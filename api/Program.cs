@@ -9,7 +9,7 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<BlogItemService>();
 builder.Services.AddScoped<PasswordService>();
 
-var connectionString = builder.Configuration.GetConnectionString("");
+var connectionString = builder.Configuration.GetConnectionString("GameWrldString");
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddControllers();
