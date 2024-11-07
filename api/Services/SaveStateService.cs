@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using api.Models;
 using api.Models.DTO;
 using api.Services.Context;
@@ -11,39 +7,47 @@ namespace api.Services
 {
     public class SaveStateService
     {
-          private readonly DataContext _context;
+        private readonly DataContext _context;
 
-    public SaveStateService(DataContext context)
-    {
-        _context = context;
-    }
-
-    public async Task<IEnumerable<SaveStateDTO>> GetAllSavesAsync()
-{
-    return await _context.GameSaves
-        .Select(save => new SaveStateDTO
+        public SaveStateService(DataContext context)
         {
-            Id = save.Id,
-            StateData = save.SaveState,  
-        })
-        .ToListAsync();
-}
+            _context = context;
+        }
 
-public async Task<SaveStateDTO?> SaveGameAsync(SaveStateDTO dto)
-{
-    var SaveState = new SaveStateModel  
-    {
-        SaveState = dto.StateData, 
-    };
+        public async Task<IEnumerable<SaveStateDTO>> GetAllSavesAsync(int userId)
+        {
+            // Fetch save states for a specific user
+            return await _context.GameSaves
+                .Where(save => save.UserId == userId) // Filter by UserId
+                .Select(save => new SaveStateDTO
+                {
+                    Id = save.Id,
+                    StateData = save.SaveState,
+                    CreatedAt = save.CreatedAt,
+                    UserId = save.UserId
+                })
+                .ToListAsync();
+        }
 
-    _context.GameSaves.Add(SaveState);
-    await _context.SaveChangesAsync();
+        public async Task<SaveStateDTO?> SaveGameAsync(SaveStateDTO dto, int userId)
+        {
+            // Save the state with the userId
+            var saveState = new SaveStateModel
+            {
+                SaveState = dto.StateData,
+                UserId = userId // Associate with the user
+            };
 
-    return new SaveStateDTO
-    {
-        Id = SaveState.Id,
-        StateData = SaveState.SaveState, 
-    };
-}
+            _context.GameSaves.Add(saveState);
+            await _context.SaveChangesAsync();
+
+            return new SaveStateDTO
+            {
+                Id = saveState.Id,
+                StateData = saveState.SaveState,
+                CreatedAt = saveState.CreatedAt,
+                UserId = saveState.UserId
+            };
+        }
     }
 }

@@ -1,8 +1,7 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using api.Models.DTO;
 using api.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers
 {
@@ -17,24 +16,31 @@ namespace api.Controllers
             _saveStateService = saveStateService;
         }
 
-
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<SaveStateDTO>>> GetAllSaveStates()
+        [HttpGet("GetAllSaves")]
+        public async Task<IActionResult> GetAllSaves()
         {
-            var saves = await _saveStateService.GetAllSavesAsync();
-            return Ok(saves);
+            var userId = GetUserIdFromClaims();
+
+            var saveStates = await _saveStateService.GetAllSavesAsync(userId);
+            return Ok(saveStates);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<SaveStateDTO>> SaveGameState(SaveStateDTO dto)
+        [HttpPost("SaveGame")]
+        public async Task<IActionResult> SaveGame([FromBody] SaveStateDTO saveStateDTO)
         {
-            var savedState = await _saveStateService.SaveGameAsync(dto);
-            if (savedState == null)
-            {
-                return BadRequest("Failed to save the game state.");
-            }
+            var userId = GetUserIdFromClaims();
+            var savedState = await _saveStateService.SaveGameAsync(saveStateDTO, userId);
+            return Ok(savedState);
+        }
 
-            return CreatedAtAction(nameof(GetAllSaveStates), new { id = savedState.Id }, savedState);
+        private int GetUserIdFromClaims()
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (int.TryParse(userIdClaim, out var userId))
+            {
+                return userId;
+            }
+            throw new UnauthorizedAccessException("User not authenticated.");
         }
     }
 }
