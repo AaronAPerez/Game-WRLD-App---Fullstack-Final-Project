@@ -1,11 +1,10 @@
 import { createBrowserRouter } from 'react-router-dom';
-import Layout from './routing/Layout';
+import Layout from './hooks/Layout';
 import ErrorPage from './pages/ErrorPage';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
-import SignUpPage from './pages/SignUpPage';
-import ChatPage from './pages/ChatPage';
-import FriendsPage from './components/friends/FriendsPage';
+import SignupPage from './pages/SignUpPage';
+
 
 const router = createBrowserRouter([
   {
@@ -23,15 +22,7 @@ const router = createBrowserRouter([
       },
       { 
         path: "signup",
-        element: <SignUpPage />
-      },
-      { 
-        path: "chat",
-        element: <ChatPage />
-      },
-      {
-        path: "friends",
-        element: <FriendsPage />
+        element: <SignupPage/>
       },
     ],
   },
