@@ -17,6 +17,8 @@ public class DataContext : DbContext
     public DbSet<UserModel> UserInfo {get; set;}
     public DbSet<BlogItemModel> BlogInfo {get; set;}
 
+    public DbSet<SaveStateModel> GameSaves { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
