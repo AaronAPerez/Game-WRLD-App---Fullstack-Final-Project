@@ -7,6 +7,7 @@ import { Disclosure, DisclosureButton, MenuButton, Menu, MenuItems, DisclosurePa
 import { Bars3Icon, XMarkIcon, BellIcon } from '@heroicons/react/24/outline';
 import { MessageCircleIcon, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Logo from '../assets/Images/logo.png'
 
 
 const Navbar = () => {
@@ -36,8 +37,8 @@ const Navbar = () => {
               <div className="flex shrink-0 items-center">
                 <img
                   alt="Your Company"
-                  src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500"
-                  className="h-8 w-auto"
+                  src={Logo}
+                  className="h-12 w-auto"
                 />
               </div>
               <div className="hidden sm:ml-6 sm:block">
@@ -48,7 +49,7 @@ const Navbar = () => {
 
                   <Link to="/" className="hover:text-blue-600" >Home</Link>
                   <Link to="/arcade" className="hover:text-blue-600">Arcade</Link>
-                  <Link to="/users" className="hover:text-blue-600">Users</Link>
+                  <Link to="/games" className="hover:text-blue-600">Games</Link>
                   <Link to="/login" className="hover:text-blue-600">Login</Link>
                   <Link to="/signup" className="hover:text-blue-600">Sign Up</Link>
 
