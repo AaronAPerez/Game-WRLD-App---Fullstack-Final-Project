@@ -1,20 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace api.Models;
-
-public class UserModel
+namespace api.Models
 {
-    public int Id { get; set; }
-    public string? Username { get; set; }
-    public string? Salt { get; set; }
-    public string? Hash { get; set; }
+    public class UserModel
+    {
+        public int Id { get; set; }
+        public string? Username { get; set; }
+        public string? Salt { get; set; }
+        public string? Hash { get; set; }
 
-  public UserModel()
-  {
-    
-  }
+        // Navigation properties for chat messages
+        public ICollection<Message> SentMessages { get; set; } = new List<Message>();
+        public ICollection<Message> ReceivedMessages { get; set; } = new List<Message>();
 
+        public UserModel() { }
+    }
 }

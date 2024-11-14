@@ -8,13 +8,23 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<BlogItemService>();
 builder.Services.AddScoped<PasswordService>();
-builder.Services.AddScoped<SaveStateService>();
+builder.Services.AddScoped<ChatService>(); // Add ChatService
 
 var connectionString = builder.Configuration.GetConnectionString("GameWrldString");
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Add CORS configuration if frontend is on a different domain/port
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")  // Your frontend URL
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -28,6 +38,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Enable CORS
+app.UseCors("AllowLocalhost");
 
 app.UseAuthorization();
 

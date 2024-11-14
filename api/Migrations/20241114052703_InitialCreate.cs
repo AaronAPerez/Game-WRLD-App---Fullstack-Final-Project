@@ -49,30 +49,43 @@ namespace api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "GameSaves",
+                name: "Messages",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    SaveState = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    SenderId = table.Column<int>(type: "int", nullable: false),
+                    ReceiverId = table.Column<int>(type: "int", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsRead = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GameSaves", x => x.Id);
+                    table.PrimaryKey("PK_Messages", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_GameSaves_UserInfo_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Messages_UserInfo_ReceiverId",
+                        column: x => x.ReceiverId,
                         principalTable: "UserInfo",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Messages_UserInfo_SenderId",
+                        column: x => x.SenderId,
+                        principalTable: "UserInfo",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_GameSaves_UserId",
-                table: "GameSaves",
-                column: "UserId");
+                name: "IX_Messages_ReceiverId",
+                table: "Messages",
+                column: "ReceiverId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_SenderId",
+                table: "Messages",
+                column: "SenderId");
         }
 
         /// <inheritdoc />
@@ -82,7 +95,7 @@ namespace api.Migrations
                 name: "BlogInfo");
 
             migrationBuilder.DropTable(
-                name: "GameSaves");
+                name: "Messages");
 
             migrationBuilder.DropTable(
                 name: "UserInfo");

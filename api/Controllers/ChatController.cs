@@ -1,61 +1,47 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using api.Models.DTO;
+using api.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace api.Controllers
 {
-    [Authorize]
-[ApiController]
-[Route("api/[controller]")]
-public class ChatController : ControllerBase
-{
-    private readonly ApplicationDbContext _context;
-    private readonly IHubContext<ChatHub> _hubContext;
-
-    public ChatController(ApplicationDbContext context, IHubContext<ChatHub> hubContext)
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ChatController : ControllerBase
     {
-        _context = context;
-        _hubContext = hubContext;
-    }
+        private readonly IChatService _chatService;
 
-    [HttpPost]
-    public async Task<ActionResult<Chat>> CreateChat(CreateChatDto dto)
-    {
-        var chat = new Chat
+        public ChatController(IChatService chatService)
         {
-            Name = dto.Name,
-            IsGroupChat = dto.IsGroupChat,
-            Participants = await _context.Users
-                .Where(u => dto.ParticipantIds.Contains(u.Id))
-                .ToListAsync()
-        };
+            _chatService = chatService;
+        }
 
-        _context.Chats.Add(chat);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetChat), new { id = chat.Id }, chat);
-    }
-
-    [HttpPost("{chatId}/messages")]
-    public async Task<ActionResult<Message>> SendMessage(int chatId, SendMessageDto dto)
-    {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var message = new Message
+        // Send a message
+        [HttpPost("send")]
+        public async Task<IActionResult> SendMessage([FromBody] SendMessageDTO sendMessageDto)
         {
-            Content = dto.Content,
-            UserId = userId,
-            ChatId = chatId
-        };
+            if (sendMessageDto == null)
+                return BadRequest("Message data is required");
 
-        _context.Messages.Add(message);
-        await _context.SaveChangesAsync();
+            var message = await _chatService.SendMessageAsync(sendMessageDto);
+            return Ok(message);
+        }
 
-        await _hubContext.Clients.Group($"chat_{chatId}")
-            .SendAsync("ReceiveMessage", message);
+        // Get messages between two users
+        [HttpGet("conversation")]
+        public async Task<IActionResult> GetMessagesBetweenUsers([FromQuery] int userId1, [FromQuery] int userId2)
+        {
+            var messages = await _chatService.GetMessagesBetweenUsersAsync(userId1, userId2);
+            return Ok(messages);
+        }
 
-        return Ok(message);
+        // Mark a message as read
+        [HttpPatch("mark-as-read/{messageId}")]
+        public async Task<IActionResult> MarkMessageAsRead(int messageId)
+        {
+            await _chatService.MarkMessageAsReadAsync(messageId);
+            return NoContent();
+        }
     }
-}
 }
