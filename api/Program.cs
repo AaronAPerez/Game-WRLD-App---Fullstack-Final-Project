@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<BlogItemService>();
 builder.Services.AddScoped<PasswordService>();
-builder.Services.AddScoped<ChatService>(); // Add ChatService
+builder.Services.AddScoped<IChatService, ChatService>();
 
 var connectionString = builder.Configuration.GetConnectionString("GameWrldString");
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(connectionString));
