@@ -62,7 +62,7 @@ namespace api.Services
        public async Task MarkMessageAsReadAsync(int messageId)
 {
     var message = await _context.Messages.FindAsync(messageId);
-    if (message == null) return; // Handle null case
+    if (message == null) return;
 
     if (!message.IsRead)
     {

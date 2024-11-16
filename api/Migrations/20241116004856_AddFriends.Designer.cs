@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.Services.Context;
 
@@ -11,9 +12,11 @@ using api.Services.Context;
 namespace api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20241116004856_AddFriends")]
+    partial class AddFriends
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,28 +24,6 @@ namespace api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("UserModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Hash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Salt")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserInfo");
-                });
 
             modelBuilder.Entity("api.Models.BlogItemModel", b =>
                 {
@@ -107,24 +88,11 @@ namespace api.Migrations
                     b.Property<DateTime>("SentAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("UserModelId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UserModelId1")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ReceiverId");
 
                     b.HasIndex("SenderId");
-
-                    b.HasIndex("UserModelId");
-
-                    b.HasIndex("UserModelId1");
 
                     b.ToTable("FriendRequests");
                 });
@@ -146,16 +114,11 @@ namespace api.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserModelId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("FriendId");
 
                     b.HasIndex("UserId");
-
-                    b.HasIndex("UserModelId");
 
                     b.ToTable("Friends");
                 });
@@ -192,27 +155,41 @@ namespace api.Migrations
                     b.ToTable("Messages");
                 });
 
+            modelBuilder.Entity("api.Models.UserModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Hash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Salt")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserInfo");
+                });
+
             modelBuilder.Entity("api.Models.FriendRequestModel", b =>
                 {
-                    b.HasOne("UserModel", "Receiver")
-                        .WithMany()
+                    b.HasOne("api.Models.UserModel", "Receiver")
+                        .WithMany("ReceivedFriendRequests")
                         .HasForeignKey("ReceiverId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("UserModel", "Sender")
-                        .WithMany()
+                    b.HasOne("api.Models.UserModel", "Sender")
+                        .WithMany("SentFriendRequests")
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("UserModel", null)
-                        .WithMany("ReceivedFriendRequests")
-                        .HasForeignKey("UserModelId");
-
-                    b.HasOne("UserModel", null)
-                        .WithMany("SentFriendRequests")
-                        .HasForeignKey("UserModelId1");
 
                     b.Navigation("Receiver");
 
@@ -221,21 +198,17 @@ namespace api.Migrations
 
             modelBuilder.Entity("api.Models.FriendsModel", b =>
                 {
-                    b.HasOne("UserModel", "Friend")
+                    b.HasOne("api.Models.UserModel", "Friend")
                         .WithMany()
                         .HasForeignKey("FriendId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("UserModel", "User")
-                        .WithMany()
+                    b.HasOne("api.Models.UserModel", "User")
+                        .WithMany("Friends")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("UserModel", null)
-                        .WithMany("Friends")
-                        .HasForeignKey("UserModelId");
 
                     b.Navigation("Friend");
 
@@ -244,13 +217,13 @@ namespace api.Migrations
 
             modelBuilder.Entity("api.Models.Message", b =>
                 {
-                    b.HasOne("UserModel", "Receiver")
+                    b.HasOne("api.Models.UserModel", "Receiver")
                         .WithMany("ReceivedMessages")
                         .HasForeignKey("ReceiverId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("UserModel", "Sender")
+                    b.HasOne("api.Models.UserModel", "Sender")
                         .WithMany("SentMessages")
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -261,7 +234,7 @@ namespace api.Migrations
                     b.Navigation("Sender");
                 });
 
-            modelBuilder.Entity("UserModel", b =>
+            modelBuilder.Entity("api.Models.UserModel", b =>
                 {
                     b.Navigation("Friends");
 
