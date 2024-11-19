@@ -1,11 +1,14 @@
 import { createBrowserRouter } from 'react-router-dom';
-import Layout from './hooks/Layout';
+import Layout from './components/layout/Layout';
 import ErrorPage from './pages/ErrorPage';
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
+// import HomePage from './pages/HomePage';
 import SignupPage from './pages/SignUpPage';
-import GamesPage from './pages/GamesPage';
 import ArcadePage from './pages/ArcadePage';
+import Games from './pages/Games';
+import Timeline from './pages/Timeline';
+import LoginPage from './pages/LoginPage';
+import LandingPage from './pages/LandingPage';
+import Dashboard  from './pages/Dashboard';
 
 
 const router = createBrowserRouter([
@@ -15,20 +18,24 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { 
-        index: true,
-        element: <HomePage />
+        index: true, element: <LandingPage />
       },
+      
+      // { 
+      //   index: true,
+      //   element: <HomePage />
+      // },
       {
         path: "arcade",
         element: <ArcadePage />
       },
       { 
-        path: "login",
-        element: <LoginPage />
+        path: "games",
+        element: <Games />
       },
       { 
-        path: "games",
-        element: <GamesPage />
+        path: "timeline",
+        element: <Timeline />
       },
       { 
         path: "login",
@@ -37,6 +44,10 @@ const router = createBrowserRouter([
       { 
         path: "signup",
         element: <SignupPage/>
+      },
+      { 
+        path: "dashboard",
+        element: <Dashboard />
       },
     ],
   },

@@ -1,27 +1,22 @@
-// components/Navbar.tsx
-// import { MessageCircleIcon } from 'lucide-react';
-// import { Link } from 'react-router-dom';
-
-
 import { Disclosure, DisclosureButton, MenuButton, Menu, MenuItems, DisclosurePanel, MenuItem } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon, BellIcon } from '@heroicons/react/24/outline';
-import { MessageCircleIcon, Users } from 'lucide-react';
+import { MessageCircleIcon, Search, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Logo from '../assets/Images/logo.png'
+import { useState } from 'react';
 
 
 const Navbar = () => {
-  // function classNames(...classes) {
-  //   return classes.filter(Boolean).join(' ')
-  // }
-
-
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
 
 
   return (
     <>
-      <Disclosure as="nav" className="bg-gray-800">
+      <Disclosure as="nav" className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      isScrolled ? 'bg-slate-600 backdrop-blur-md shadow-lg' : 'bg-transparent'
+    }">
         <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
           <div className="relative flex h-16 items-center justify-between">
             <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -41,65 +36,61 @@ const Navbar = () => {
                   className="h-12 w-auto"
                 />
               </div>
+
               <div className="hidden sm:ml-6 sm:block">
-                <div className="flex space-x-4 text-white">
+                <div className="flex space-x-4">
 
-                  {/* {navigation.map((item) => ( */}
-                  {/* <a */}
+                  <Link to="/" className="hover:text-green-600" >Browse</Link>
+                  <Link to="/arcade" className="hover:text-green-600">Arcade</Link>
+                  <Link to="/games" className="hover:text-green-600">Games</Link>
+                  <Link to="/timeline" className="hover:text-green-600">Timeline</Link>
 
-                  <Link to="/" className="hover:text-blue-600" >Home</Link>
-                  <Link to="/arcade" className="hover:text-blue-600">Arcade</Link>
-                  <Link to="/games" className="hover:text-blue-600">Games</Link>
-                  <Link to="/login" className="hover:text-blue-600">Login</Link>
-                  <Link to="/signup" className="hover:text-blue-600">Sign Up</Link>
-
-                  {/* // key={item.name}
-                  // href={item.href}
-                  // aria-current={item.current ? 'page' : undefined}
-            // /      className={classNames( */}
-                  {/* //         item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-            //         'rounded-md px-3 py-2 text-sm font-medium', */}
-                  {/* className=
-                    'bg-gray-900 text-white'  */}
-                  {/* > */}
-
-                  {/* {item.name} */}
+                  {/* Search Bar */}
+                  <div className="hidden md:block relative w-64">
+                    <input
+                      type="text"
+                      placeholder="Search games..."
+                      className="w-full bg-transparent text-white px-4 py-2 pl-10 rounded-full 
+                            border-2 border-gray-800 focus:border-green-700 outline-none
+                            transition-all duration-300"
+                    />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  </div>
 
                 </div>
               </div>
             </div>
-            {/* <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"> */}
             <div className="flex space-x-4 text-white">
 
-            <button
+              <button
                 type="button"
-                className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                className="relative text-gray-400"
               >
 
-              <Link to="/chat" className="hover:text-blue-600"><MessageCircleIcon /></Link>
+                <Link to="/chat" className="hover:text-green-600"><MessageCircleIcon />
+                </Link>
               </button>
 
               <button
                 type="button"
-                className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                className="relative text-gray-400"
               >
-
-              <Link to="/friends" className="hover:text-blue-600">
-                <Users className="h-5 w-5" />
-              </Link>
+                <Link to="/friends" className="hover:text-green-600">
+                  <Users className="h-5 w-5" />
+                </Link>
 
               </button>
-
-
               <button
                 type="button"
-                className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                className="relative text-gray-400"
               >
                 <span className="absolute -inset-1.5" />
                 <span className="sr-only">View notifications</span>
                 <BellIcon aria-hidden="true" className="h-6 w-6" />
               </button>
-
+              <Link to="/login" className="hover:text-green-600">Login</Link>
+              <Link to="/signup" className="hover:text-green-600">Sign Up</Link>
+              <Link to="/dashboard" className="hover:text-green-600">Dashboard</Link>
               {/* Profile dropdown */}
               <Menu as="div" className="relative ml-3">
                 <div>
@@ -146,46 +137,12 @@ const Navbar = () => {
             </div>
           </div>
         </div>
-
         <DisclosurePanel className="sm:hidden">
           <div className="space-y-1 px-2 pb-3 pt-2">
-            {/* {navigation.map((item) => ( */}
-            <DisclosureButton
-            // key={item.name}
-            // as="a"
-            // href={item.href}
-            // aria-current={item.current ? 'page' : undefined}
-            // className={classNames(
-            //   item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-            //   'block rounded-md px-3 py-2 text-base font-medium',
-            // )}
-            >
-              {/* {item.name} */}
-            </DisclosureButton>
-            {/* ))} */}
           </div>
         </DisclosurePanel>
       </Disclosure>
     </>
-
-
-
-    // <nav className="bg-white shadow-lg">
-    //   <div className="container mx-auto px-4">
-    //     <div className="flex justify-between items-center h-16">
-    //       <Link to="/" className="font-bold text-xl">Logo</Link>
-
-    //       <div className="flex space-x-4">
-    //       <Link to="/chat" className="hover:text-blue-600"><MessageCircleIcon/></Link>
-    //         <Link to="/" className="hover:text-blue-600">Home</Link>
-    //         <Link to="/arcade" className="hover:text-blue-600">Arcade</Link>
-    //         <Link to="/" className="hover:text-blue-600">Library</Link>
-    //         <Link to="/login" className="hover:text-blue-600">Login</Link>
-    //         <Link to="/signup" className="hover:text-blue-600">Sign Up</Link>
-    //       </div>
-    //     </div>
-    //   </div>
-    // </nav>
   );
 };
 
