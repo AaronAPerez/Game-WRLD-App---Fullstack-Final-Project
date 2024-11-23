@@ -213,7 +213,7 @@ function GameDetailsModal({ gameId, onClose }: { gameId: number; onClose: () => 
                    {/* Close Button */}
                  <button
                   onClick={onClose}
-                  className="p-2 rounded-lg bg-gray-800 backdrop-blur-sm text-orange-300 hover:bg-black/70 transition-colors"
+                  className="p-2 rounded-lg bg-gray-900 backdrop-blur-sm text-orange-300 hover:bg-black/70 transition-colors"
                 >
                   <X className="w-6 h-6" />
                 </button>

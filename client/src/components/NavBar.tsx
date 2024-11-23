@@ -1,39 +1,31 @@
 import { Disclosure, DisclosureButton, MenuButton, Menu, MenuItems, DisclosurePanel, MenuItem } from '@headlessui/react';
-import { Bars3Icon, XMarkIcon, BellIcon } from '@heroicons/react/24/outline';
+import { BellIcon } from '@heroicons/react/24/outline';
 import { MessageCircleIcon, Search, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Logo from '../assets/Images/logo.png'
-import { useState } from 'react';
 
 
 const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
 
 
   return (
     <>
-      <Disclosure as="nav" className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled ? 'bg-slate-600 backdrop-blur-md shadow-lg' : 'bg-transparent'
-    }">
+      <Disclosure as="nav" className="fixed top-0 left-10 right-0 transition-all duration-300 ">
         <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
           <div className="relative flex h-16 items-center justify-between">
             <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
               {/* Mobile menu button*/}
-              <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-                <span className="absolute -inset-0.5" />
+              <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md hover:bg-gray-800 hover:text-white focus:outline-none focus:ring-white">
+                <span className="absolute" />
                 <span className="sr-only">Open main menu</span>
-                <Bars3Icon aria-hidden="true" className="block h-6 w-6 group-data-[open]:hidden" />
-                <XMarkIcon aria-hidden="true" className="hidden h-6 w-6 group-data-[open]:block" />
               </DisclosureButton>
             </div>
             <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
               <div className="flex shrink-0 items-center">
                 <img
-                  alt="Your Company"
                   src={Logo}
-                  className="h-12 w-auto"
+                  className="h-14 w-16"
                 />
               </div>
 
@@ -54,7 +46,7 @@ const Navbar = () => {
                             border-2 border-gray-800 focus:border-green-700 outline-none
                             transition-all duration-300"
                     />
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <Search className="absolute left- top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   </div>
 
                 </div>
@@ -92,9 +84,9 @@ const Navbar = () => {
               <Link to="/signup" className="hover:text-green-600">Sign Up</Link>
               <Link to="/dashboard" className="hover:text-green-600">Dashboard</Link>
               {/* Profile dropdown */}
-              <Menu as="div" className="relative ml-3">
+              <Menu as="div" className="relative ml-3 pr-2">
                 <div>
-                  <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                  <MenuButton className="relative flex rounded-full focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                     <span className="absolute -inset-1.5" />
                     <span className="sr-only">Open user menu</span>
                     <img
@@ -142,6 +134,7 @@ const Navbar = () => {
           </div>
         </DisclosurePanel>
       </Disclosure>
+
     </>
   );
 };

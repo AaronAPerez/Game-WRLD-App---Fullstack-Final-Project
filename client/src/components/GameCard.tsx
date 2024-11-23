@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Calendar, ChartLine, Eye, Star } from "lucide-react";
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import type { Game } from '../types/rawg';
 import { useGameStore } from "./store/gameStore";
 import { cn } from "../utils/styles";
@@ -16,9 +16,9 @@ interface GameCardProps {
 export const GameCard = ({ game, onClick, rank }: GameCardProps) => {
   // State management
   const [isHovering, setIsHovering] = useState(false);
-  const [mediaLoaded, setMediaLoaded] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  
+
+
+
   // Global state management for favorites
   const { addToFavorites, isGameInCollection } = useGameStore();
   const isFavorite = isGameInCollection(game.id, 'favorites');
@@ -39,32 +39,6 @@ export const GameCard = ({ game, onClick, rank }: GameCardProps) => {
     return 'text-red-500';
   };
 
-  // Handle video playback on hover
-  useEffect(() => {
-    let videoTimeout: NodeJS.Timeout;
-    
-    if (isHovering && videoRef.current && game.clip?.clip) {
-      // Add delay before playing video to prevent flickering on quick hover
-      videoTimeout = setTimeout(async () => {
-        try {
-          await videoRef.current?.play();
-          setMediaLoaded(true);
-        } catch (error) {
-          console.error('Error playing video:', error);
-        }
-      }, 300);
-    } else if (videoRef.current) {
-      // Reset video when not hovering
-      videoRef.current.pause();
-      videoRef.current.currentTime = 0;
-      setMediaLoaded(false);
-    }
-
-    // Cleanup timeout on unmount or when dependencies change
-    return () => {
-      clearTimeout(videoTimeout);
-    };
-  }, [isHovering, game.clip?.clip]);
 
   // Animation variants for favorite star
   const starVariants = {
@@ -81,6 +55,7 @@ export const GameCard = ({ game, onClick, rank }: GameCardProps) => {
       layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -5 }}
       exit={{ opacity: 0, y: 20 }}
       className="group relative bg-stone-900 rounded-lg overflow-hidden hover:ring-2 hover:ring-blue-500/50 transition-all duration-300"
       onHoverStart={() => setIsHovering(true)}
@@ -122,18 +97,9 @@ export const GameCard = ({ game, onClick, rank }: GameCardProps) => {
         </motion.div>
       </motion.button>
 
-      {/* Media Container (Image) */}
-      <div className="relative">
+      <div className="relative aspect-video">
         {/* Base Image */}
-        <img
-          src={game.background_image}
-          alt={game.name}
-          className={cn(
-            "w-full h-full object-cover transition-opacity duration-300",
-            isHovering && mediaLoaded ? 'opacity-0' : 'opacity-100'
-          )}
-          loading="lazy"
-        />
+        <img src={game.background_image} alt={game.name} />
 
 
         {/* Overlay Content */}
@@ -145,7 +111,7 @@ export const GameCard = ({ game, onClick, rank }: GameCardProps) => {
                 <Calendar className="w-4 h-4" />
                 <span>{formattedDate}</span>
               </div>
-              
+
               {game.metacritic && (
                 <div className={cn(
                   "px-2 py-1 rounded-full bg-stone-900/50 backdrop-blur-sm text-sm",
@@ -162,21 +128,21 @@ export const GameCard = ({ game, onClick, rank }: GameCardProps) => {
                 e.stopPropagation();
                 onClick(game);
               }}
-              className="p-2 bg-stone-900/50 backdrop-blur-sm rounded-full hover:bg-stone-800 transition-colors"
+              className="p-2 bg-stone-900/50 backdrop-blur-sm rounded-full hover:bg-stone-900 transition-colors"
               aria-label="View game details"
             >
-              <Eye className="w-4 h-4 text-white" />
+              <Eye className="w-4 h-4 text-gray-400" />
             </button>
           </div>
         </div>
       </div>
 
       {/* Game Information */}
-      <div className="text-center p-4">
-        <h3 className="font-bold text-lg text-white mb-3">
+      <div className="p-4">
+        <h3 className="font-bold text-lg text-white  line-clamp-1 mb-3">
           {game.name}
         </h3>
-        
+
         {/* Genre Tags */}
         <div className="flex flex-wrap gap-2">
           {game.genres?.slice(0, 2).map(genre => (

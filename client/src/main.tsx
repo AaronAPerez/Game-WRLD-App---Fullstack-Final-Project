@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import './styles/scrollbar.css';
 import "./index.css";
 import router from './routes';
 import { RouterProvider } from 'react-router-dom';
