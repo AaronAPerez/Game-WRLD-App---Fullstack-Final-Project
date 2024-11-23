@@ -6,6 +6,7 @@ export interface PaginatedResponse<T> {
   }
   
   export interface Game {
+    clip: any;
     id: number;
     slug: string;
     name: string;
