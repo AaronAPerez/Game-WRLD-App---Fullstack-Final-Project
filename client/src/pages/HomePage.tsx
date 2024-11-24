@@ -1,10 +1,14 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, scroll } from 'framer-motion';
 import { 
   Gamepad, Star, Calendar, TrendingUp, 
   ChevronRight, 
-  X
+  X,
+  PanelTopCloseIcon,
+  Minimize,
+  Minimize2,
+  Minimize2Icon
 } from 'lucide-react';
 import { gameService, getMetacriticColor } from '../services/gameService';
 import { GameCard } from '../components/GameCard';
@@ -189,9 +193,13 @@ function GameDetailsModal({ gameId, onClose }: { gameId: number; onClose: () => 
               alt={game.name}
               className="w-full h-full object-cover"
             />
+
+
+
+
             <div className="absolute inset-0 bg-gradient-to-t from-app-card via-transparent" />
           </div>
-
+    
           {/* Content */}
           <div className="p-8 space-y-8">
             <div className="flex justify-between items-start">
@@ -210,19 +218,13 @@ function GameDetailsModal({ gameId, onClose }: { gameId: number; onClose: () => 
                 </div>
               </div>
               
-                   {/* Close Button */}
-                 <button
-                  onClick={onClose}
-                  className="p-2 rounded-lg bg-gray-900 backdrop-blur-sm text-orange-300 hover:bg-black/70 transition-colors"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              {/* <button
+     
+               <button
                 onClick={onClose}
-                className="p-2 hover:bg-app-hover rounded-lg"
+                className="p-2 hover:bg-app-hover rounded-lg outline"
               >
-                ×
-              </button> */}
+              <Minimize2 size={35} color={'orange'} />
+              </button> 
             </div>
 
             {/* Game Info Grid */}

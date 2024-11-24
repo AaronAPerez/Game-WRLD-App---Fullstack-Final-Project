@@ -6,9 +6,58 @@
   html {
     @apply antialiased;
   }
-  
+
   body {
     @apply bg-stone-950 text-gray-200;
+  }
 
+  /* Glow Effect */
+  @layer utilities {
+    .glow-effect-light {
+      @apply relative before:absolute before:inset-0 before:rounded-full before:bg-[radial-gradient(circle_at_center,rgba(79,70,229,0.15)_0%,transparent_70%)] before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100;
+    }
+
+    .glow-effect-strong {
+      @apply relative before:absolute before:inset-0 before:rounded-full before:bg-[radial-gradient(circle_at_center,rgba(79,70,229,0.3)_0%,transparent_70%)] before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100;
+    }
+
+    .hover-scale {
+      @apply transition-transform duration-300 hover:scale-[1.02];
+    }
+    .glow-effect {
+      position: relative;
+    }
+
+    .glow-effect::before {
+      content: '';
+      pointer-events: none;
+      position: absolute;
+      inset: 0;
+      border-radius: 0.5rem;
+      background: radial-gradient(
+        circle at center,
+        rgba(79, 70, 229, 0.15) 0%,
+        transparent 70%
+      );
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .glow-effect:hover::before {
+      opacity: 1;
+    }
+
+    .w-full.bg-transparent.text-white {
+      border-color: transparent;
+    }
+
+    /* Custom search input autofill style */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus {
+      -webkit-text-fill-color: white;
+      -webkit-box-shadow: 0 0 0px 1000px rgb(38 38 38 / 0.5) inset;
+      transition: background-color 5000s ease-in-out 0s;
+    }
   }
 }

@@ -5,6 +5,8 @@ import HomePage from './pages/HomePage';
 import SignupPage from './pages/SignUpPage';
 import ArcadePage from './pages/ArcadePage';
 import LoginPage from './pages/LoginPage';
+import GamesGrid from './components/GamesGrid';
+
 
 
 
@@ -18,19 +20,11 @@ const router = createBrowserRouter([
       { 
         index: true, element: <HomePage />
       },
-      
-      // { 
-      //   index: true,
-      //   element: <HomePage />
-      // },
-      {
-        path: "arcade",
-        element: <ArcadePage />
+  
+      { 
+        path: "games",
+        element: <GamesGrid />
       },
-      // { 
-      //   path: "games",
-      //   element: <Games />
-      // },
       // { 
       //   path: "timeline",
       //   element: <Timeline />
