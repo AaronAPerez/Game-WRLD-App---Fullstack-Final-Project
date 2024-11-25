@@ -5,15 +5,24 @@ import Sidebar from './SideBar';
 import { Link, Outlet } from 'react-router-dom';
 import { cn } from '../../utils/styles';
 import Logo from '../Logo';
-
+import { useSearch } from '../../hooks/useSearch';
+import SearchResults from '../SearchResults';
 
 // Layout Component 
 const Layout = () => {
   // State Management
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
   const [, setIsMobile] = useState<boolean>(false);
-  const [searchQuery, setSearchQuery] = useState<string>('');
   const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
+
+  const {
+    searchQuery,
+    debouncedSearch,
+    isSearchOpen,
+    setIsSearchOpen,
+    handleSearchChange,
+    handleSearchClear
+  } = useSearch();
 
   // Handle responsive layout, Auto collapses sidebar on mobile 
   useEffect(() => {
@@ -57,59 +66,73 @@ const Layout = () => {
             </button>
 
             {/*  Logo */}
-            <Link to="/" aria-label="Home">
-              <Logo className="w-48 hover:opacity-90 transition-opacity" />
+            <Link to="/" aria-label="Home" className="hover:opacity-90 transition-opacity">
+              <Logo className="w-40" />
             </Link>
           </div>
-
           {/* Search Section */}
-          <div className="flex-1 max-w-3xl mx-auto">
-            <div className={cn(
-              "relative group",
-              "flex items-center bg-stone-800/50 rounded-full overflow-hidden transition-all duration-300",
-              // Glow effect container
-              "before:absolute before:inset-0 before:rounded-full before:opacity-0",
-              "before:bg-[radial-gradient(circle_at_center,rgba(79,70,229,0.15)_0%,transparent_70%)]",
-              "hover:before:opacity-100",
-              isSearchFocused ? 'ring-2 ring-indigo-500/50 before:opacity-100' : ''
-            )}>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={() => setIsSearchFocused(true)}
-                onBlur={() => setIsSearchFocused(false)}
-                placeholder="Search games..."
-                className={cn(
-                  "w-full bg-transparent text-white px-6 py-2 outline-none relative z-10",
-                  "placeholder:text-gray-400",
-                  "transition-all duration-300"
-                )}
-                aria-label="Search games"
-              />
-              {/* Clear Search Button */}
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
+          <div className="flex-1 flex justify-center pr-4" data-search>
+            <div className="relative w-full max-w-3xl">
+              <div className={cn(
+                "relative group",
+                "flex items-center bg-stone-800/50 rounded-full overflow-hidden transition-all duration-300",
+                // Glow effect container
+                "before:absolute before:inset-0 before:rounded-full before:opacity-0",
+                "before:bg-[radial-gradient(circle_at_center,rgba(79,70,229,0.15)_0%,transparent_70%)]",
+                "hover:before:opacity-100",
+                isSearchFocused ? 'ring-2 ring-indigo-500/50 before:opacity-100' : ''
+              )}>
+                {/* Search Icon (Left) */}
+                <div className="pl-4 pr-4">
+                  <Search className="w-5 h-5 text-gray-400" />
+                </div>
+
+                {/* Search Input */}
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  onFocus={() => {
+                    setIsSearchOpen(true);
+                    setIsSearchFocused(true);
+                  }}
+                  onBlur={() => setIsSearchFocused(false)}
+                  placeholder="Search games..."
                   className={cn(
-                    "p-2 hover:bg-stone-700/50 relative z-10",
-                    "transition-colors duration-300"
+                    "w-full bg-transparent text-white px-4 py-2 outline-none relative z-10",
+                    "placeholder:text-gray-400",
+                    "transition-all duration-300"
                   )}
-                  aria-label="Clear search"
-                >
-                  <X className="w-4 h-4 text-gray-400 hover:text-white hover:scale-110 transition-transform" />
-                </button>
-              )}
-              {/* Search Button */}
-              <button
-                className={cn(
-                  "px-6 py-2 hover:bg-stone-700/50 relative z-10",
-                  "transition-colors duration-300"
+                  aria-label="Search games"
+                />
+
+                {/* Clear Search Button */}
+                {searchQuery && (
+                  <button
+                    onClick={handleSearchClear}
+                    className={cn(
+                      "p-2 hover:bg-stone-700/50 relative z-10",
+                      "transition-colors duration-300"
+                    )}
+                    aria-label="Clear search"
+                  >
+                    <X className="w-4 h-4 text-gray-400 hover:text-white hover:scale-110 transition-transform" />
+                  </button>
                 )}
-                aria-label="Search"
-              >
-                <Search className="w-5 text-gray-400 hover:text-white hover:scale-110 transition-transform" />
-              </button>
+              </div>
+
+              {/* Search Results Dropdown */}
+              <AnimatePresence>
+                {(isSearchOpen && debouncedSearch.length >= 2) && (
+                  <div className="absolute w-full">
+                    <SearchResults
+                      query={debouncedSearch}
+                      onClose={() => setIsSearchOpen(false)}
+                      isOpen={isSearchOpen}
+                    />
+                  </div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
@@ -182,8 +205,7 @@ const Layout = () => {
           )}
         </AnimatePresence>
 
-        {/* Main Content Area */}
-
+        {/* Main Content */}
         <main
           className={cn(
             "flex-1 transition-all duration-300 custom-scrollbar",

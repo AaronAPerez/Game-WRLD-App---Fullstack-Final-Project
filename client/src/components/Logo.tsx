@@ -8,7 +8,7 @@ export default function Logo({ className = "w-32", ...props }: LogoProps) {
   return (
     <svg 
       className={className}
-      viewBox="0 0 298 80" 
+      viewBox="0 0 290 85" 
       xmlns="http://www.w3.org/2000/svg"
       aria-label="Game WRLD Logo"
       {...props}
@@ -28,7 +28,7 @@ export default function Logo({ className = "w-32", ...props }: LogoProps) {
           />
           <stop 
             offset="100%" 
-            stopColor="#06B6D4" 
+            stopColor="#fff" 
             stopOpacity="0.2" 
           />
         </linearGradient>

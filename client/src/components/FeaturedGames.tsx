@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar, ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import { useState } from 'react';
 import { Game } from '../types/rawg';
-import { gameService } from '../services/gameService';
+import { gameService, getMetacriticColor } from '../services/gameService';
+import { cn } from '../utils/styles';
 
 // Response type array from the API
 interface FeaturedGamesResponse {
@@ -25,12 +26,29 @@ const FeaturedGames = () => {
     })
   });
 
+  const nextSlide = () => {
+    if (featured?.results) {
+      setCurrentIndex((current) =>
+        current === featured.results.length - 1 ? 0 : current + 1
+      );
+    }
+  };
+
+  const prevSlide = () => {
+    if (featured?.results) {
+      setCurrentIndex((current) =>
+        current === 0 ? featured.results.length - 1 : current - 1
+      );
+    }
+  };
+
+
   // Display Loading skeleton while data is being fetched
   if (isLoading) {
     return (
       <div className="w-full aspect-video bg-stone-900 animate-pulse rounded-lg">
         <div className="h-full w-full flex items-center justify-center">
-          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
         </div>
       </div>
     );
@@ -40,11 +58,15 @@ const FeaturedGames = () => {
   if (!featured?.results.length) return null;
 
 
-// Carousel w/ featured games
+  // Carousel w/ featured games
   const currentGame = featured.results[currentIndex];
 
   return (
     <div className="relative group">
+      {/* Section Title Overlay */}
+      <div className="absolute top-0 left-0 z-20 p-6 bg-gradient-to-r from-stone-950 to-transparent">
+        <h2 className="text-3xl font-bold text-white">Featured Games</h2>
+      </div>
       {/* AnimatePresence enables exit animations */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -62,14 +84,36 @@ const FeaturedGames = () => {
           />
           {/* Gradient overlay for better text readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/50 to-transparent" />
-          
+        <div className="relative container mx-auto px-4 h-full flex items-end pb-12">
+          <div className="space-y-4">
+            <h1 className="text-5xl font-bold">{currentGame.name}</h1>
+            <div className="flex items-center gap-6">
+              {currentGame.metacritic && (
+                <div className={cn(
+                  "px-3 py-1 rounded-full font-medium",
+                  getMetacriticColor(currentGame.metacritic)
+                )}>
+                  Metacritic: {currentGame.metacritic}
+                </div>
+              )}
+              <div className="flex items-center gap-2">
+                <Star className="w-5 h-5 text-yellow-500" />
+                <span>{currentGame.rating}/5</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Calendar className="w-5 h-5" />
+                <span>{new Date(currentGame.released).getFullYear()}</span>
+              </div>
+            </div>
+          </div>
+        </div>
           {/* Game Information Overlay */}
-          <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+          <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
             <motion.h2
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              className="text-3xl font-bold mb-2"
-            >
+              className="text-3xl font-bold mb-4"
+            >            
               {currentGame.name}
             </motion.h2>
             <motion.div
@@ -80,11 +124,10 @@ const FeaturedGames = () => {
             >
               {/* Metacritic Score Badge */}
               {currentGame.metacritic && (
-                <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-sm">
+                <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-lg text-sm font-medium">
                   {currentGame.metacritic}
                 </span>
               )}
-              {/* Game Genres */}
               <div className="flex gap-2">
                 {currentGame.genres?.slice(0, 3).map(genre => (
                   <span key={genre.id} className="text-sm text-gray-300">
@@ -98,49 +141,48 @@ const FeaturedGames = () => {
       </AnimatePresence>
 
 
-      {/* Navigation Arrows - Only visible on hover */}
-      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-4 opacity-0 group-hover:opacity-100 transition-opacity">
-        {/* Previous Button */}
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={() => setCurrentIndex(current => 
-            current === 0 ? featured.results.length - 1 : current - 1
+      {/* Navigation Arrows */}
+      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-4">
+        <button
+          onClick={prevSlide}
+          className={cn(
+            "p-2 rounded-full bg-black/50 backdrop-blur-sm text-white",
+            "hover:bg-indigo-500/50 transition-colors",
+            "opacity-0 group-hover:opacity-100 transition-opacity"
           )}
-          className="p-2 rounded-full bg-black/50 backdrop-blur-sm text-white hover:bg-black/70 transition-colors"
           aria-label="Previous game"
         >
           <ChevronLeft className="w-6 h-6" />
-        </motion.button>
-        {/* Next Button */}
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={() => setCurrentIndex(current => 
-            current === featured.results.length - 1 ? 0 : current + 1
+        </button>
+        <button
+          onClick={nextSlide}
+          className={cn(
+            "p-2 rounded-full bg-black/50 backdrop-blur-sm text-white",
+            "hover:bg-indigo-500/50 transition-colors",
+            "opacity-0 group-hover:opacity-100 transition-opacity"
           )}
-          className="p-2 rounded-full bg-black/50 backdrop-blur-sm text-white hover:bg-black/70 transition-colors"
           aria-label="Next game"
         >
           <ChevronRight className="w-6 h-6" />
-        </motion.button>
+        </button>
       </div>
 
-      {/*Navigation Dots*/}
+      {/* Navigation Dots */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
         {featured.results.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentIndex(index)}
-            className={`w-2 h-2 rounded-full transition-colors ${
-              index === currentIndex ? 'bg-white' : 'bg-white/50'
-            }`}
+            className={cn(
+              "w-2 h-2 rounded-full transition-colors",
+              index === currentIndex ? "bg-white" : "bg-white/50"
+            )}
             aria-label={`Go to game ${index + 1}`}
           />
         ))}
       </div>
     </div>
   );
-};
+}
 
 export default FeaturedGames;
