@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface PaginatedResponse<T> {
     count: number;
     next: string | null;
@@ -6,6 +8,8 @@ export interface PaginatedResponse<T> {
   }
   
   export interface Game {
+    parent_platforms: any;
+    achievements_count: ReactNode;
     clip: any;
     id: number;
     slug: string;
@@ -95,6 +99,7 @@ export interface PaginatedResponse<T> {
   
   export interface StoreInfo {
     store: {
+      domain: any;
       id: number;
       name: string;
       slug: string;

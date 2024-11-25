@@ -1,126 +1,150 @@
-import { NavLink } from 'react-router-dom';
-import { LucideIcon,
-  Home, 
-  Gamepad2, 
-  Clock, 
-  Trophy, 
-  History,
-  Calendar,
-  TrendingUp,
-  LayoutGrid,
+import { NavLink, useLocation } from 'react-router-dom';
+import {
+  LucideIcon,
+  Home,
+  Gamepad2,
+  Clock,
+  Trophy,
   Flame,
-  Star,
-  BarChart
+  BarChart,
+  Calendar,
+  Search,
+  Library
 } from 'lucide-react';
 import { cn } from '../../utils/styles';
 
-// Interfaces for component props and data structures
-interface SidebarProps {
-  isCollapsed: boolean;
-}
-
-interface NavigationItem {
+// Define types for navigation items
+type NavItem = {
   icon: LucideIcon;
   label: string;
   path: string;
-  badge?: number;
-}
+};
 
-interface NavigationSection {
+type NavSection = {
   title?: string;
-  items: NavigationItem[];
-}
+  items: NavItem[];
+};
 
-// Navigation configuration Defines the structure of the sidebar navigation
-const navigationSections: NavigationSection[] = [
-  {
-    items: [
-      { icon: Home, label: 'Home', path: '/' },
-      { icon: LayoutGrid, label: 'Browse', path: '/games' },
-      { icon: History, label: 'Timeline', path: '/timeline' },
-    ]
-  },
-  {
-    title: 'Discover',
-    items: [
-      { icon: Flame, label: 'Trending', path: '/trending' },
-      { icon: Clock, label: 'New Releases', path: '/new-releases' },
-      { icon: BarChart, label: 'Top Rated', path: '/top-rated' },
-      { icon: Trophy, label: 'Popular', path: '/popular' },
-      { icon: Gamepad2, label: 'All Games', path: '/games' }
-    ]
-  },
-  {
-    title: 'Library',
-    items: [
-      { icon: Star, label: 'Favorites', path: '/favorites', badge: 0 },
-      { icon: Calendar, label: 'Coming Soon', path: '/upcoming' }
-    ]
-  },
-  {
-    title: 'Personal',
-    items: [
-      { icon: TrendingUp, label: 'Dashboard', path: '/dashboard' },
-    ]
-  }
-];
-
-// Navigation Item Component Renders individual nav links w/ icons, labels
-const NavItem = ({ 
-  item, 
-  isCollapsed 
-}: { 
-  item: NavigationItem; 
-  isCollapsed: boolean 
-}) => {
+// Navigation Item Component
+const NavItem = ({ item, isCollapsed }: { item: NavItem; isCollapsed: boolean }) => {
+  const location = useLocation();
   const Icon = item.icon;
   
+  // Check if the current path matches the nav item path
+  const isActive = location.pathname === item.path;
+
   return (
     <NavLink
       to={item.path}
       className={({ isActive }) => cn(
-        "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors",
+        // Base styles
+        "group relative flex items-center gap-3 px-3 py-2 rounded-lg",
+        "transition-all duration-300",
         isCollapsed ? "justify-center" : "",
-        isActive 
-          ? "bg-stone-800 text-white" 
-          : "text-gray-400 hover:bg-stone-800 hover:text-white"
+        
+        // Hover styles
+        "hover:bg-stone-800/50",
+        
+        // Glow effect
+        "before:absolute before:inset-0 before:rounded-lg before:opacity-0",
+        "before:transition-opacity",
+        "before:bg-[radial-gradient(circle_at_center,rgba(79,70,229,0.15)_0%,transparent_70%)]",
+        "hover:before:opacity-100",
+        
+        // Active state
+        isActive ? [
+          "bg-stone-800",
+          "after:absolute after:inset-0 after:rounded-lg after:ring-1",
+          "after:ring-indigo-500/50 after:transition-all",
+          "text-white",
+          "before:bg-[radial-gradient(circle_at_center,rgba(79,70,229,0.25)_0%,transparent_70%)]",
+          "before:opacity-100"
+        ] : "text-gray-400 hover:text-white"
       )}
       title={isCollapsed ? item.label : undefined}
     >
-      <div className="relative">
-        <Icon className="w-5 h-5 min-w-[20px]" />
-        {item.badge !== undefined && item.badge > 0 && (
-          <span className="absolute -top-1 -right-1 w-4 h-4 text-xs flex items-center justify-center bg-green-500 text-white rounded-full">
-            {item.badge}
+      <div className="relative z-10 flex items-center gap-3">
+        <Icon className={cn(
+          "w-5 h-5 min-w-[20px] transition-transform duration-300",
+          "group-hover:scale-110",
+        )} />
+        {!isCollapsed && (
+          <span className="transition-colors duration-300">
+            {item.label}
           </span>
         )}
       </div>
-      {!isCollapsed && <span>{item.label}</span>}
     </NavLink>
   );
 };
 
-// Sidebar Component, Renders main navigation sidebar w/ collapsible functionality
-const Sidebar = ({ isCollapsed }: SidebarProps) => {
+// Main Sidebar Component
+const Sidebar = ({ isCollapsed }: { isCollapsed: boolean }) => {
+  // Navigation sections with proper routing
+  const navigationSections: NavSection[] = [
+    {
+      items: [
+        { icon: Home, label: 'Home', path: '/' },
+        { icon: Search, label: 'Browse', path: '/games' },
+        // { icon: Library, label: 'My Library', path: '/library' },
+      ]
+    },
+    {
+      title: 'Discover',
+      items: [
+        // Each path corresponds to a specific page component
+        { 
+          icon: Flame, 
+          label: 'Trending', 
+          path: '/trending'
+        },
+        { 
+          icon: Clock, 
+          label: 'New Releases', 
+          path: '/new-releases'
+        },
+        { 
+          icon: BarChart, 
+          label: 'Top Rated', 
+          path: '/top-rated'
+        },
+        { 
+          icon: Trophy, 
+          label: 'Popular', 
+          path: '/popular'
+        },
+        { 
+          icon: Gamepad2, 
+          label: 'All Games', 
+          path: '/games'
+        },
+        {
+          icon: Calendar,
+          label: 'Upcoming',
+          path: '/upcoming'
+        }
+      ]
+    },
+  ];
+
   return (
-    <div 
+    <aside
       className={cn(
         "h-full custom-scrollbar overflow-y-auto py-4 transition-all duration-300",
+        "bg-stone-950/95 backdrop-blur-sm",
         isCollapsed ? "w-16" : "w-60"
       )}
       role="navigation"
     >
-      <nav className="space-y-6 px-3">
+      <nav className="space-y-6 px-2">
         {navigationSections.map((section, sectionIndex) => (
           <div key={sectionIndex} className="space-y-1">
-            {/* Section Title - Only shown when sidebar is expanded */}
             {section.title && !isCollapsed && (
-              <h3 className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <h3 className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
                 {section.title}
               </h3>
             )}
 
-            {/* Navigation Items */}
             {section.items.map((item) => (
               <NavItem
                 key={item.path}
@@ -131,7 +155,7 @@ const Sidebar = ({ isCollapsed }: SidebarProps) => {
           </div>
         ))}
       </nav>
-    </div>
+    </aside>
   );
 };
 

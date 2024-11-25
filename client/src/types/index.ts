@@ -1,3 +1,5 @@
+import { Message } from "postcss";
+
 export interface User {
     id: string;
     email: string;

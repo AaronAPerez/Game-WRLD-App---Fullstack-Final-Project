@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, AlertCircle, Loader2 } from 'lucide-react';
+import { toast } from 'react-hot-toast';
+import { cn } from '../utils/styles';
 
 interface SignUpForm {
   email: string;
@@ -18,7 +20,7 @@ interface FormErrors {
   general?: string;
 }
 
-const SignUpPage = () => {
+export default function SignUpPage() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -36,21 +38,18 @@ const SignUpPage = () => {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    // Email validation
     if (!formData.email) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Please enter a valid email';
     }
 
-    // Username validation
     if (!formData.username) {
       newErrors.username = 'Username is required';
     } else if (formData.username.length < 3) {
       newErrors.username = 'Username must be at least 3 characters';
     }
 
-    // Password validation
     if (!formData.password) {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 8) {
@@ -59,7 +58,6 @@ const SignUpPage = () => {
       newErrors.password = 'Password must include uppercase, lowercase and numbers';
     }
 
-    // Confirm password validation
     if (!formData.confirmPassword) {
       newErrors.confirmPassword = 'Please confirm your password';
     } else if (formData.password !== formData.confirmPassword) {
@@ -86,7 +84,7 @@ const SignUpPage = () => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // Redirect to login or dashboard
+      toast.success('Account created successfully! Please sign in to continue.');
       navigate('/login');
     } catch (error) {
       setErrors({
@@ -112,6 +110,7 @@ const SignUpPage = () => {
       }));
     }
   };
+
 
   return (
     <div className="min-h-screen bg-stone-950 flex items-center justify-center p-4">
@@ -256,7 +255,17 @@ const SignUpPage = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-stone-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className={cn(
+                "w-full relative px-4 py-2 font-medium text-white rounded-full outline",
+                "transition-all duration-300",
+                "bg-blue-900 hover:bg-indigo-500",
+                // Enhanced glow for primary button
+                "before:absolute before:inset-0 before:rounded-full before:opacity-0",
+                "before:bg-[radial-gradient(circle_at_center,rgba(79,70,229,0.3)_0%,transparent_70%)]",
+                "hover:before:opacity-100",
+                // Shadow effect
+                "shadow-lg shadow-indigo-500/20"
+              )}
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -285,4 +294,3 @@ const SignUpPage = () => {
   );
 };
 
-export default SignUpPage;

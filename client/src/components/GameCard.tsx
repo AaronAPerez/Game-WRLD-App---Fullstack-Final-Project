@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import { Calendar, ChartLine, Eye, Star } from "lucide-react";
-import { useState } from 'react';
+import { Calendar, Star, Eye, ExpandIcon, ChartLine } from "lucide-react";
+import { useEffect, useRef, useState } from 'react';
 import type { Game } from '../types/rawg';
 import { useGameStore } from "./store/gameStore";
 import { cn } from "../utils/styles";
@@ -13,15 +13,14 @@ interface GameCardProps {
 }
 
 
-export const GameCard = ({ game, onClick, rank }: GameCardProps) => {
+export function GameCard({ game, onClick, rank }: GameCardProps) {
   // State management
   const [isHovering, setIsHovering] = useState(false);
-
-
-
   // Global state management for favorites
   const { addToFavorites, isGameInCollection } = useGameStore();
   const isFavorite = isGameInCollection(game.id, 'favorites');
+
+
 
   // Format release date for display
   const releaseDate = new Date(game.released);
@@ -38,7 +37,6 @@ export const GameCard = ({ game, onClick, rank }: GameCardProps) => {
     if (score >= 50) return 'text-yellow-500';
     return 'text-red-500';
   };
-
 
   // Animation variants for favorite star
   const starVariants = {
@@ -57,13 +55,22 @@ export const GameCard = ({ game, onClick, rank }: GameCardProps) => {
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -5 }}
       exit={{ opacity: 0, y: 20 }}
-      className="group relative bg-stone-900 rounded-lg overflow-hidden hover:ring-2 hover:ring-blue-500/50 transition-all duration-300"
+      className={cn(
+        "group relative bg-stone-950/50 rounded-xl overflow-hidden",
+        "backdrop-blur-sm border border-stone-800/50",
+        "hover:border-indigo-500/30 transition-all duration-300",
+        "before:absolute before:inset-0 before:rounded-xl before:opacity-0",
+        "before:bg-[radial-gradient(circle_at_center,rgba(79,70,229,0.15)_0%,transparent_70%)]",
+        "hover:before:opacity-100"
+      )}
       onHoverStart={() => setIsHovering(true)}
       onHoverEnd={() => setIsHovering(false)}
     >
-      {/* Rank Badge*/}
+
+
+      {/* Rank Badge (if provided) */}
       {rank && (
-        <div className="absolute left-3 z-20 flex items-center gap-1 px-2 py-1 bg-black/70 backdrop-blur-sm rounded-full text-white text-sm">
+        <div className="absolute top-3 left-3 z-20 flex items-center gap-1 px-2 py-1 bg-black/70 backdrop-blur-sm rounded-full text-white text-sm">
           <ChartLine className="w-4 h-4" />
           <span>#{rank}</span>
         </div>
@@ -97,11 +104,17 @@ export const GameCard = ({ game, onClick, rank }: GameCardProps) => {
         </motion.div>
       </motion.button>
 
+      {/* Media Container (Image/Video) */}
       <div className="relative aspect-video">
         {/* Base Image */}
-        <img src={game.background_image} alt={game.name} />
-
-
+        <img
+          src={game.background_image}
+          alt={game.name}
+          className={cn(
+            "w-full h-full object-cover transition-opacity duration-3 opacity-100"
+          )}
+          loading="lazy"
+        />
         {/* Overlay Content */}
         <div className="absolute inset-0 bg-gradient-to-t from-stone-900 via-transparent opacity-0 group-hover:opacity-100 transition-opacity">
           <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center">
@@ -111,50 +124,58 @@ export const GameCard = ({ game, onClick, rank }: GameCardProps) => {
                 <Calendar className="w-4 h-4" />
                 <span>{formattedDate}</span>
               </div>
-
-              {game.metacritic && (
-                <div className={cn(
-                  "px-2 py-1 rounded-full bg-stone-900/50 backdrop-blur-sm text-sm",
-                  getMetacriticColor(game.metacritic)
-                )}>
-                  {game.metacritic}
-                </div>
-              )}
             </div>
-
             {/* View Details Button */}
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 onClick(game);
               }}
-              className="p-2 bg-stone-900/50 backdrop-blur-sm rounded-full hover:bg-stone-900 transition-colors"
+              className="p-2 bg-stone-900/50 backdrop-blur-sm rounded-full hover:bg-stone-800 transition-colors"
               aria-label="View game details"
             >
-              <Eye className="w-4 h-4 text-gray-400" />
+              <Eye className="w-4 h-4 text-white" />
             </button>
           </div>
         </div>
       </div>
-
-      {/* Game Information */}
-      <div className="p-4">
-        <h3 className="font-bold text-lg text-white  line-clamp-1 mb-3">
+      {/* Game Info */}
+      <div className="p-4 space-y-4">
+        <h3 className="font-bold text-lg text-white line-clamp-1">
           {game.name}
         </h3>
-
-        {/* Genre Tags */}
-        <div className="flex flex-wrap gap-2">
-          {game.genres?.slice(0, 2).map(genre => (
-            <span
-              key={genre.id}
-              className="text-sm px-2 py-1 rounded-full bg-blue-500/20 text-blue-400"
-            >
-              {genre.name}
+        <div className="flex items-center justify-between">
+          <div className="flex flex-wrap gap-2">
+            {game.genres?.slice(0, 2).map(genre => (
+              <span
+                key={genre.id}
+                className="text-xs px-2 py-1 rounded-lg bg-indigo-500/20 text-indigo-400"
+              >
+                {genre.name}
+              </span>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <span>
+              {game.metacritic && (
+                <div className={cn(
+                  "px-2 py-1 rounded-full text-sm bg-green-950",
+                  getMetacriticColor(game.metacritic)
+                )}>
+                  {game.metacritic}
+                </div>
+              )}
             </span>
-          ))}
+          </div>
+        </div>
+        {/* Game Details (Release Date & Rating) */}
+        <div className="flex items-center gap-4">
+        <Calendar className="w-4 h-4" />
+        <span>{new Date(game.released).getFullYear()}</span>
+          <Star className="w-4 h-4 text-yellow-500 text-end" />
+          <span>{game.rating}/5</span>
         </div>
       </div>
     </motion.div>
   );
-};
+}
