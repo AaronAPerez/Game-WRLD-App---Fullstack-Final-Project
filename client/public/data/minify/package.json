@@ -16,6 +16,7 @@
   },
   "homepage": "https://github.com/EmulatorJS/EmulatorJS#readme",
   "dependencies": {
+    "emulatorjs-minify": "file:",
     "uglify-js": "^3.17.4",
     "uglifycss": "0.0.29"
   }

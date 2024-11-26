@@ -4,22 +4,33 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<BlogItemService>();
 builder.Services.AddScoped<PasswordService>();
+builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddScoped<FriendRequestService>();
+builder.Services.AddScoped<FriendService>();
 
 var connectionString = builder.Configuration.GetConnectionString("GameWrldString");
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -27,6 +38,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowLocalhost");
 
 app.UseAuthorization();
 
