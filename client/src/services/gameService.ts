@@ -11,10 +11,10 @@ import type {
 } from '../types/rawg'
 
 
-const BASE_URL = 'https://api.rawg.io/api';
+const RAWG_URL = 'https://api.rawg.io/api';
 
 const apiClient = axios.create({
-  baseURL: BASE_URL,
+  baseURL: RAWG_URL,
   params: {
     key: '88682be5c94f45ec86a72c163e1a3a09'
   }

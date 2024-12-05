@@ -118,8 +118,8 @@ public class UserService : ControllerBase
             var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("letsaddmorereallylongkeysuperSecretKey@345"));
             var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
             var tokeOptions = new JwtSecurityToken(
-                issuer: "https://localhost:5001",
-                audience: "https://localhost:5001",
+                issuer: "https://localhost:5173",
+                audience: "https://localhost:5173",
                 claims: new List<Claim>(),
                 expires: DateTime.Now.AddMinutes(5),
                 signingCredentials: signinCredentials
@@ -131,9 +131,14 @@ public class UserService : ControllerBase
         return Result;
     }
 
-    internal UserIdDTO GetUserIdDTOByUserName(string username)
+    public UserIdDTO GetUserIdDTOByUserName(string username)
     {
-        throw new NotImplementedException();
+        var UserInfo = new UserIdDTO();
+        var foundUser = _context.UserInfo.SingleOrDefault(user => user.Username == username);
+        UserInfo.UserId = foundUser.Id;
+        UserInfo.PublisherName = foundUser.Username;
+
+        return UserInfo;
     }
 
     public UserModel GetUserByUsername(string? username)

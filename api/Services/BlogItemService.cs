@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Models;
 using api.Services.Context;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Services;
@@ -51,7 +52,8 @@ public class BlogItemService : ControllerBase
         for(int i = 0; i < allItems.Count; i++)
         {
             BlogItemModel Item = allItems[i];
-            var itemArr = Item.Tag.Split(',');
+            BlogItemModel item = Item;
+            var itemArr = item.Tag.Split(',');
             for(int j = 0; j < itemArr.Length; j++)
             {
                 if(itemArr[j].Contains(Tag))
@@ -67,9 +69,19 @@ public class BlogItemService : ControllerBase
 
     public bool UpdateBlogItems(BlogItemModel blogUpdate)
     {
-        throw new NotImplementedException();
+        _context.Update<BlogItemModel>(blogUpdate);
+            return _context.SaveChanges() !=0;
+    }
+
+    public IEnumerable<BlogItemModel> GetItemsByUserId(int userId)
+    {
+        return _context.BlogInfo.Where(item => item.UserId == userId);
     }
 
 
+    public IEnumerable<BlogItemModel> GetPublishedItems()
+    {
+        return _context.BlogInfo.Where(item => item.IsPublished && item.IsDeleted == false);
+    }
 
 }

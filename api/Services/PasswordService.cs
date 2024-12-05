@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace api.Services;
 
-public class PasswordService
-{
-
-}
+    public class PasswordService
+    {
+        
+    }

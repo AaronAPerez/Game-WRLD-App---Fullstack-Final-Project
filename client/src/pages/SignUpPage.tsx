@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, AlertCircle, Loader2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { cn } from '../utils/styles';
+import { AuthProvider, useAuth } from '../hooks/useAuth';
 
 interface SignUpForm {
-  email: string;
   username: string;
   password: string;
   confirmPassword: string;
 }
 
 interface FormErrors {
-  email?: string;
   username?: string;
   password?: string;
   confirmPassword?: string;
@@ -21,13 +20,12 @@ interface FormErrors {
 }
 
 export default function SignUpPage() {
-  const navigate = useNavigate();
+  const { signup } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
   const [formData, setFormData] = useState<SignUpForm>({
-    email: '',
     username: '',
     password: '',
     confirmPassword: ''
@@ -37,12 +35,6 @@ export default function SignUpPage() {
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-
-    if (!formData.email) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email';
-    }
 
     if (!formData.username) {
       newErrors.username = 'Username is required';
@@ -54,8 +46,6 @@ export default function SignUpPage() {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 8) {
       newErrors.password = 'Password must be at least 8 characters';
-    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
-      newErrors.password = 'Password must include uppercase, lowercase and numbers';
     }
 
     if (!formData.confirmPassword) {
@@ -78,17 +68,11 @@ export default function SignUpPage() {
     setIsLoading(true);
 
     try {
-      // Add signup API call here
-      // const response = await authService.signup(formData);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await signup(formData.username, formData.password);
       toast.success('Account created successfully! Please sign in to continue.');
-      navigate('/login');
-    } catch (error) {
+    } catch (error: any) {
       setErrors({
-        general: 'Failed to create account. Please try again.'
+        general: error.response?.data?.message || 'Failed to create account. Please try again.'
       });
     } finally {
       setIsLoading(false);
@@ -102,7 +86,6 @@ export default function SignUpPage() {
       [name]: value
     }));
     
-    // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({
         ...prev,
@@ -111,8 +94,9 @@ export default function SignUpPage() {
     }
   };
 
-
   return (
+    <>
+    <AuthProvider>
     <div className="min-h-screen bg-stone-950 flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -120,7 +104,6 @@ export default function SignUpPage() {
         className="w-full max-w-md"
       >
         <div className="bg-stone-900 rounded-xl shadow-xl p-8">
-          {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-white mb-2">Create Account</h1>
             <p className="text-gray-400">
@@ -128,7 +111,6 @@ export default function SignUpPage() {
             </p>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             {errors.general && (
               <div className="bg-red-500/10 text-red-500 px-4 py-3 rounded-lg flex items-center gap-2">
@@ -137,29 +119,6 @@ export default function SignUpPage() {
               </div>
             )}
 
-            {/* Email Field */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-1.5">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                autoComplete="email"
-                value={formData.email}
-                onChange={handleChange}
-                className={`w-full px-4 py-2.5 bg-stone-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 transition-all ${
-                  errors.email ? 'ring-2 ring-red-500' : ''
-                }`}
-                placeholder="Enter your email"
-              />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-500">{errors.email}</p>
-              )}
-            </div>
-
-            {/* Username Field */}
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-400 mb-1.5">
                 Username
@@ -168,12 +127,13 @@ export default function SignUpPage() {
                 type="text"
                 id="username"
                 name="username"
-                autoComplete="username"
                 value={formData.username}
                 onChange={handleChange}
-                className={`w-full px-4 py-2.5 bg-stone-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 transition-all ${
-                  errors.username ? 'ring-2 ring-red-500' : ''
-                }`}
+                className={cn(
+                  "w-full px-4 py-2.5 bg-stone-800 text-white rounded-lg",
+                  "focus:ring-2 focus:ring-blue-500 transition-all",
+                  errors.username && "ring-2 ring-red-500"
+                )}
                 placeholder="Choose a username"
               />
               {errors.username && (
@@ -181,7 +141,6 @@ export default function SignUpPage() {
               )}
             </div>
 
-            {/* Password Field */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-400 mb-1.5">
                 Password
@@ -191,12 +150,13 @@ export default function SignUpPage() {
                   type={showPassword ? 'text' : 'password'}
                   id="password"
                   name="password"
-                  autoComplete="new-password"
                   value={formData.password}
                   onChange={handleChange}
-                  className={`w-full px-4 py-2.5 bg-stone-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 transition-all ${
-                    errors.password ? 'ring-2 ring-red-500' : ''
-                  }`}
+                  className={cn(
+                    "w-full px-4 py-2.5 bg-stone-800 text-white rounded-lg",
+                    "focus:ring-2 focus:ring-blue-500 transition-all",
+                    errors.password && "ring-2 ring-red-500"
+                  )}
                   placeholder="Create a password"
                 />
                 <button
@@ -216,7 +176,6 @@ export default function SignUpPage() {
               )}
             </div>
 
-            {/* Confirm Password Field */}
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-400 mb-1.5">
                 Confirm Password
@@ -226,12 +185,13 @@ export default function SignUpPage() {
                   type={showConfirmPassword ? 'text' : 'password'}
                   id="confirmPassword"
                   name="confirmPassword"
-                  autoComplete="new-password"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className={`w-full px-4 py-2.5 bg-stone-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 transition-all ${
-                    errors.confirmPassword ? 'ring-2 ring-red-500' : ''
-                  }`}
+                  className={cn(
+                    "w-full px-4 py-2.5 bg-stone-800 text-white rounded-lg",
+                    "focus:ring-2 focus:ring-blue-500 transition-all",
+                    errors.confirmPassword && "ring-2 ring-red-500"
+                  )}
                   placeholder="Confirm your password"
                 />
                 <button
@@ -291,6 +251,8 @@ export default function SignUpPage() {
         </div>
       </motion.div>
     </div>
+    </AuthProvider>
+  </>
   );
 };
 

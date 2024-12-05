@@ -1,48 +1,84 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createContext, useContext, useState, useCallback, ReactNode, createElement } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../components/store/authStore';
-import { authService } from '../api/authService';
+import { authService, LoginResponse } from '../services/authService';
 
 
-export function useAuth() {
+interface AuthContextType {
+  isAuthenticated: boolean;
+  user: LoginResponse | null;
+  login: (username: string, password: string) => Promise<void>;
+  logout: () => void;
+  signup: (username: string, password: string) => Promise<void>;
+}
+
+// Create context with initial null value
+const AuthContext = createContext<AuthContextType | null>(null);
+
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+// Auth Provider Component
+export function AuthProvider(props: AuthProviderProps) {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const { setToken, setUser, logout } = useAuthStore();
-
-  const loginMutation = useMutation({
-    mutationFn: authService.login,
-    onSuccess: (data) => {
-      setToken(data.token);
-      setUser(data.user);
-      queryClient.setQueryData(['user'], data.user);
-      navigate('/dashboard');
-    }
+  const [user, setUser] = useState<LoginResponse | null>(() => {
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : null;
   });
 
-  const registerMutation = useMutation({
-    mutationFn: authService.register,
-    onSuccess: (data) => {
-      setToken(data.token);
-      setUser(data.user);
-      queryClient.setQueryData(['user'], data.user);
-      navigate('/dashboard');
+  const login = useCallback(async (username: string, password: string) => {
+    try {
+      const response = await authService.login({
+        userName: username,
+        password: password
+      });
+      
+      localStorage.setItem('user', JSON.stringify(response));
+      setUser(response);
+      navigate('/');
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
     }
-  });
+  }, [navigate]);
 
-  const logoutMutation = useMutation({
-    mutationFn: authService.logout,
-    onSuccess: () => {
-      logout();
-      queryClient.clear();
+  const logout = useCallback(() => {
+    authService.logout();
+    setUser(null);
+    navigate('/login');
+  }, [navigate]);
+
+  const signup = useCallback(async (username: string, password: string) => {
+    try {
+      await authService.signup({
+        id: 0,
+        username,
+        password
+      });
       navigate('/login');
+    } catch (error) {
+      console.error('Signup error:', error);
+      throw error;
     }
-  });
+  }, [navigate]);
 
-  return {
-    login: loginMutation.mutate,
-    register: registerMutation.mutate,
-    logout: logoutMutation.mutate,
-    isLoading: loginMutation.isPending || registerMutation.isPending || logoutMutation.isPending,
-    error: loginMutation.error || registerMutation.error || logoutMutation.error
-  };
+  return createElement(AuthContext.Provider, {
+    value: {
+      isAuthenticated: !!user,
+      user,
+      login,
+      logout,
+      signup
+    },
+    children: props.children
+  });
+}
+
+// Custom hook to use auth context
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 }

@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { AlertCircle, Loader2, AtSign, User, EyeOff, Eye, Lock } from 'lucide-react';
+import { AlertCircle, Loader2, User, EyeOff, Eye, Lock } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { cn } from '../utils/styles';
 
-interface LoginForm {
-  identifier: string;
+interface LoginFormData {
+  userName: string;
   password: string;
   rememberMe: boolean;
 }
 
 interface FormErrors {
-  identifier?: string;
+  userName?: string;
   password?: string;
   general?: string;
 }
@@ -22,8 +22,8 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const [formData, setFormData] = useState<LoginForm>({
-    identifier: '',
+  const [formData, setFormData] = useState<LoginFormData>({
+    userName: '',
     password: '',
     rememberMe: false
   });
@@ -33,8 +33,8 @@ const LoginPage = () => {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    if (!formData.identifier) {
-      newErrors.identifier = 'Email or username is required';
+    if (!formData.userName) {
+      newErrors.userName = 'Username is required';
     }
 
     if (!formData.password) {
@@ -55,10 +55,13 @@ const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      await login(formData.identifier, formData.password);
-    } catch (error) {
+      await login(formData.userName, formData.password);
+      if (formData.rememberMe) {
+        localStorage.setItem('rememberedUser', formData.userName);
+      }
+    } catch (error: any) {
       setErrors({
-        general: 'Invalid email/username or password'
+        general: error.response?.data?.message || 'Invalid username or password'
       });
     } finally {
       setIsLoading(false);
@@ -79,8 +82,6 @@ const LoginPage = () => {
       }));
     }
   };
-
-  const isEmail = (value: string) => value.includes('@');
 
   return (
     <div className="min-h-screen bg-stone-950 flex items-center justify-center p-4">
@@ -106,33 +107,30 @@ const LoginPage = () => {
             )}
 
             <div>
-              <label htmlFor="identifier" className="block text-sm font-medium text-gray-400 mb-1.5">
-                Email or Username
+              <label htmlFor="userName" className="block text-sm font-medium text-gray-400 mb-1.5">
+                Username
               </label>
               <div className="relative">
-                {isEmail(formData.identifier) ? (
-                  <AtSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                ) : (
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                )}
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   type="text"
-                  id="identifier"
-                  name="identifier"
-                  value={formData.identifier}
+                  id="userName"
+                  name="userName"
+                  value={formData.userName}
                   onChange={handleChange}
-                  className={`w-full pl-10 pr-4 py-2.5 bg-stone-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 transition-all ${errors.identifier ? 'ring-2 ring-red-500' : ''
-                    }`}
-                  placeholder="Enter your email or username"
+                  className={cn(
+                    "w-full pl-10 pr-4 py-2.5 bg-stone-800 text-white rounded-lg",
+                    "focus:ring-2 focus:ring-blue-500 transition-all",
+                    errors.userName && "ring-2 ring-red-500"
+                  )}
+                  placeholder="Enter your username"
                 />
               </div>
-              {errors.identifier && (
-                <p className="mt-1 text-sm text-red-500">{errors.identifier}</p>
+              {errors.userName && (
+                <p className="mt-1 text-sm text-red-500">{errors.userName}</p>
               )}
             </div>
 
-
-            {/* Password Field */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-400 mb-1.5">
                 Password
@@ -143,11 +141,13 @@ const LoginPage = () => {
                   type={showPassword ? 'text' : 'password'}
                   id="password"
                   name="password"
-                  autoComplete="current-password"
                   value={formData.password}
                   onChange={handleChange}
-                  className={`w-full pl-10 pr-12 py-2.5 bg-stone-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 transition-all ${errors.password ? 'ring-2 ring-red-500' : ''
-                    }`}
+                  className={cn(
+                    "w-full pl-10 pr-12 py-2.5 bg-stone-800 text-white rounded-lg",
+                    "focus:ring-2 focus:ring-blue-500 transition-all",
+                    errors.password && "ring-2 ring-red-500"
+                  )}
                   placeholder="Enter your password"
                 />
                 <button
@@ -167,7 +167,6 @@ const LoginPage = () => {
               )}
             </div>
 
-            {/* Remember Me & Forgot Password */}
             <div className="flex items-center justify-between">
               <label className="flex items-center gap-2">
                 <input
@@ -179,28 +178,18 @@ const LoginPage = () => {
                 />
                 <span className="text-sm text-gray-400">Remember me</span>
               </label>
-
-              <Link
-                to="/forgot-password"
-                className="text-sm text-blue-500 hover:text-blue-400"
-              >
-                Forgot password?
-              </Link>
             </div>
-
 
             <button
               type="submit"
               disabled={isLoading}
               className={cn(
-                "w-full relative px-4 py-2 font-medium text-white rounded-full outline",
+                "w-full relative px-4 py-2 font-medium text-white rounded-full",
                 "transition-all duration-300",
                 "bg-blue-900 hover:bg-indigo-500",
-                // Enhanced glow for primary button
                 "before:absolute before:inset-0 before:rounded-full before:opacity-0",
                 "before:bg-[radial-gradient(circle_at_center,rgba(79,70,229,0.3)_0%,transparent_70%)]",
                 "hover:before:opacity-100",
-                // Shadow effect
                 "shadow-lg shadow-indigo-500/20"
               )}
             >
