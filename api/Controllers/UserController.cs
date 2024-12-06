@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using api.Models;
 using api.Models.DTO;
 using api.Services;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace api.Controllers;
 
@@ -14,61 +11,111 @@ namespace api.Controllers;
 [Route("api/[controller]")]
 public class UserController : ControllerBase
 {
-    private readonly UserService _data;
+    private readonly UserService _userService;
 
-    public UserController(UserService dataFromService)
+    public UserController(UserService userService)
     {
-        _data = dataFromService;
+        _userService = userService;
     }
 
-//Add a user
+    [HttpPost("AddUsers")]
+    public bool AddUser(CreateAccountDTO UserToAdd)
+    {
+        return _userService.AddUser(UserToAdd);
+    }
 
-[HttpPost("AddUsers")]
+    [HttpGet("GetAllUsers")]
+    public IEnumerable<UserModel> GetAllUsers()
+    {
+        return _userService.GetAllUsers();
+    }
 
-public bool AddUser(CreateAccountDTO UserToAdd)
-{
-  return _data.AddUser(UserToAdd);
-}
+    [HttpGet("GetUserByUsername/{username}")]
+    public UserIdDTO GetUserIdDTOByUserName(string username)
+    {
+        return _userService.GetUserIdDTOByUserName(username);
+    }
 
-//GetAllUser Endpoint
-[HttpGet("GetAllUsers")]
+    [HttpPost("Login")]
+    public IActionResult Login([FromBody] LoginDTO User)
+    {
+        return _userService.Login(User);
+    }
 
-public IEnumerable<UserModel> GetAllUsers()
-{
-  return _data.GetAllUsers();
-}
+    [Authorize]
+    [HttpGet("Profile")]
+    public ActionResult<UserProfileDTO> GetUserProfile()
+    {
+        var userId = User.FindFirst("userId")?.Value;
+        if (userId == null) return Unauthorized();
+        
+        var profile = _userService.GetUserProfile(int.Parse(userId));
+        return Ok(profile);
+    }
 
-//GetUserByUserName
-[HttpGet("GetUserByUsername/{username}")]
+    [Authorize]
+    [HttpPut("Profile")]
+    public ActionResult<bool> UpdateProfile([FromBody] UpdateUserProfileDTO updateProfile)
+    {
+        var userId = User.FindFirst("userId")?.Value;
+        if (userId == null) return Unauthorized();
+        
+        var result = _userService.UpdateProfile(int.Parse(userId), updateProfile);
+        return Ok(result);
+    }
 
-  public UserIdDTO GetUserIdDTOByUserName(string username)
-  {
-    return _data.GetUserIdDTOByUserName(username);
-  }
+    [Authorize]
+    [HttpPost("Friends/Request")]
+    public ActionResult<bool> SendFriendRequest([FromBody] FriendRequestDTO request)
+    {
+        var userId = User.FindFirst("userId")?.Value;
+        if (userId == null) return Unauthorized();
+        
+        var result = _userService.SendFriendRequest(int.Parse(userId), request.AddresseeId);
+        return Ok(result);
+    }
 
+    [Authorize]
+    [HttpPost("Friends/Respond")]
+    public ActionResult<bool> RespondToFriendRequest([FromBody] FriendResponseDTO response)
+    {
+        var userId = User.FindFirst("userId")?.Value;
+        if (userId == null) return Unauthorized();
+        
+        var result = _userService.RespondToFriendRequest(int.Parse(userId), response.RequestId, response.Accept);
+        return Ok(result);
+    }
 
+    [Authorize]
+    [HttpGet("Friends")]
+    public ActionResult<IEnumerable<UserProfileDTO>> GetFriends()
+    {
+        var userId = User.FindFirst("userId")?.Value;
+        if (userId == null) return Unauthorized();
+        
+        var friends = _userService.GetFriends(int.Parse(userId));
+        return Ok(friends);
+    }
 
+    [Authorize]
+    [HttpPost("Games")]
+    public ActionResult<bool> AddUserGame([FromBody] UserGameDTO gameDto)
+    {
+        var userId = User.FindFirst("userId")?.Value;
+        if (userId == null) return Unauthorized();
+        
+        var result = _userService.AddUserGame(int.Parse(userId), gameDto);
+        return Ok(result);
+    }
 
-//Login
-[HttpPost("Login")]
-
-public IActionResult Login([FromBody] LoginDTO User)
-{
-  return _data.Login(User);
-}
-
-//Delete User Account
-[HttpPost("DeleteUser/{userToDelete}")]
-public bool DeleteUser(string userToDelete)
-{
-  return _data.DeleteUser(userToDelete);
-}
-
-//Update user Account
-[HttpPost("UpdateUser")]
-public bool UpdateUser(int id, string username)
-{
-  return _data.UpdateUser(id,username);
-}
-
+    [Authorize]
+    [HttpGet("Games")]
+    public ActionResult<IEnumerable<UserGameDTO>> GetUserGames()
+    {
+        var userId = User.FindFirst("userId")?.Value;
+        if (userId == null) return Unauthorized();
+        
+        var games = _userService.GetUserGames(int.Parse(userId));
+        return Ok(games);
+    }
 }
