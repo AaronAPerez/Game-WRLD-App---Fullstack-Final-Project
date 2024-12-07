@@ -6,9 +6,13 @@ using Microsoft.Extensions.Options;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<BlogItemService>();
 builder.Services.AddScoped<PasswordService>();
+builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddScoped<FriendRequestService>();
+builder.Services.AddScoped<FriendService>();
 
 var connectionString = builder.Configuration.GetConnectionString("GAMEWRLDString");
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(connectionString));
