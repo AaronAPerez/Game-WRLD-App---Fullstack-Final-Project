@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Eye, EyeOff, AlertCircle, Loader2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { cn } from '../utils/styles';
-import { AuthProvider, useAuth } from '../hooks/useAuth';
+import { useAuth } from '../hooks/useAuth';
 
 interface SignUpForm {
   username: string;
@@ -19,7 +19,7 @@ interface FormErrors {
   general?: string;
 }
 
-export default function SignUpPage() {
+const SignUpPage = () => {
   const { signup } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -66,14 +66,17 @@ export default function SignUpPage() {
     }
 
     setIsLoading(true);
+    setErrors({});
 
     try {
       await signup(formData.username, formData.password);
-      toast.success('Account created successfully! Please sign in to continue.');
+      toast.success('Account created successfully! Please sign in.');
     } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Failed to create account';
       setErrors({
-        general: error.response?.data?.message || 'Failed to create account. Please try again.'
+        general: errorMessage
       });
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -86,6 +89,7 @@ export default function SignUpPage() {
       [name]: value
     }));
     
+    // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({
         ...prev,
@@ -96,7 +100,6 @@ export default function SignUpPage() {
 
   return (
     <>
-    <AuthProvider>
     <div className="min-h-screen bg-stone-950 flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -251,8 +254,9 @@ export default function SignUpPage() {
         </div>
       </motion.div>
     </div>
-    </AuthProvider>
   </>
   );
 };
+
+export default SignUpPage;
 

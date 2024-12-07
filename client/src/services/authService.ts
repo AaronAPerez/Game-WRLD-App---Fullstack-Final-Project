@@ -30,7 +30,7 @@ const api = axios.create({
   }
 });
 
-// interceptor to automatically add auth token to requests
+// Add auth token to requests automatically
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -43,14 +43,11 @@ export const authService = {
   async login(credentials: LoginDTO): Promise<LoginResponse> {
     const response = await api.post('/User/Login', credentials);
     if (response.data.token) {
-      // Store token in localStorage
       localStorage.setItem('token', response.data.token);
-      // Get user details after successful login
-      const userDetails = await this.getUserByUsername(credentials.userName);
       return {
         token: response.data.token,
-        userId: userDetails.userId,
-        publisherName: userDetails.publisherName
+        userId: response.data.userId,
+        publisherName: response.data.publisherName
       };
     }
     throw new Error('Login failed');
@@ -61,20 +58,20 @@ export const authService = {
     return response.data;
   },
 
-  async getUserByUsername(username: string): Promise<UserIdDTO> {
-    const response = await api.get(`/User/GetUserByUsername/${username}`);
+  async getUserById(id: number): Promise<UserIdDTO> {
+    const response = await api.get(`/User/Profile`);
     return response.data;
   },
 
-  async updateUser(id: number, username: string): Promise<boolean> {
-    const response = await api.post('/User/UpdateUser', null, {
-      params: { id, username }
+  async updateProfile(id: number, username: string): Promise<boolean> {
+    const response = await api.put('/User/Profile', {
+      username
     });
     return response.data;
   },
 
-  async deleteUser(username: string): Promise<boolean> {
-    const response = await api.post(`/User/DeleteUser/${username}`);
+  async deleteAccount(username: string): Promise<boolean> {
+    const response = await api.delete(`/User/Delete/${username}`);
     return response.data;
   },
 
@@ -83,6 +80,5 @@ export const authService = {
     localStorage.removeItem('user');
   }
 };
-
 
 export default authService;
