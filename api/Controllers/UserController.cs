@@ -3,8 +3,6 @@ using api.Models;
 using api.Models.DTO;
 using api.Services;
 using Microsoft.AspNetCore.Authorization;
-
-
 namespace api.Controllers;
 
 [ApiController]
@@ -44,78 +42,124 @@ public class UserController : ControllerBase
 
     [Authorize]
     [HttpGet("Profile")]
-    public ActionResult<UserProfileDTO> GetUserProfile()
+    public async Task<ActionResult<UserProfileDTO>> GetUserProfile()
     {
         var userId = User.FindFirst("userId")?.Value;
         if (userId == null) return Unauthorized();
         
-        var profile = _userService.GetUserProfile(int.Parse(userId));
+        var profile = await _userService.GetUserProfile(int.Parse(userId));
         return Ok(profile);
     }
 
     [Authorize]
     [HttpPut("Profile")]
-    public ActionResult<bool> UpdateProfile([FromBody] UpdateUserProfileDTO updateProfile)
+    public async Task<ActionResult<bool>> UpdateProfile([FromBody] UpdateUserProfileDTO updateProfile)
     {
         var userId = User.FindFirst("userId")?.Value;
         if (userId == null) return Unauthorized();
         
-        var result = _userService.UpdateProfile(int.Parse(userId), updateProfile);
+        var result = await _userService.UpdateProfile(int.Parse(userId), updateProfile);
         return Ok(result);
     }
 
     [Authorize]
     [HttpPost("Friends/Request")]
-    public ActionResult<bool> SendFriendRequest([FromBody] FriendRequestDTO request)
+    public async Task<ActionResult<bool>> SendFriendRequest([FromBody] FriendRequestDTO request)
     {
         var userId = User.FindFirst("userId")?.Value;
         if (userId == null) return Unauthorized();
         
-        var result = _userService.SendFriendRequest(int.Parse(userId), request.AddresseeId);
+        var result = await _userService.SendFriendRequest(int.Parse(userId), request.AddresseeId);
         return Ok(result);
     }
 
     [Authorize]
     [HttpPost("Friends/Respond")]
-    public ActionResult<bool> RespondToFriendRequest([FromBody] FriendResponseDTO response)
+    public async Task<ActionResult<bool>> RespondToFriendRequest([FromBody] FriendResponseDTO response)
     {
         var userId = User.FindFirst("userId")?.Value;
         if (userId == null) return Unauthorized();
         
-        var result = _userService.RespondToFriendRequest(int.Parse(userId), response.RequestId, response.Accept);
+        var result = await _userService.RespondToFriendRequest(int.Parse(userId), response.RequestId, response.Accept);
         return Ok(result);
     }
 
     [Authorize]
     [HttpGet("Friends")]
-    public ActionResult<IEnumerable<UserProfileDTO>> GetFriends()
+    public async Task<ActionResult<IEnumerable<UserProfileDTO>>> GetFriends()
     {
-        var userId = User.FindFirst("userId")?.Value;
-        if (userId == null) return Unauthorized();
-        
-        var friends = _userService.GetFriends(int.Parse(userId));
-        return Ok(friends);
+        try
+        {
+            var userId = User.FindFirst("userId")?.Value;
+            if (userId == null) return Unauthorized();
+
+            IEnumerable<UserProfileDTO> friends = await _userService.GetFriends(int.Parse(userId));
+            return Ok(friends);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [Authorize]
+    [HttpGet("Friends/Requests")]
+    public async Task<ActionResult<object>> GetFriendRequests()
+    {
+        try
+        {
+            var userId = User.FindFirst("userId")?.Value;
+            if (userId == null) return Unauthorized();
+
+            var requests = await _userService.GetFriendRequests(int.Parse(userId));
+            return Ok(requests);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [Authorize]
     [HttpPost("Games")]
-    public ActionResult<bool> AddUserGame([FromBody] UserGameDTO gameDto)
+    public async Task<ActionResult<bool>> AddUserGame([FromBody] UserGameDTO gameDto)
     {
         var userId = User.FindFirst("userId")?.Value;
         if (userId == null) return Unauthorized();
         
-        var result = _userService.AddUserGame(int.Parse(userId), gameDto);
+        var result = await _userService.AddUserGame(int.Parse(userId), gameDto);
         return Ok(result);
     }
 
     [Authorize]
     [HttpGet("Games")]
-    public ActionResult<IEnumerable<UserGameDTO>> GetUserGames()
+    public async Task<ActionResult<IEnumerable<UserGameDTO>>> GetUserGames()
     {
         var userId = User.FindFirst("userId")?.Value;
         if (userId == null) return Unauthorized();
         
-        var games = _userService.GetUserGames(int.Parse(userId));
+        var games = await _userService.GetUserGames(int.Parse(userId));
         return Ok(games);
     }
+
+    [Authorize]
+    [HttpGet("search")]
+    public async Task<ActionResult<IEnumerable<UserProfileDTO>>> SearchUsers([FromQuery] string query)
+    {
+        var userId = User.FindFirst("userId")?.Value;
+        if (userId == null) return Unauthorized();
+
+        if (string.IsNullOrWhiteSpace(query))
+            return Ok(Array.Empty<UserProfileDTO>());
+
+        var results = await _userService.SearchUsers(int.Parse(userId), query);
+        return Ok(results);
+    }
+}
+
+public class FriendResponseDTO
+{
+    internal bool Accept;
+
+    public int RequestId { get; internal set; }
 }
