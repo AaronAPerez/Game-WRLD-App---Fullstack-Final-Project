@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import {
   LucideIcon,
   Home,
@@ -8,50 +8,49 @@ import {
   Flame,
   BarChart,
   Calendar,
-  Search,
-  Library
+  Users,
+  MessageSquare,
+  LayoutDashboard,
+  BookOpen,
+  MessagesSquare,
+  ChevronLeft
 } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { cn } from '../../utils/styles';
+import { useAuth } from '../../hooks/useAuth';
+import { motion } from 'framer-motion';
 
 // Define types for navigation items
 type NavItem = {
   icon: LucideIcon;
   label: string;
   path: string;
+  requiresAuth?: boolean;
 };
 
 type NavSection = {
   title?: string;
   items: NavItem[];
+  requiresAuth?: boolean;
 };
 
-// Navigation Item Component
+// Navigation Item Component with responsive design
 const NavItem = ({ item, isCollapsed }: { item: NavItem; isCollapsed: boolean }) => {
-  const location = useLocation();
   const Icon = item.icon;
-  
-  // Check if the current path matches the nav item path
-  const isActive = location.pathname === item.path;
+
 
   return (
     <NavLink
       to={item.path}
       className={({ isActive }) => cn(
-        // Base styles
         "group relative flex items-center gap-3 px-3 py-2 rounded-lg",
         "transition-all duration-300",
-        isCollapsed ? "justify-center" : "",
-        
-        // Hover styles
+        isCollapsed ? "justify-center w-12 mx-auto" : "w-full",
         "hover:bg-stone-800/50",
-        
-        // Glow effect
         "before:absolute before:inset-0 before:rounded-lg before:opacity-0",
         "before:transition-opacity",
         "before:bg-[radial-gradient(circle_at_center,rgba(79,70,229,0.15)_0%,transparent_70%)]",
         "hover:before:opacity-100",
-        
-        // Active state
         isActive ? [
           "bg-stone-800",
           "after:absolute after:inset-0 after:rounded-lg after:ring-1",
@@ -69,7 +68,7 @@ const NavItem = ({ item, isCollapsed }: { item: NavItem; isCollapsed: boolean })
           "group-hover:scale-110",
         )} />
         {!isCollapsed && (
-          <span className="transition-colors duration-300">
+          <span className="transition-colors duration-300 whitespace-nowrap">
             {item.label}
           </span>
         )}
@@ -79,64 +78,83 @@ const NavItem = ({ item, isCollapsed }: { item: NavItem; isCollapsed: boolean })
 };
 
 // Main Sidebar Component
-const Sidebar = ({ isCollapsed }: { isCollapsed: boolean }) => {
-  // Navigation sections with proper routing
+const Sidebar = () => {
+  const { isAuthenticated } = useAuth();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  // Handle responsive layout
+  useEffect(() => {
+    const handleResize = () => {
+      setIsCollapsed(window.innerWidth < 1024);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Navigation sections
   const navigationSections: NavSection[] = [
     {
       items: [
         { icon: Home, label: 'Home', path: '/' },
-        { icon: Search, label: 'Browse', path: '/games' },
-        // { icon: Library, label: 'My Library', path: '/library' },
+        { icon: Gamepad2, label: 'Browse', path: '/games' },
       ]
     },
     {
       title: 'Discover',
       items: [
-        // Each path corresponds to a specific page component
-        { 
-          icon: Flame, 
-          label: 'Trending', 
-          path: '/trending'
-        },
-        { 
-          icon: Clock, 
-          label: 'New Releases', 
-          path: '/new-releases'
-        },
-        { 
-          icon: BarChart, 
-          label: 'Top Rated', 
-          path: '/top-rated'
-        },
-        { 
-          icon: Trophy, 
-          label: 'Popular', 
-          path: '/popular'
-        },
-        { 
-          icon: Gamepad2, 
-          label: 'All Games', 
-          path: '/games'
-        },
-        {
-          icon: Calendar,
-          label: 'Upcoming',
-          path: '/upcoming'
-        }
+        { icon: Flame, label: 'Trending', path: '/trending' },
+        { icon: Clock, label: 'New Releases', path: '/new-releases' },
+        { icon: BarChart, label: 'Top Rated', path: '/top-rated' },
+        { icon: Trophy, label: 'Popular', path: '/popular' },
+        { icon: Calendar, label: 'Upcoming', path: '/upcoming' }
       ]
     },
+    ...(isAuthenticated ? [
+      {
+        title: 'Personal',
+        items: [
+          { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', requiresAuth: true },
+          { icon: BookOpen, label: 'Blog', path: '/blog', requiresAuth: true },
+          { icon: Users, label: 'Friends', path: '/friends', requiresAuth: true },
+          { icon: MessagesSquare, label: 'Chat Room', path: '/chat', requiresAuth: true },
+          { icon: MessageSquare, label: 'Messages', path: '/messages', requiresAuth: true },
+        ]
+      }
+    ] : [])
   ];
 
   return (
-    <aside
+    <motion.aside
+      initial={false}
+      animate={{
+        width: isCollapsed ? 72 : 240,
+        transition: { duration: 0.2 }
+      }}
       className={cn(
         "h-full custom-scrollbar overflow-y-auto py-4 transition-all duration-300",
-        "bg-stone-950/95 backdrop-blur-sm",
-        isCollapsed ? "w-16" : "w-60"
+        "bg-stone-950/95 backdrop-blur-sm fixed left-0 top-16 bottom-0 z-40 border-r border-stone-800"
       )}
-      role="navigation"
     >
-      <nav className="space-y-6 px-2">
+      <button
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        className={cn(
+          "absolute right-2 top-2 p-2 rounded-full",
+          "text-gray-400 hover:text-white hover:bg-stone-800",
+          "transition-colors duration-300",
+          "lg:flex hidden"
+        )}
+      >
+        <motion.div
+          animate={{ rotate: isCollapsed ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </motion.div>
+      </button>
+
+      <nav className="space-y-6 px-2 mt-10">
         {navigationSections.map((section, sectionIndex) => (
           <div key={sectionIndex} className="space-y-1">
             {section.title && !isCollapsed && (
@@ -145,17 +163,19 @@ const Sidebar = ({ isCollapsed }: { isCollapsed: boolean }) => {
               </h3>
             )}
 
-            {section.items.map((item) => (
-              <NavItem
-                key={item.path}
-                item={item}
-                isCollapsed={isCollapsed}
-              />
-            ))}
+            {section.items
+              .filter(item => !item.requiresAuth || (item.requiresAuth && isAuthenticated))
+              .map((item) => (
+                <NavItem
+                  key={item.path}
+                  item={item}
+                  isCollapsed={isCollapsed}
+                />
+              ))}
           </div>
         ))}
       </nav>
-    </aside>
+    </motion.aside>
   );
 };
 

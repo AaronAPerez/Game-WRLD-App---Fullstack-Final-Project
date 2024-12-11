@@ -136,7 +136,8 @@ function GameSection({ title, icon: Icon, games, onGameSelect }: GameSectionProp
             <GameCard
               game={game} 
               onClick={() => 
-              onGameSelect(game)} />
+              onGameSelect(game)}
+              rank={0} />
           </motion.div>
         ))}
       </div>

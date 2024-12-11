@@ -98,6 +98,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
+    app.UseHsts();
+}
 
 // Important: Place UseCors before other middleware that might use routing
 app.UseCors("GameWorldPolicy"); // Use the more restrictive policy
@@ -107,9 +111,11 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+
+// Map endpoints
+app.MapControllers();
 // Configure SignalR hub
 app.MapHub<ChatHub>("/hubs/chat");
 
-app.MapControllers();
 
 app.Run();
