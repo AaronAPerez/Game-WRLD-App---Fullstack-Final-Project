@@ -17,17 +17,17 @@ api.interceptors.request.use((config) => {
 });
 
 // Error handling interceptor
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Optionally redirect to login or handle token expiration
-      localStorage.removeItem('token');
-      window.location.href = '/login';
-    }
-    return Promise.reject(error);
-  }
-);
+// api.interceptors.response.use(
+//   (response) => response,
+//   (error) => {
+//     if (error.response?.status === 401) {
+//       // Optionally redirect to login or handle token expiration
+//       localStorage.removeItem('token');
+//       window.location.href = '/home';
+//     }
+//     return Promise.reject(error);
+//   }
+// );
 
 export const UserService = {
   async getFriendRequests() {
