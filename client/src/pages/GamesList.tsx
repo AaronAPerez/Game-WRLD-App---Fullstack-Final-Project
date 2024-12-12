@@ -7,13 +7,14 @@ import { GameDetailsModal } from '../components/GameDetailsModal';
 import { Loader2 } from 'lucide-react';
 import { cn } from '../utils/styles';
 import type { Game, GameQueryParams, PaginatedResponse } from '../types/rawg';
+import { LucideIcon } from 'lucide-react';
 
-// Define props interface
+// Props interface
 interface GamesListProps {
   title: string;
   queryKey: string;
   queryParams: GameQueryParams;
-  icon: (props: { className?: string }) => JSX.Element;
+  icon: LucideIcon;
 }
 
 const GamesList = ({ title, queryKey, queryParams, icon: Icon }: GamesListProps) => {
@@ -76,7 +77,8 @@ const GamesList = ({ title, queryKey, queryParams, icon: Icon }: GamesListProps)
           >
             <GameCard 
               game={game}
-              onClick={() => setSelectedGame(game)}
+              onClick={() => 
+              setSelectedGame(game)}
               rank={index + 1}
             />
           </motion.div>

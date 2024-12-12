@@ -51,11 +51,11 @@ const ArcadePage = () => {
   const startEmulator = (game: Game) => {
     if (!emulatorContainerRef.current) return;
     
-    // Update global EmulatorJS config
-    window.EJS_gameUrl = game.romUrl;
-    window.EJS_core = game.core;
-    window.EJS_pathtodata = 'https://cdn.emulatorjs.org/latest/data/';
-    window.EJS_startOnLoaded = true;
+    // // Update global EmulatorJS config
+    // window.EJS_gameUrl = game.romUrl;
+    // window.EJS_core = game.core;
+    // window.EJS_pathtodata = 'https://cdn.emulatorjs.org/latest/data/';
+    // window.EJS_startOnLoaded = true;
     
     // Reset container
     emulatorContainerRef.current.innerHTML = '';

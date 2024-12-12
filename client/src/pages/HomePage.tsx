@@ -125,15 +125,19 @@ function GameSection({ title, icon: Icon, games, onGameSelect }: GameSectionProp
           <ChevronRight className="w-4 h-4" />
         </button>
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    {/* Games Grid */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {games.map((game) => (
           <motion.div
             key={game.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <GameCard game={game} onClick={() => onGameSelect(game)} />
+            <GameCard
+              game={game} 
+              onClick={() => 
+              onGameSelect(game)}
+              rank={0} />
           </motion.div>
         ))}
       </div>

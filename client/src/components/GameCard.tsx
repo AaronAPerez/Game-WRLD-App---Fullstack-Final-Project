@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import { Calendar, Star, Eye, ExpandIcon, ChartLine } from "lucide-react";
-import { useEffect, useRef, useState } from 'react';
+import { Calendar, Star, Eye, ChartLine } from "lucide-react";
+import { useState } from 'react';
 import type { Game } from '../types/rawg';
 import { useGameStore } from "./store/gameStore";
 import { cn } from "../utils/styles";

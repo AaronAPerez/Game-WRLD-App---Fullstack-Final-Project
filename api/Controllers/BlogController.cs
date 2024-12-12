@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using api.Models;
 using api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -73,7 +69,7 @@ public class BlogController : ControllerBase
         return _data.DeleteBlogItem(BlogDelete);
     }
 
-    //WE need a GetItemsByUserId 
+    //GetItemsByUserId 
     [HttpGet("GetItemsByUserId/{UserId}")]
 
     public IEnumerable<BlogItemModel> GetItemsByUserId (int UserId)

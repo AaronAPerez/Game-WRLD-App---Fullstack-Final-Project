@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { AlertCircle, Loader2, User, EyeOff, Eye, Lock } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { cn } from '../utils/styles';
+import { toast } from 'react-hot-toast';
 
 interface LoginFormData {
   userName: string;
@@ -53,16 +54,21 @@ const LoginPage = () => {
     }
 
     setIsLoading(true);
+    setErrors({});
 
     try {
       await login(formData.userName, formData.password);
+      toast.success('Login successful!');
+      
       if (formData.rememberMe) {
         localStorage.setItem('rememberedUser', formData.userName);
       }
     } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Invalid username or password';
       setErrors({
-        general: error.response?.data?.message || 'Invalid username or password'
+        general: errorMessage
       });
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -75,6 +81,7 @@ const LoginPage = () => {
       [name]: type === 'checkbox' ? checked : value
     }));
 
+    // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({
         ...prev,
@@ -190,6 +197,7 @@ const LoginPage = () => {
                 "before:absolute before:inset-0 before:rounded-full before:opacity-0",
                 "before:bg-[radial-gradient(circle_at_center,rgba(79,70,229,0.3)_0%,transparent_70%)]",
                 "hover:before:opacity-100",
+                "disabled:opacity-50 disabled:cursor-not-allowed",
                 "shadow-lg shadow-indigo-500/20"
               )}
             >
