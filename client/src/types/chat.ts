@@ -1,89 +1,59 @@
-import { Message } from "postcss";
-import { ReactNode } from "react";
-
-
-export interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  profilePicture?: string;
-  bio?: string;
-  joinDate: string;
+export interface UserProfile {
+  id: number;
+  username: string;
+  avatar: string | null;
+  status: 'online' | 'offline' | 'ingame';
+  lastActive: string;
+  friendsCount: number;
+  gamesCount: number;
+  friendStatus?: 'none' | 'pending' | 'accepted';
 }
 
-export interface Post {
+export interface ChatUser {
+  id: number;
+  username: string;
+  avatar: string | null;
+  status: 'online' | 'offline' | 'ingame';
+  lastActive: string;
+}
+
+export interface ChatMessage {
   id: number;
   content: string;
-  imageUrl?: string;
-  createdAt: string;
-  userId: string;
-  user: User;
-  // likes: Like[];
-  comments: Comment[];
+  sender: UserProfile;
+  sentAt: string;
+  isEdited: boolean;
+  type: 'text' | 'image' | 'file';
 }
 
-
-export interface Chat {
-  id: number;
-  name: string;
-  isGroupChat: boolean;
-  createdAt: Date;
-  participants: User[];
-  messages: Message[];
+export interface DirectMessage extends ChatMessage {
+  receiverId: number;
+  isRead: boolean;
 }
 
 export interface ChatRoom {
   id: number;
   name: string;
-  description: string;
-  image: string | null;
-  membersCount: number;
+  description?: string;
+  image?: string;
+  lastMessage?: ChatMessage;
+  unreadCount: number;
+  participants: UserProfile[];
   createdAt: string;
-  creator: UserProfile;
   isPrivate: boolean;
 }
 
-export interface ChatMessage {
-  id: number;
-  chatRoomId: number;
-  sender: UserProfile;
-  content: string;
-  messageType: string;
-  sentAt: string;
-  isEdited: boolean;
-}
-
-
-
-export interface DirectMessage {
-  id: number;
-  sender: UserProfile;
-  receiver: UserProfile;
-  content: string;
-  messageType: string;
-  sentAt: string;
-  isRead: boolean;
-  isEdited: boolean;
-}
-
-export interface UserProfile {
-  friendsCount: ReactNode;
-  id: number;
-  username: string;
-  avatar: string | null;
-  status: string;
-  lastActive: string;
-}
-
 export interface SendMessageRequest {
-  chatRoomId: number;
   content: string;
-  messageType?: string;
+  type?: 'text' | 'image' | 'file';
+  roomId?: number;
+  receiverId?: number;
 }
 
-export interface SendDirectMessageRequest {
-  receiverId: number;
-  content: string;
-  messageType?: string;
+export interface ChatRoomMember {
+  id: number;
+  userId: number;
+  roomId: number;
+  role: 'admin' | 'moderator' | 'member';
+  joinedAt: string;
 }

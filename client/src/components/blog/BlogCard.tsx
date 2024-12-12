@@ -2,7 +2,6 @@ import { formatDistanceToNow } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Clock, MessageCircle, User } from 'lucide-react';
-import type { BlogPostDTO } from '@/types/blog';
 
 interface BlogCardProps {
   blog: BlogPostDTO;

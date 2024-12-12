@@ -28,7 +28,7 @@ public class ChatService
         var rooms = await _context.ChatRooms
             .Include(r => r.Creator)
             .Include(r => r.Members)
-            .Where(r => !r.IsDeleted && 
+            .Where(r => !r.IsDeleted &&
                 (r.Members.Any(m => m.UserId == userId) || !r.IsPrivate))
             .OrderByDescending(r => r.CreatedAt)
             .Select(r => new ChatRoomDTO
@@ -85,7 +85,7 @@ public class ChatService
         await _context.SaveChangesAsync();
 
         var creator = await _userService.GetUserProfile(userId);
-        
+
         return new ChatRoomDTO
         {
             Id = room.Id,
@@ -355,4 +355,32 @@ public class ChatService
         message.IsRead = true;
         return await _context.SaveChangesAsync() > 0;
     }
+
+    public async Task<IEnumerable<UserProfileDTO>> GetFriends(int userId)
+    {
+        if (_context.Friends == null || _context.UserInfo == null)
+            return Enumerable.Empty<UserProfileDTO>();
+
+        var friends = await _context.Friends
+            .Where(f => (f.RequesterId == userId || f.AddresseeId == userId) &&
+                        f.Status.ToLower() == "accepted")  
+            .Select(f => f.RequesterId == userId ? f.Addressee : f.Requester)
+            .Select(u => new UserProfileDTO
+            {
+                Id = u.Id,
+                Username = u.Username ?? string.Empty,
+                Avatar = u.Avatar ?? string.Empty,
+                Status = u.Status ?? "offline",
+                LastActive = u.LastActive,
+                FriendsCount = _context.Friends.Count(fr =>
+                    (fr.RequesterId == u.Id || fr.AddresseeId == u.Id) &&
+                    fr.Status.ToLower() == "accepted"), 
+                GamesCount = u.UserGames != null ? u.UserGames.Count : 0
+            })
+            .ToListAsync();
+
+        return friends;
+    }
 }
+
+

@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Plus, X, Loader2, ImagePlus } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { blogService } from '../../services/api/blogService';
-import type { CreateBlogPostDTO } from '@/types/blog';
+import { blogService } from '../BlogService';
+
 
 const blogSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters').max(200),

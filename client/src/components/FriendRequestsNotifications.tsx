@@ -51,21 +51,21 @@ export const FriendRequestsNotifications = () => {
   if (!requests?.received.length) {
     return (
       <div className="text-center p-4 text-gray-400">
-             <button
-                type="button"
-                className="relative text-gray-400"
-              >
-                <Link to="/friends" className="hover:text-green-600">
-                  <Users className="h-5 w-5" />
-                </Link>
-              </button>
+        <button
+          type="button"
+          className="relative text-gray-400"
+        >
+          <Link to="/friends" className="hover:text-green-600">
+            <Users className="h-5 w-5" />
+          </Link>
+        </button>
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
-       {requests?.received.map((request: FriendRequest) => (
+      {requests?.received.map((request: FriendRequest) => (
         <div
           key={request.id}
           className="bg-stone-900 rounded-lg p-4 flex items-center justify-between"

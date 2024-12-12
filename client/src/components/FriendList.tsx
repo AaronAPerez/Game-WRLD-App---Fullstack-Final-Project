@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, UserPlus, MessageSquare, Gamepad2, X, User } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth';
 
 const mockFriends = [
   {

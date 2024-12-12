@@ -1,20 +1,20 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Search, UserPlus, MessageSquare, Mail, Loader2, Users } from 'lucide-react';
+import { Search, UserPlus, MessageSquare, Mail, Loader2, Users, Check } from 'lucide-react';
 import { cn } from '../../utils/styles';
 import { useAuth } from '../../hooks/useAuth';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import type { UserProfile } from '../../types/chat';
 import { UserService } from '../../services/userService';
-import { FriendActionButton } from '../FriendActionButton';
-import { ChatActionButton } from '../ChatActionButton';
+
 
 export const UserSearchResults = () => {
-  useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const [pendingRequests, setPendingRequests] = useState<number[]>([]);
 
   const { data: searchResults, isLoading } = useQuery({
     queryKey: ['searchUsers', searchQuery],
@@ -25,6 +25,7 @@ export const UserSearchResults = () => {
   const handleSendFriendRequest = async (targetUser: UserProfile) => {
     try {
       await UserService.sendFriendRequest(targetUser.id);
+      setPendingRequests(prev => [...prev, targetUser.id]);
       toast.success(`Friend request sent to ${targetUser.username}`);
     } catch (error) {
       toast.error('Failed to send friend request');
@@ -123,15 +124,26 @@ export const UserSearchResults = () => {
               <div className="flex items-center gap-3 mt-6">
                 <button
                   onClick={() => handleSendFriendRequest(searchUser)}
+                  disabled={pendingRequests.includes(searchUser.id)}
                   className={cn(
                     "flex items-center gap-2 px-4 py-2 rounded-lg flex-1",
-                    "bg-indigo-500/20 text-indigo-400",
-                    "hover:bg-indigo-500/30 transition-colors"
+                    pendingRequests.includes(searchUser.id)
+                      ? "bg-green-500/20 text-green-400"
+                      : "bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30",
+                    "transition-colors"
                   )}
                 >
-                  <UserPlus className="w-4 h-4" />
-                  <span>Add Friend</span>
-                  <FriendActionButton targetUser={searchUser} />
+                  {pendingRequests.includes(searchUser.id) ? (
+                    <>
+                      <Check className="w-4 h-4" />
+                      <span>Request Sent</span>
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus className="w-4 h-4" />
+                      <span>Add Friend</span>
+                    </>
+                  )}
                 </button>
                 <button
                   onClick={() => handleStartChat(searchUser)}
@@ -147,7 +159,6 @@ export const UserSearchResults = () => {
                     <>
                       <MessageSquare className="w-4 h-4" />
                       <span>Chat</span>
-                      <ChatActionButton targetUser={searchUser} />
                     </>
                   ) : (
                     <>
@@ -164,3 +175,5 @@ export const UserSearchResults = () => {
     </div>
   );
 };
+
+export default UserSearchResults;

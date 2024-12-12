@@ -16,10 +16,12 @@ public class ChatHub : Hub
         _userService = userService;
     }
 
-    public override async Task OnConnectedAsync()
+   public override async Task OnConnectedAsync()
+{
+    var userId = Context.User?.FindFirst("userId")?.Value;
+    if (userId != null)
     {
-        var userId = Context.User?.FindFirst("userId")?.Value;
-        if (userId != null)
+        try 
         {
             var userIdInt = int.Parse(userId);
             
@@ -40,8 +42,17 @@ public class ChatHub : Hub
                     .SendAsync("UserOnlineStatus", userProfile, true);
             }
         }
-        await base.OnConnectedAsync();
+        catch (Exception ex)
+        {
+            // Log the exception
+            Console.Error.WriteLine($"Connection error: {ex.Message}");
+            
+            // send an error back to the client
+            await Clients.Caller.SendAsync("ConnectionError", ex.Message);
+        }
     }
+    await base.OnConnectedAsync();
+}
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
@@ -69,6 +80,19 @@ public class ChatHub : Hub
             }
         }
         await base.OnDisconnectedAsync(exception);
+    }
+
+
+    // method to handle typing status
+    public async Task SendTypingStatus(int roomId, bool isTyping)
+    {
+        var userId = GetUserId();
+        if (userId == null) return;
+
+        var user = await _userService.GetUserProfile(userId.Value);
+
+        await Clients.Group($"room_{roomId}")
+            .SendAsync("UserTypingStatus", roomId, user, isTyping);
     }
 
     public async Task SendMessage(SendMessageDTO message)

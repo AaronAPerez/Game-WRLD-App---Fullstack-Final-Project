@@ -8,6 +8,7 @@ const api = axios.create({
   }
 });
 
+// Interceptor to handle token injection and unauthorized errors
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -16,23 +17,35 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Error handling interceptor
-// api.interceptors.response.use(
-//   (response) => response,
-//   (error) => {
-//     if (error.response?.status === 401) {
-//       // Optionally redirect to login or handle token expiration
-//       localStorage.removeItem('token');
-//       window.location.href = '/home';
-//     }
-//     return Promise.reject(error);
-//   }
-// );
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token is invalid or expired
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      
+      // Redirect to login or trigger re-authentication
+      // window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
 
 export const UserService = {
   async getFriendRequests() {
-    const response = await api.get('/Friends/Requests');
-    return response.data;
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No authentication token');
+      }
+
+      const response = await api.get('/Friends/Requests');
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch friend requests:', error);
+      throw error;
+    }
   },
 
   async sendFriendRequest(addresseeId: number) {

@@ -17,7 +17,7 @@ export interface User {
     createdAt: string;
     userId: string;
     user: User;
-    likes: Like[];
+    // likes: Like[];
     comments: Comment[];
   }
   
@@ -27,4 +27,14 @@ export interface User {
     isGroupChat: boolean;
     participants: User[];
     messages: Message[];
+  }
+
+  export interface TokenRefreshResponse {
+    token: string;
+    userId: number;
+    username: string;
+  }
+  
+  export interface TokenRefreshRequest {
+    token: string;
   }

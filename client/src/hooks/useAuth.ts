@@ -74,11 +74,18 @@ export function AuthProvider(props: AuthProviderProps) {
   });
 }
 
+
 // Custom hook to use auth context
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
-  return context;
-}
+
+  const isAuthenticated = !!context.user && !!localStorage.getItem('token');
+  
+  return {
+    ...context,
+    isAuthenticated
+  };
+};
