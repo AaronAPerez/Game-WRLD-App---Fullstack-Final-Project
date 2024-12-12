@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, UserPlus, MessageSquare, Gamepad2, X, User } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 
 const mockFriends = [
   {
@@ -24,9 +25,35 @@ const mockFriends = [
 const FriendsList = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddFriend, setShowAddFriend] = useState(false);
+  const [friendUsername, setFriendUsername] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
 
   const filters = ['all', 'online', 'offline', 'in-game'];
+
+  const sendFriendRequest = async () => {
+    try {
+      const response = await fetch('/api/friends/request', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // 'Authorization': `Bearer ${userToken}`, // Add auth token if needed
+        },
+        body: JSON.stringify({ username: friendUsername }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send friend request');
+      }
+
+      // Close the modal after the request is sent
+      setShowAddFriend(false);
+      // Optionally update friends list or show a success message
+      alert('Friend request sent!');
+    } catch (error) {
+      console.error('Error sending friend request:', error);
+      alert('Failed to send friend request');
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -90,9 +117,7 @@ const FriendsList = () => {
                   alt={friend.name}
                   className="w-12 h-12 rounded-full"
                 />
-                <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-stone-900 ${
-                  friend.status === 'online' ? 'bg-green-500' : 'bg-gray-500'
-                }`} />
+                <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-stone-900 ${friend.status === 'online' ? 'bg-green-500' : 'bg-gray-500'}`} />
               </div>
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-white">{friend.name}</h3>
@@ -147,6 +172,8 @@ const FriendsList = () => {
                   <input
                     type="text"
                     placeholder="Enter username or friend code"
+                    value={friendUsername}
+                    onChange={(e) => setFriendUsername(e.target.value)}
                     className="w-full pl-10 pr-4 py-2 bg-stone-800 rounded-lg text-white placeholder:text-gray-400"
                   />
                 </div>
@@ -157,7 +184,10 @@ const FriendsList = () => {
                   >
                     Cancel
                   </button>
-                  <button className="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors">
+                  <button
+                    onClick={sendFriendRequest}
+                    className="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors"
+                  >
                     Send Request
                   </button>
                 </div>

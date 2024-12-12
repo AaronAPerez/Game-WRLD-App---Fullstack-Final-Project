@@ -4,11 +4,10 @@ import { BASE_URL } from '../constant';
 const api = axios.create({
   baseURL: `${BASE_URL}/User`,
   headers: {
-    'Content-Type': 'application/json'
-  }
+    'Content-Type': 'application/json',
+  },
 });
 
-// Interceptor to handle token injection and unauthorized errors
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -16,17 +15,13 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
-
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token is invalid or expired
+     
       localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      
-      // Redirect to login or trigger re-authentication
-      // window.location.href = '/login';
+      window.location.href = '/home'; 
     }
     return Promise.reject(error);
   }
@@ -34,18 +29,8 @@ api.interceptors.response.use(
 
 export const UserService = {
   async getFriendRequests() {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No authentication token');
-      }
-
-      const response = await api.get('/Friends/Requests');
-      return response.data;
-    } catch (error) {
-      console.error('Failed to fetch friend requests:', error);
-      throw error;
-    }
+    const response = await api.get('/Friends/Requests');
+    return response.data;
   },
 
   async sendFriendRequest(addresseeId: number) {
@@ -75,8 +60,34 @@ export const UserService = {
       },
     });
     return response.data;
-  }
+  },
+
+
+  async getUserProfile() {
+    const response = await api.get('/Profile');
+    return response.data;
+  },
+
+  async updateUserProfile(updatedProfileData: any) {
+    const response = await api.put('/Profile', updatedProfileData);
+    return response.data;
+  },
+
+
+  async searchFriends(query: string) {
+    const response = await api.get('/search', { params: { query } });
+    return response.data;
+  },
+
+
+  async getUserGames() {
+    const response = await api.get('/Games');
+    return response.data;
+  },
+
+
+  async addUserGame(gameData: any) {
+    const response = await api.post('/Games', gameData);
+    return response.data;
+  },
 };
-
-
-
