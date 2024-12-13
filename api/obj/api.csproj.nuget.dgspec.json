@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\aaper\\Documents\\.CodeStack Academy\\React\\Final Project\\Final_Project_Fullstack_App\\Game_WRLD-Fullstack-Final-App-Project\\api\\api.csproj": {}
+    "C:\\Users\\silve\\Documents\\Academy Full Stack\\wrld\\Game_WRLD-Fullstack-Final-App-Project\\api\\api.csproj": {}
   },
   "projects": {
-    "C:\\Users\\aaper\\Documents\\.CodeStack Academy\\React\\Final Project\\Final_Project_Fullstack_App\\Game_WRLD-Fullstack-Final-App-Project\\api\\api.csproj": {
+    "C:\\Users\\silve\\Documents\\Academy Full Stack\\wrld\\Game_WRLD-Fullstack-Final-App-Project\\api\\api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\aaper\\Documents\\.CodeStack Academy\\React\\Final Project\\Final_Project_Fullstack_App\\Game_WRLD-Fullstack-Final-App-Project\\api\\api.csproj",
+        "projectUniqueName": "C:\\Users\\silve\\Documents\\Academy Full Stack\\wrld\\Game_WRLD-Fullstack-Final-App-Project\\api\\api.csproj",
         "projectName": "api",
-        "projectPath": "C:\\Users\\aaper\\Documents\\.CodeStack Academy\\React\\Final Project\\Final_Project_Fullstack_App\\Game_WRLD-Fullstack-Final-App-Project\\api\\api.csproj",
-        "packagesPath": "C:\\Users\\aaper\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\aaper\\Documents\\.CodeStack Academy\\React\\Final Project\\Final_Project_Fullstack_App\\Game_WRLD-Fullstack-Final-App-Project\\api\\obj\\",
+        "projectPath": "C:\\Users\\silve\\Documents\\Academy Full Stack\\wrld\\Game_WRLD-Fullstack-Final-App-Project\\api\\api.csproj",
+        "packagesPath": "C:\\Users\\silve\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\silve\\Documents\\Academy Full Stack\\wrld\\Game_WRLD-Fullstack-Final-App-Project\\api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\aaper\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\silve\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -99,7 +99,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.206/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.303/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

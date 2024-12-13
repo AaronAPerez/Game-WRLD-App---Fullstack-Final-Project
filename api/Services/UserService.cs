@@ -350,32 +350,41 @@ public class UserService : ControllerBase
             (f.Status ?? "").Equals("accepted", StringComparison.OrdinalIgnoreCase));
     }
 
-    private string GenerateJwtToken(UserModel user)
+   private string GenerateJwtToken(UserModel user)
+{
+    var rawKey = _config["Jwt:Key"] 
+        ?? throw new InvalidOperationException("JWT key not configured");
+
+
+    var keyBytes = Encoding.UTF8.GetBytes(rawKey);
+    var base64Key = Convert.ToBase64String(keyBytes);
+
+
+    var signingKey = Convert.FromBase64String(base64Key);
+
+    var signingCredentials = new SigningCredentials(
+        new SymmetricSecurityKey(signingKey),
+        SecurityAlgorithms.HmacSha256
+    );
+
+    var claims = new List<Claim>
     {
-        var secretKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(_config["Jwt:Key"] ??
-            throw new InvalidOperationException("JWT key not configured")));
+        new Claim("userId", user.Id.ToString()),
+        new Claim("username", user.Username ?? string.Empty),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+    };
 
-        var signingCredentials = new SigningCredentials(secretKey,
-            SecurityAlgorithms.HmacSha256);
+    var tokenOptions = new JwtSecurityToken(
+        issuer: _config["Jwt:Issuer"],
+        audience: _config["Jwt:Audience"],
+        claims: claims,
+        expires: DateTime.UtcNow.AddHours(1),
+        signingCredentials: signingCredentials
+    );
 
-        var claims = new List<Claim>
-        {
-            new Claim("userId", user.Id.ToString()),
-            new Claim("username", user.Username ?? string.Empty),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        };
+    return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+}
 
-        var tokenOptions = new JwtSecurityToken(
-            issuer: _config["Jwt:Issuer"],
-            audience: _config["Jwt:Audience"],
-            claims: claims,
-            expires: DateTime.UtcNow.AddHours(1),
-            signingCredentials: signingCredentials
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
-    }
    public async Task<IEnumerable<UserProfileDTO>> SearchUsers(int v, string query)
     {
         if (_context.UserInfo == null)

@@ -11,7 +11,7 @@ namespace api.Utils
         public static string GenerateJwtToken(string userId, string username, string secretKey)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(secretKey);
+            var key = Encoding.UTF8.GetBytes(secretKey);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -37,7 +37,7 @@ namespace api.Utils
                 return false;
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(secretKey);
+            var key = Encoding.UTF8.GetBytes(secretKey);
 
             try
             {
