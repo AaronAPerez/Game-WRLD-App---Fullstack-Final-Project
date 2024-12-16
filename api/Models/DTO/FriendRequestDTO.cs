@@ -7,18 +7,14 @@ namespace api.Models.DTO
 {
     public class FriendRequestDTO
     {
-        internal object SentAt;
-        internal object ReceiverName;
-        internal object ReceiverId;
-        internal object SenderName;
-        internal object SenderId;
-        internal object Status;
-        internal object Id;
-
+        public int RequestId { get; set; } 
+        public int RequesterId { get; set; } 
+        public string RequesterName { get; set; } 
         public int AddresseeId { get; set; }
-        public int RequestId { get; internal set; }
-        public UserProfileDTO Requester { get; internal set; }
-        public DateTime CreatedAt { get; internal set; }
+        public string AddresseeName { get; set; } 
+        public string Status { get; set; } 
+        public DateTime CreatedAt { get; set; } 
     }
 
 }
+

@@ -34,7 +34,7 @@ export const UserService = {
   },
 
   async sendFriendRequest(addresseeId: number) {
-    const response = await api.post('/Friends/Request', { addresseeId });
+    const response = await api.post('/User/Friends/Request', { addresseeId });
     return response.data;
   },
 

@@ -96,14 +96,17 @@ builder.Services.AddAuthentication(options =>
     options.RequireHttpsMetadata = false;
     options.SaveToken = true;
     options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key),
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        ValidateLifetime = true,
-        ClockSkew = TimeSpan.Zero
-    };
+{
+    ValidateIssuerSigningKey = true,
+    IssuerSigningKey = new SymmetricSecurityKey(key),
+    ValidateIssuer = true,  
+    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+    ValidateAudience = true,  
+    ValidAudience = builder.Configuration["Jwt:Audience"],
+    ValidateLifetime = true,
+    ClockSkew = TimeSpan.Zero
+};
+
 
     // Configure for SignalR
     options.Events = new JwtBearerEvents

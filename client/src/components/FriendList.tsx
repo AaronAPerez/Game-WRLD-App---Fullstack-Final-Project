@@ -32,28 +32,58 @@ const FriendsList = () => {
 
   const sendFriendRequest = async () => {
     try {
-      const response = await fetch('/api/friends/request', {
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        alert('No token found, please login again.');
+        return;
+      }
+  
+      const userResponse = await fetch(`http://localhost:5182/api/User/GetUserByUsername/${friendUsername}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+  
+      const user = await userResponse.json();
+  
+      if (!user || !user.id) {
+        alert('User not found');
+        return;
+      }
+  
+      const userId = localStorage.getItem('userId'); 
+      if (!userId) {
+        alert('Unable to get user ID.');
+        return;
+      }
+  
+      const response = await fetch('http://localhost:5182/api/User/Friends/Request', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // 'Authorization': `Bearer ${userToken}`, // Add auth token if needed
+          'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ username: friendUsername }),
+        body: JSON.stringify({
+          requesterId: userId, 
+          addresseeId: user.id,  
+          status: 'pending',  
+        }),
       });
-
+  
       if (!response.ok) {
         throw new Error('Failed to send friend request');
       }
-
-      // Close the modal after the request is sent
+  
       setShowAddFriend(false);
-      // Optionally update friends list or show a success message
       alert('Friend request sent!');
     } catch (error) {
       console.error('Error sending friend request:', error);
       alert('Failed to send friend request');
     }
   };
+  
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -89,11 +119,9 @@ const FriendsList = () => {
             <button
               key={filter}
               onClick={() => setSelectedFilter(filter)}
-              className={`px-3 py-1 rounded-full text-sm capitalize transition-colors ${
-                selectedFilter === filter
-                  ? 'bg-indigo-500 text-white'
-                  : 'bg-stone-800 text-gray-400 hover:bg-stone-700'
-              }`}
+              className={`px-3 py-1 rounded-full text-sm capitalize transition-colors ${selectedFilter === filter
+                ? 'bg-indigo-500 text-white'
+                : 'bg-stone-800 text-gray-400 hover:bg-stone-700'}`}
             >
               {filter}
             </button>

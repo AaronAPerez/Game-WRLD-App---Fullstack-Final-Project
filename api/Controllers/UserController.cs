@@ -9,11 +9,11 @@ namespace api.Controllers;
 [Route("api/[controller]")]
 public class UserController : ControllerBase
 {
-    private readonly UserService _userService;
+     private readonly UserService _userService;
 
     public UserController(UserService userService)
     {
-        _userService = userService;
+        _userService = userService ?? throw new ArgumentNullException(nameof(userService));
     }
 
     [HttpPost("AddUsers")]
@@ -28,11 +28,24 @@ public class UserController : ControllerBase
         return _userService.GetAllUsers();
     }
 
-    [HttpGet("GetUserByUsername/{username}")]
-    public UserIdDTO GetUserIdDTOByUserName(string username)
+
+[HttpGet("GetUserByUsername/{username}")]
+public async Task<IActionResult> GetUserIdDTOByUserName(string username)
+{
+    try
     {
-        return _userService.GetUserIdDTOByUserName(username);
+        var userIdDTO = await _userService.GetUserIdDTOByUserName(username);
+        return Ok(userIdDTO);  
     }
+    catch (KeyNotFoundException ex)
+    {
+        return NotFound(new { message = ex.Message });
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, new { message = "An error occurred", details = ex.Message });
+    }
+}
 
     [HttpPost("Login")]
     public IActionResult Login([FromBody] LoginDTO User)
@@ -63,15 +76,23 @@ public class UserController : ControllerBase
     }
 
     [Authorize]
-    [HttpPost("Friends/Request")]
-    public async Task<ActionResult<bool>> SendFriendRequest([FromBody] FriendRequestDTO request)
+[HttpPost("Friends/Request")]
+public async Task<ActionResult<bool>> SendFriendRequest([FromBody] FriendRequestDTO request)
+{
+    var userId = User.FindFirst("userId")?.Value;
+    if (userId == null) return Unauthorized();
+    
+    // Look up the AddresseeId using the provided username
+    var addressee = await _userService.GetUserIdDTOByUserName(request.AddresseeName);
+    if (addressee == null)
     {
-        var userId = User.FindFirst("userId")?.Value;
-        if (userId == null) return Unauthorized();
-        
-        var result = await _userService.SendFriendRequest(int.Parse(userId), request.AddresseeId);
-        return Ok(result);
+        return NotFound(new { message = "User not found" });
     }
+
+    // Send the friend request using the userId and AddresseeId
+    var result = await _userService.SendFriendRequest(int.Parse(userId), addressee.UserId);
+    return Ok(result);
+}
 
     [Authorize]
     [HttpPost("Friends/Respond")]

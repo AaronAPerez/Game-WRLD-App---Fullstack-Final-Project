@@ -98,19 +98,20 @@ public class UserService : ControllerBase
             .ToList();
     }
 
-    public UserIdDTO GetUserIdDTOByUserName(string username)
+    public async Task<UserIdDTO> GetUserIdDTOByUserName(string username)
     {
         if (_context.UserInfo == null || string.IsNullOrEmpty(username))
             throw new InvalidOperationException("Invalid username or database context");
 
-        var foundUser = _context.UserInfo.FirstOrDefault(u => u.Username == username) ??
+        var foundUser = await _context.UserInfo
+            .Where(u => u.Username == username)
+            .Select(u => new UserIdDTO { UserId = u.Id, PublisherName = u.Username ?? string.Empty })
+            .FirstOrDefaultAsync();
+
+        if (foundUser == null)
             throw new KeyNotFoundException($"User {username} not found");
 
-        return new UserIdDTO
-        {
-            UserId = foundUser.Id,
-            PublisherName = foundUser.Username ?? string.Empty
-        };
+        return foundUser;
     }
 
     public UserModel? GetUserByUsername(string? username)
