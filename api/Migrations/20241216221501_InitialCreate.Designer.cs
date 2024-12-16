@@ -12,8 +12,8 @@ using api.Services.Context;
 namespace api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20241207101543_Init")]
-    partial class Init
+    [Migration("20241216221501_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

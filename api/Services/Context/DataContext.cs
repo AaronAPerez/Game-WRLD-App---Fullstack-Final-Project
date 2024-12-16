@@ -45,10 +45,10 @@ public class DataContext : DbContext
 
         // Blog Item Relationships
         modelBuilder.Entity<BlogItemModel>()
-            .HasOne<UserModel>()
-            .WithMany()
-            .HasForeignKey(b => b.UserId)
-            .OnDelete(DeleteBehavior.Restrict);
+    .HasOne<UserModel>()
+    .WithMany()
+   .HasForeignKey(b => b.UserId)
+.OnDelete(DeleteBehavior.Restrict);
 
         // Chat Room Relationships
         modelBuilder.Entity<ChatRoomModel>()

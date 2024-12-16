@@ -17,13 +17,14 @@ public class BlogItemService : ControllerBase
     {
             _context = context;
     }
-    public bool AddBlogItems(BlogItemModel newBlogItem)
-    {
-        bool result = false;
-        _context.Add(newBlogItem);
-        result = _context.SaveChanges() != 0;
-        return result;
-    }
+ public bool AddBlogItems(BlogItemModel newBlogItem)
+{
+    bool result = false;
+    _context.Add(newBlogItem);
+    result = _context.SaveChanges() != 0;
+    return result;
+}
+
 
     public bool DeleteBlogItem(BlogItemModel blogDelete)
     {
