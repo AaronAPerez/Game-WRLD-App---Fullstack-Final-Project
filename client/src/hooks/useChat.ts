@@ -1,51 +1,26 @@
-import { useEffect, useState } from 'react';
-import { chatService } from '../services/chatService';
-import { useAuth } from './useAuth';
+import { createContext, useContext } from 'react';
+import { HubConnectionState } from '@microsoft/signalr';
+import type { ChatMessage, ChatRoom } from '../types/chat';
 
-import toast from 'react-hot-toast';
+interface ChatContextType {
+  connection: any;
+  connectionState: HubConnectionState;
+  activeRoom: ChatRoom | null;
+  messages: Record<number, ChatMessage[]>;
+  sendMessage: (roomId: number, content: string) => Promise<void>;
+  joinRoom: (roomId: number) => Promise<void>;
+  leaveRoom: (roomId: number) => Promise<void>;
+  setActiveRoom: (room: ChatRoom | null) => void;
+}
 
-export function useChatConnection() {
-  const { user } = useAuth();
-  const [connectionState, setConnectionState] = useState(false);
+const ChatContext = createContext<ChatContextType | null>(null);
 
-  useEffect(() => {
-    if (!user) return;
 
-    const handleConnect = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          console.error('No token found');
-          return;
-        }
-
-        await chatService.connect(token);
-        setConnectionState(true);
-      } catch (error) {
-        console.error('Chat connection failed:', error);
-        setConnectionState(false);
-        toast.error('Failed to connect to chat');
-      }
-    };
-
-    const handleConnectionStatus = (isConnected: boolean) => {
-      setConnectionState(isConnected);
-      if (!isConnected) {
-        toast.error('Chat connection lost');
-      }
-    };
-
-    const unsubscribeConnectionStatus = chatService.onConnectionStatusChange(handleConnectionStatus);
-
-    handleConnect();
-
-    return () => {
-      unsubscribeConnectionStatus();
-      chatService.disconnect();
-    };
-  }, [user]);
-
-  return {
-    connectionState
-  };
+// Custom hook
+export function useChat() {
+  const context = useContext(ChatContext);
+  if (!context) {
+    throw new Error('useChat must be used within a ChatProvider');
+  }
+  return context;
 }

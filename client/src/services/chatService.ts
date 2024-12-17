@@ -15,7 +15,7 @@ class ChatService {
   private directMessageHandlers: ((message: DirectMessage) => void)[] = [];
   private typingHandlers: ((roomId: number, userId: number, isTyping: boolean) => void)[] = [];
   private connectionStatusHandlers: ((isConnected: boolean) => void)[] = [];
-  private userStatusHandlers: ((user: UserProfile, isOnline: boolean) => void)[] = []; // Add this line
+  private userStatusHandlers: ((user: UserProfile, isOnline: boolean) => void)[] = [];
 
   onUserStatus(handler: (user: UserProfile, isOnline: boolean) => void) {
     this.userStatusHandlers.push(handler);

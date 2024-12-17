@@ -4,34 +4,28 @@ import { cn } from '../utils/styles';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import type { UserProfile } from '../types/chat';
-import { useChatStore } from './store/chatStore';
-import { HubConnectionState } from '@microsoft/signalr';
-
-
+import { useChat } from '../hooks/useChat';
+import { useChatStore } from '../components/store/chatStore';
+import { FriendActionButton } from './FriendActionButton';
 
 interface ChatActionButtonProps {
   targetUser: UserProfile;
 }
 
-
-
-export const ChatActionButton = ({ targetUser }: ChatActionButtonProps) => {
+export function ChatActionButton({ targetUser }: ChatActionButtonProps) {
   const navigate = useNavigate();
   const [isStartingChat, setIsStartingChat] = useState(false);
-  const connectionState = useChatStore(state => state.connectionState);
-  const { connect } = useChat();
+  const { setActiveConversation } = useChatStore();
 
   const handleStartChat = async () => {
     try {
       setIsStartingChat(true);
 
-      // Check if we need to connect
-      if (connectionState !== HubConnectionState.Connected) {
-        await connect();
-      }
+      // Set the active conversation to the target user
+      setActiveConversation(targetUser);
 
-      // Navigate to messages with the user ID
-      navigate(`/messages/${targetUser.id}`);
+      // Navigate to messages with the user selected
+      navigate('/messages');
     } catch (error) {
       console.error('Chat error:', error);
       toast.error('Failed to start chat');
@@ -70,23 +64,4 @@ export const ChatActionButton = ({ targetUser }: ChatActionButtonProps) => {
       )}
     </button>
   );
-};
-
-
-function useChat(): { connect: any; } {
-  throw new Error('Function not implemented.');
 }
-// User card component
-// export const UserCard = ({ user }: { user: UserProfile }) => {
-//   return (
-//     <div className="bg-stone-900 rounded-xl p-6 border border-stone-800">
-//       {/* User info... */}
-      
-//       {/* Action Buttons */}
-//       <div className="flex items-center gap-3 mt-6">
-//         <FriendActionButton targetUser={user} />
-//         <ChatActionButton targetUser={user} />
-//       </div>
-//     </div>
-//   );
-// };
