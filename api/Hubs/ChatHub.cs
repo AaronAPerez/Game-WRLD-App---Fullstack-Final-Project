@@ -108,20 +108,20 @@ public class ChatHub : Hub
         }
     }
 
-    public async Task SendDirectMessage(SendDirectMessageDTO message)
-    {
-        var userId = GetUserId();
-        if (userId == null) return;
+    // public async Task SendDirectMessage(SendDirectMessageDTO message)
+    // {
+    //     var userId = GetUserId();
+    //     if (userId == null) return;
 
-        var directMessage = await _chatService.AddDirectMessage(userId.Value, message);
-        if (directMessage != null)
-        {
-            await Clients.Group($"user_{message.ReceiverId}")
-                .SendAsync("ReceiveDirectMessage", directMessage);
-            await Clients.Caller
-                .SendAsync("ReceiveDirectMessage", directMessage);
-        }
-    }
+    //     var directMessage = await _chatService.AddDirectMessage(userId.Value, message);
+    //     if (directMessage != null)
+    //     {
+    //         await Clients.Group($"user_{message.ReceiverId}")
+    //             .SendAsync("ReceiveDirectMessage", directMessage);
+    //         await Clients.Caller
+    //             .SendAsync("ReceiveDirectMessage", directMessage);
+    //     }
+    // }
 
     public async Task JoinRoom(int roomId)
     {
@@ -143,13 +143,13 @@ public class ChatHub : Hub
             .SendAsync("UserLeftRoom", roomId, await _userService.GetUserProfile(userId.Value));
     }
 
-    public async Task MarkMessageAsRead(int messageId)
-    {
-        var userId = GetUserId();
-        if (userId == null) return;
+    // public async Task MarkMessageAsRead(int messageId)
+    // {
+    //     var userId = GetUserId();
+    //     if (userId == null) return;
 
-        await _chatService.MarkMessageAsRead(userId.Value, messageId);
-    }
+    //     await _chatService.MarkMessageAsRead(userId.Value, messageId);
+    // }
 
     public async Task UserTyping(int roomId, bool isTyping)
     {

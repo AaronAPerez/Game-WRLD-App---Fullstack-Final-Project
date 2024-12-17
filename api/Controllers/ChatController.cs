@@ -1,7 +1,12 @@
+using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using api.Models.DTO;
 using api.Services;
+using api.Models;
+using api.Services;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace api.Controllers;
 
@@ -15,6 +20,63 @@ public class ChatController : ControllerBase
     public ChatController(ChatService chatService)
     {
         _chatService = chatService;
+    }
+
+     [HttpPost("direct/start")]
+    public async Task<ActionResult<DirectMessageDTO>> StartDirectMessage([FromBody] StartDirectMessageRequest request)
+    {
+        var userId = User.FindFirst("userId")?.Value;
+        if (userId == null) return Unauthorized();
+
+        try {
+            var conversation = await _chatService.StartDirectMessage(
+                int.Parse(userId), 
+                request.ReceiverId
+            );
+            return Ok(conversation);
+        }
+        catch (Exception ex) {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("direct/{userId}")]
+    public async Task<ActionResult<IEnumerable<DirectMessageDTO>>> GetDirectMessages(
+        int userId,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 50)
+    {
+        var currentUserId = User.FindFirst("userId")?.Value;
+        if (currentUserId == null) return Unauthorized();
+
+        var messages = await _chatService.GetDirectMessages(
+            int.Parse(currentUserId),
+            userId,
+            page,
+            pageSize
+        );
+        return Ok(messages);
+    }
+
+     [HttpPost("direct/send")]
+    public async Task<ActionResult<DirectMessageDTO>> SendDirectMessage(
+        [FromBody] SendDirectMessageDTO request)
+    {
+        try
+        {
+            var userId = User.FindFirst("userId")?.Value;
+            if (userId == null) return Unauthorized();
+
+            var result = await _chatService.SendDirectMessage(
+                int.Parse(userId), 
+                request
+            );
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpGet("rooms")]
@@ -69,18 +131,18 @@ public class ChatController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("direct")]
-    public ActionResult<IEnumerable<DirectMessageDTO>> GetDirectMessages(
-        [FromQuery] int userId,
-        [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 50)
-    {
-        var currentUserId = User.FindFirst("userId")?.Value;
-        if (currentUserId == null) return Unauthorized();
+    // [HttpGet("direct")]
+    // public ActionResult<IEnumerable<DirectMessageDTO>> DirectMessages(
+    //     [FromQuery] int userId,
+    //     [FromQuery] int page = 1,
+    //     [FromQuery] int pageSize = 50)
+    // {
+    //     var currentUserId = User.FindFirst("userId")?.Value;
+    //     if (currentUserId == null) return Unauthorized();
 
-        var result = _chatService.GetDirectMessages(int.Parse(currentUserId), userId, page, pageSize);
-        return Ok(result);
-    }
+    //     var result = _chatService.DirectMessages(int.Parse(currentUserId), userId, page, pageSize);
+    //     return Ok(result);
+    // }
 
     [HttpPost("rooms/{roomId}/join")]
     public async Task<ActionResult> JoinRoom(int roomId)

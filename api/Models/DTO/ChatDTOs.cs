@@ -1,4 +1,5 @@
-// Models/DTO/ChatDTOs.cs
+using System;
+
 namespace api.Models.DTO;
 
 public class ChatRoomDTO
@@ -44,16 +45,28 @@ public class DirectMessageDTO
     public int Id { get; set; }
     public UserProfileDTO? Sender { get; set; }
     public UserProfileDTO? Receiver { get; set; }
-    public string? Content { get; set; }
-    public string? MessageType { get; set; }
+    public string Content { get; set; } = string.Empty;
+    public string MessageType { get; set; } = "text";
     public DateTime SentAt { get; set; }
     public bool IsRead { get; set; }
     public bool IsEdited { get; set; }
 }
 
+public class StartDirectMessageRequest
+{
+    public int ReceiverId { get; set; }
+}
+
+public class SendDirectMessageRequest
+{
+    public int ReceiverId { get; set; }
+    public string Content { get; set; } = string.Empty;
+    public string MessageType { get; set; } = "text";
+}
+
 public class SendDirectMessageDTO
 {
     public int ReceiverId { get; set; }
-    public string? Content { get; set; }
+    public string? Content { get; set; } = string.Empty;
     public string MessageType { get; set; } = "text";
 }
