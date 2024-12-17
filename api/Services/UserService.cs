@@ -341,50 +341,53 @@ public class UserService : ControllerBase
             .ToListAsync();
     }
 
+
+    // Handle null Status
     private int GetFriendsCount(UserModel user)
     {
         if (_context.Friends == null)
             return 0;
 
-        return _context.Friends.Count(f =>
-            (f.RequesterId == user.Id || f.AddresseeId == user.Id) &&
-            (f.Status ?? "").Equals("accepted", StringComparison.OrdinalIgnoreCase));
+        return _context.Friends.Count(f => 
+            (f.RequesterId == user.Id || f.AddresseeId == user.Id) && 
+            (f.Status != null && f.Status.ToLower() == "accepted")
+        );
     }
 
    private string GenerateJwtToken(UserModel user)
-{
-    var rawKey = _config["Jwt:Key"] 
-        ?? throw new InvalidOperationException("JWT key not configured");
-
-
-    var keyBytes = Encoding.UTF8.GetBytes(rawKey);
-    var base64Key = Convert.ToBase64String(keyBytes);
-
-
-    var signingKey = Convert.FromBase64String(base64Key);
-
-    var signingCredentials = new SigningCredentials(
-        new SymmetricSecurityKey(signingKey),
-        SecurityAlgorithms.HmacSha256
-    );
-
-    var claims = new List<Claim>
     {
-        new Claim("userId", user.Id.ToString()),
-        new Claim("username", user.Username ?? string.Empty),
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-    };
+        var rawKey = _config["Jwt:Key"] 
+            ?? throw new InvalidOperationException("JWT key not configured");
 
-    var tokenOptions = new JwtSecurityToken(
-        issuer: _config["Jwt:Issuer"],
-        audience: _config["Jwt:Audience"],
-        claims: claims,
-        expires: DateTime.UtcNow.AddHours(1),
-        signingCredentials: signingCredentials
-    );
 
-    return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
-}
+        var keyBytes = Encoding.UTF8.GetBytes(rawKey);
+        var base64Key = Convert.ToBase64String(keyBytes);
+
+
+        var signingKey = Convert.FromBase64String(base64Key);
+
+        var signingCredentials = new SigningCredentials(
+            new SymmetricSecurityKey(signingKey),
+            SecurityAlgorithms.HmacSha256
+        );
+
+        var claims = new List<Claim>
+        {
+            new Claim("userId", user.Id.ToString()),
+            new Claim("username", user.Username ?? string.Empty),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        };
+
+        var tokenOptions = new JwtSecurityToken(
+            issuer: _config["Jwt:Issuer"],
+            audience: _config["Jwt:Audience"],
+            claims: claims,
+            expires: DateTime.UtcNow.AddHours(1),
+            signingCredentials: signingCredentials
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+    }
 
    public async Task<IEnumerable<UserProfileDTO>> SearchUsers(int v, string query)
     {
@@ -504,13 +507,12 @@ public class UserService : ControllerBase
                 f.Status == "accepted");
     }
 
+
+    
+
     internal async Task RespondToFriendRequest(int v, object requestId, object accept)
     {
         throw new NotImplementedException();
     }
 
-    internal async Task RespondToFriendRequest(int v, int requestId, object accept)
-    {
-        throw new NotImplementedException();
-    }
 }

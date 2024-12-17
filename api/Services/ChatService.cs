@@ -488,5 +488,48 @@ public class ChatService
                 }
             };
         }
+    
+
+        public async Task<bool> MarkMessageAsRead(int userId, int messageId)
+        {
+            if (_context.DirectMessages == null)
+                return false;
+
+            var message = await _context.DirectMessages
+                .FirstOrDefaultAsync(m => m.Id == messageId && m.ReceiverId == userId);
+
+            if (message == null)
+                return false;
+
+            message.IsRead = true;
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+
+        public async Task<IEnumerable<UserProfileDTO>> GetFriends(int userId)
+        {
+            if (_context.Friends == null || _context.UserInfo == null)
+                return Enumerable.Empty<UserProfileDTO>();
+
+            var friends = await _context.Friends
+                .Where(f => (f.RequesterId == userId || f.AddresseeId == userId) &&
+                            f.Status.ToLower() == "accepted")  
+                .Select(f => f.RequesterId == userId ? f.Addressee : f.Requester)
+                .Select(u => new UserProfileDTO
+                {
+                    Id = u.Id,
+                    Username = u.Username ?? string.Empty,
+                    Avatar = u.Avatar ?? string.Empty,
+                    Status = u.Status ?? "offline",
+                    LastActive = u.LastActive,
+                    FriendsCount = _context.Friends.Count(fr =>
+                        (fr.RequesterId == u.Id || fr.AddresseeId == u.Id) &&
+                        fr.Status.ToLower() == "accepted"), 
+                    GamesCount = u.UserGames != null ? u.UserGames.Count : 0
+                })
+                .ToListAsync();
+
+            return friends;
+        }
     }
 }
