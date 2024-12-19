@@ -6,6 +6,7 @@ import AppRoutes from './AppRoutes';
 import { ChatProvider } from './contexts/ChatContext';
 
 
+
 // Create query client
 const queryClient = new QueryClient();
 

@@ -8,12 +8,14 @@ import SignUpPage from './pages/SignUpPage';
 import GameDetailsWrapper from './components/GameDetailsWrapper';
 import Dashboard from './pages/Dashboard';
 import BlogPage from './pages/BlogPage';
-import FriendsList from './components/FriendList';
-import ChatRoom from './components/chat/ChatRoom';
-import Messages from './components/chat/Messages';
 import { UserSearch } from './components/UserSearch/UserSearch';
 import GamesList from './pages/GamesList';
 import { Gamepad2, Flame, Clock, BarChart, Calendar } from 'lucide-react';
+import ChatComponent from './components/chat/ChatComponent';
+import Messages from './components/chat/Messages';
+import FriendsPage from './pages/FriendsPage';
+import ChatRoom from './components/chat/ChatRoom';
+
 
 // Protected Route Component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -114,17 +116,17 @@ const AppRoutes = () => {
         } />
         <Route path="friends" element={
           <ProtectedRoute>
-            <FriendsList />
+            <FriendsPage />
           </ProtectedRoute>
         } />
-        <Route path="chat" element={
+        {/* <Route path="chat" element={
           <ProtectedRoute>
-            <ChatRoom />
+            
           </ProtectedRoute>
-        } />
+        } /> */}
         <Route path="messages/:userId?" element={
           <ProtectedRoute>
-            <Messages />
+            <Messages/>
           </ProtectedRoute>
         } />
       </Route>

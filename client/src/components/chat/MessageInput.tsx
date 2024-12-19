@@ -2,9 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Smile, Paperclip, Image, X, Loader2 } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
-import { chatService } from '../../services/chatService';
+import { useChat } from '../../contexts/ChatContext';
 import { cn } from '../../utils/styles';
-
 
 interface MessageInputProps {
   roomId: number;
@@ -17,6 +16,7 @@ export function MessageInput({ roomId, onTyping }: MessageInputProps) {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout>();
+  const { sendMessage, startTyping } = useChat();
 
   // Auto-resize textarea
   useEffect(() => {
@@ -31,6 +31,7 @@ export function MessageInput({ roomId, onTyping }: MessageInputProps) {
   useEffect(() => {
     if (message && onTyping) {
       onTyping();
+      startTyping(roomId);
       
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
@@ -46,45 +47,24 @@ export function MessageInput({ roomId, onTyping }: MessageInputProps) {
         clearTimeout(typingTimeoutRef.current);
       }
     };
-  }, [message, onTyping]);
+  }, [message, onTyping, roomId, startTyping]);
 
   // Send message mutation
   const sendMessageMutation = useMutation({
     mutationFn: async () => {
       if (!message.trim() && files.length === 0) return;
 
-      // Handle text message
-      if (message.trim()) {
-        await chatService.sendMessage(roomId, message.trim());
-      }
+      await sendMessage({
+        roomId,
+        content: message.trim(),
+        type: 'text'
+      });
 
-      // Handle file uploads
-      for (const file of files) {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('roomId', roomId.toString());
-        await chatService.uploadFile(formData);
-      }
-
-      // Clear input
       setMessage('');
       setFiles([]);
       inputRef.current?.focus();
     }
   });
-
-  // Handle file selection
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = Array.from(event.target.files || []);
-    setFiles(prev => [...prev, ...selectedFiles]);
-  };
-
-  // Handle emoji selection
-//   const handleEmojiSelect = (emoji: string) => {
-//     setMessage(prev => prev + emoji);
-//     setShowEmojiPicker(false);
-//     inputRef.current?.focus();
-//   };
 
   return (
     <div className="p-4 border-t border-stone-800">
@@ -158,20 +138,14 @@ export function MessageInput({ roomId, onTyping }: MessageInputProps) {
               <input
                 type="file"
                 accept="image/*"
-                onChange={handleFileSelect}
+                onChange={(e) => {
+                  const files = Array.from(e.target.files || []);
+                  setFiles(prev => [...prev, ...files]);
+                }}
                 multiple
                 className="hidden"
               />
               <Image className="w-5 h-5" />
-            </label>
-            <label className="p-1 text-gray-400 hover:text-white rounded-full hover:bg-stone-700 cursor-pointer">
-              <input
-                type="file"
-                onChange={handleFileSelect}
-                multiple
-                className="hidden"
-              />
-              <Paperclip className="w-5 h-5" />
             </label>
           </div>
         </div>
@@ -193,16 +167,6 @@ export function MessageInput({ roomId, onTyping }: MessageInputProps) {
           )}
         </button>
       </div>
-
-      {/* Emoji Picker */}
-      {/* <AnimatePresence>
-        {showEmojiPicker && (
-          <EmojiPicker
-            onSelect={handleEmojiSelect}
-            onClose={() => setShowEmojiPicker(false)}
-          />
-        )}
-      </AnimatePresence> */}
     </div>
   );
 }

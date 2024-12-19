@@ -2,13 +2,14 @@ import { formatDistanceToNow } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Clock, MessageCircle, User } from 'lucide-react';
+import { BlogPostDTO } from '../../types/blog';
 
 interface BlogCardProps {
   blog: BlogPostDTO;
   className?: string;
 }
 
-export const BlogCard = ({ blog, className }: BlogCardProps) => {
+const BlogCard = ({ blog, className }: BlogCardProps) => {
   return (
     <motion.article
       initial={{ opacity: 0, y: 20 }}

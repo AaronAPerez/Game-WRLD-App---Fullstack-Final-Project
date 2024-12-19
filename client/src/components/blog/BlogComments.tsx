@@ -3,10 +3,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
 import { Loader2, MessageCircle, ThumbsUp, Flag, Trash } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
-import { blogService } from '../BlogService';
-import { toast } from 'react-hot-toast';
-import type { BlogCommentDTO } from '@/types/blog';
+import { useAuth } from '../../hooks/useAuth';
+import { blogService } from '../../services/BlogService';
+import toast from 'react-hot-toast';
+
 
 interface BlogCommentsProps {
   blogId: number;

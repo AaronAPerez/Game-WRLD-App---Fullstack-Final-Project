@@ -4,7 +4,9 @@ import { z } from 'zod';
 import { Plus, X, Loader2, ImagePlus } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { blogService } from '../BlogService';
+import { blogService } from '../../services/BlogService';
+import { Post } from '../../types';
+import { CreateBlogPostDTO } from '../../types/blog';
 
 
 const blogSchema = z.object({
@@ -18,13 +20,15 @@ const blogSchema = z.object({
 type BlogFormData = z.infer<typeof blogSchema>;
 
 interface BlogEditorProps {
-  onSuccess?: () => void;
-  initialData?: BlogFormData;
+  onSuccess?: () => Post;
+  initialData: BlogFormData;
   isEditing?: boolean;
   blogId?: number;
 }
 
 export const BlogEditor = ({ onSuccess, initialData, isEditing, blogId }: BlogEditorProps) => {
+  const [show, setShow] = useState(false);
+  const [edit, setEdit] = useState<number | null>(null);
   const [tags, setTags] = useState<string[]>(initialData?.tags || []);
   const [tagInput, setTagInput] = useState('');
   const queryClient = useQueryClient();
@@ -32,8 +36,9 @@ export const BlogEditor = ({ onSuccess, initialData, isEditing, blogId }: BlogEd
   const {
     register,
     handleSubmit,
+    reset,
+    setValue,
     formState: { errors },
-    reset
   } = useForm<BlogFormData>({
     resolver: zodResolver(blogSchema),
     defaultValues: initialData
@@ -47,7 +52,8 @@ export const BlogEditor = ({ onSuccess, initialData, isEditing, blogId }: BlogEd
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['blogs'] });
       toast.success(isEditing ? 'Blog updated successfully!' : 'Blog created successfully!');
-      reset();
+      handleClose();
+      // reset();
       setTags([]);
       onSuccess?.();
     },
@@ -56,23 +62,46 @@ export const BlogEditor = ({ onSuccess, initialData, isEditing, blogId }: BlogEd
     }
   });
 
+  const handleClose = () => {
+    setShow(false);
+    setEdit(null);
+    reset();
+  };
+
+  const handleShow = (blog?: BlogFormData) => {
+    setShow(true);
+    if (blog) {
+      setEdit(blog.id);
+      setValue("tags", blog.tags);
+      setValue("title", blog.title);
+      setValue("image", blog.image);
+      setValue("description", blog. description);
+      setValue("category", blog.category);
+    } else {
+      setEdit(null);
+      reset();
+    }
+  };
+
   const handleAddTag = () => {
     if (tagInput.trim() && !tags.includes(tagInput.trim())) {
       setTags([...tags, tagInput.trim()]);
       setTagInput('');
     }
-  };
+  }
 
   const removeTag = (tagToRemove: string) => {
     setTags(tags.filter((tag) => tag !== tagToRemove));
   };
-
+}
   const onSubmit = (data: BlogFormData) => {
     mutation.mutate({
       ...data,
       tags,
-    });
-  };
+    })
+  
+
+
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
