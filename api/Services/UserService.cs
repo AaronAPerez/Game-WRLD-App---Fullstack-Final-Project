@@ -8,6 +8,7 @@ using api.Services.Context;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace api.Services;
 
@@ -175,27 +176,35 @@ public class UserService : ControllerBase
     }
 
     public async Task<UserProfileDTO> GetUserProfile(int userId)
+{
+    var user = await _context.UserInfo!
+        .Include(u => u.UserGames)
+        .Include(u => u.FriendshipsInitiated)
+        .Include(u => u.FriendshipsReceived)
+        .FirstOrDefaultAsync(u => u.Id == userId && !u.IsDeleted);
+
+    if (user == null)
+        throw new KeyNotFoundException($"User with ID {userId} not found");
+
+    // Populate UserProfileDTO
+    var userProfile = new UserProfileDTO
     {
-        var user = await _context.UserInfo!
-            .Include(u => u.UserGames)
-            .Include(u => u.FriendshipsInitiated)
-            .Include(u => u.FriendshipsReceived)
-            .FirstOrDefaultAsync(u => u.Id == userId && !u.IsDeleted);
+        Id = user.Id,
+        Username = user.Username ?? string.Empty,
+        Avatar = user.Avatar ?? string.Empty,
+        Status = user.Status ?? "offline",
+        LastActive = user.LastActive,
+        FriendsCount = GetFriendsCount(user),
+        GamesCount = user.UserGames?.Count ?? 0
+    };
 
-        if (user == null)
-            throw new KeyNotFoundException($"User with ID {userId} not found");
+    // Log the UserProfileDTO for debugging
+    Console.WriteLine("User Profile DTO: " + JsonConvert.SerializeObject(userProfile));
 
-        return new UserProfileDTO
-        {
-            Id = user.Id,
-            Username = user.Username ?? string.Empty,
-            Avatar = user.Avatar ?? string.Empty,
-            Status = user.Status ?? "offline",
-            LastActive = user.LastActive,
-            FriendsCount = GetFriendsCount(user),
-            GamesCount = user.UserGames?.Count ?? 0
-        };
-    }
+    return userProfile;
+}
+
+
 
     public async Task<bool> UpdateProfile(int userId, UpdateUserProfileDTO updateProfile)
     {
