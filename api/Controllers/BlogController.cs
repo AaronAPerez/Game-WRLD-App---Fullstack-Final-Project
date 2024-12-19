@@ -62,24 +62,23 @@ public class BlogController : ControllerBase
         return _data.UpdateBlogItems(BlogUpdate);
     }
 
-    //DeleteBlogItems
-    [HttpPost("DeleteBlogItem/{BlogDelete}")]
-    public bool DeleteBlogItem(BlogItemModel BlogDelete)
+    [HttpDelete("DeleteBlogItem/{userId}/{blogId}")]
+    public bool DeleteBlogItem(int userId, int blogId)
     {
-        return _data.DeleteBlogItem(BlogDelete);
+        return _data.DeleteBlogItem(userId, blogId);
     }
 
     //GetItemsByUserId 
     [HttpGet("GetItemsByUserId/{UserId}")]
 
-    public IEnumerable<BlogItemModel> GetItemsByUserId (int UserId)
+    public IEnumerable<BlogItemModel> GetItemsByUserId(int UserId)
     {
         return _data.GetItemsByUserId(UserId);
     }
 
     [HttpGet("GetPublishedItems")]
-        public IEnumerable<BlogItemModel> GetPublishedItems() 
-        {
-            return _data.GetPublishedItems();
-        }
+    public IEnumerable<BlogItemModel> GetPublishedItems()
+    {
+        return _data.GetPublishedItems();
+    }
 }

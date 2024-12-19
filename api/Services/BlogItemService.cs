@@ -26,15 +26,26 @@ public class BlogItemService : ControllerBase
 }
 
 
-    public bool DeleteBlogItem(BlogItemModel blogDelete)
+    public bool DeleteBlogItem(int userId, int blogId)
+{
+    var blogItem = _context.BlogInfo.FirstOrDefault(b => b.UserId == userId && b.Id == blogId);
+    
+   
+    if (blogItem != null)
     {
-        throw new NotImplementedException();
-    }
 
-     public IEnumerable<BlogItemModel> GetAllBlogItems()
-    {
-        return _context.BlogInfo;
+        _context.BlogInfo.Remove(blogItem);
+        
+
+        return _context.SaveChanges() != 0;
     }
+    
+    return false;
+}
+public IEnumerable<BlogItemModel> GetAllBlogItems()
+{
+    return _context.BlogInfo;
+}
 
     public IEnumerable<BlogItemModel> GetItemByCategory(string category)
     {
