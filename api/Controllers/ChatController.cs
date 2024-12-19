@@ -135,8 +135,25 @@ public async Task<ActionResult<ChatRoomDTO>> GetChatRoom(int id)
     }
 }
 
+[HttpPost("rooms/{roomId}/messages")]
+public async Task<ActionResult<ChatMessageDTO>> SendMessage(
+    int roomId, 
+    [FromBody] SendMessageDTO message)
+{
+    var userId = User.FindFirst("userId")?.Value;
+    if (userId == null) return Unauthorized();
+
+    // Set the room ID from the URL parameter
+    message.ChatRoomId = roomId;
+
+    var result = await _chatService.AddMessage(int.Parse(userId), message);
+    if (result == null) return BadRequest("Failed to send message");
+
+    return Ok(result);
+}
+
 [HttpGet("rooms/{id}/messages")]
-public ActionResult<IEnumerable<ChatMessageDTO>> GetRoomMessages(
+public async Task<ActionResult<IEnumerable<ChatMessageDTO>>> GetRoomMessages(
     int id,
     [FromQuery] int page = 1,
     [FromQuery] int pageSize = 50)
@@ -144,7 +161,7 @@ public ActionResult<IEnumerable<ChatMessageDTO>> GetRoomMessages(
     var userId = User.FindFirst("userId")?.Value;
     if (userId == null) return Unauthorized();
 
-    var result = _chatService.GetRoomMessages(int.Parse(userId), id, page, pageSize);
+    var result = await _chatService.GetRoomMessages(int.Parse(userId), id, page, pageSize);
     return Ok(result);
 }
 
