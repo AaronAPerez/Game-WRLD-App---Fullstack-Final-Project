@@ -12,27 +12,15 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { UserService } from '../services/userService';
-import type { UseMutationResult } from '@tanstack/react-query';
-
-// Update LoginResponse type
-interface LoginResponse {
-  token: string;
-  userId: number;
-  publisherName: string;
-  avatar?: string;
-}
-
-// Update mutation type
-interface AvatarMutationResult {
-  success: boolean;
-  avatarUrl: string;
-}
-
-
+import { userService } from '../services/userService';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
+interface UserProfile {
+  publisherName: string;
+  avatar?: string;
+}
 
 const AvatarMenu = () => {
   const { user, logout } = useAuth();
@@ -40,15 +28,11 @@ const AvatarMenu = () => {
   const queryClient = useQueryClient();
 
   // Upload mutation
-  const { mutate: uploadAvatar, isPending: isLoading } = useMutation<
-    AvatarMutationResult,
-    Error,
-    File
-  >({
+  const { mutate: uploadAvatar, isPending: isLoading } = useMutation({
     mutationFn: async (file: File) => {
       const formData = new FormData();
       formData.append('avatar', file);
-      return UserService.updateAvatar(formData);
+      return userService.updateAvatar(formData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userProfile'] });

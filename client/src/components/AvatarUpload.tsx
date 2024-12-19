@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Upload, X, Loader2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import { UserService } from '../services/userService';
+import { userService } from '../services/userService';
 
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -16,7 +16,7 @@ export const AvatarUpload = () => {
     mutationFn: async (file: File) => {
       const formData = new FormData();
       formData.append('avatar', file);
-      return UserService.updateAvatar(formData);
+      return userService.updateAvatar(formData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userProfile'] });
