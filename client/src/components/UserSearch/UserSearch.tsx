@@ -1,55 +1,58 @@
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { 
-  Search, UserPlus, MessageSquare, 
-  Mail, Loader2, Users, Check,
-  X, User
+  Search, 
+  UserPlus, 
+  MessageSquare, 
+  Users,
+  Gamepad,
+  Loader2,
+  Filter
 } from 'lucide-react';
 import { cn } from '../../utils/styles';
-import { UserService } from '../../services/userService';
-import { toast } from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
 
-interface UserProfile {
-  id: number;
-  username: string;
-  avatar: string | null;
-  status: 'online' | 'offline' | 'ingame';
-  friendsCount: number;
-  gamesCount: number;
-  friendStatus?: 'none' | 'pending' | 'friends';
-}
+import { FriendActionButton } from '../friends/FriendActionButton';
+import { ChatActionButton } from '../ChatActionButton';
+import { searchService, UserSearchFilters } from '../../services/searchService';
+import { UserProfileDTO } from '../../types/user';
 
-interface UserCardProps {
-  user: UserProfile;
-  onAddFriend: () => void;
-  onMessage: () => void;
-}
 
-export const UserSearch = () => {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const [searchQuery, setSearchQuery] = useState('');
-
-  // Search Query
-  const { data: searchResults, isLoading } = useQuery({
-    queryKey: ['searchUsers', searchQuery],
-    queryFn: () => UserService.searchUsers(searchQuery),
-    enabled: searchQuery.length >= 2,
+export function UserSearch() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [filters, setFilters] = useState<UserSearchFilters>({
+    query: searchParams.get('q') || '',
+    status: 'all',
+    mutualFriends: false,
+    mutualGames: false
   });
 
-  // Friend Request Mutation
-  const sendFriendRequestMutation = useMutation({
-    mutationFn: (userId: number) => UserService.sendFriendRequest(userId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['friendRequests'] });
-      toast.success('Friend request sent!');
-    },
-    onError: () => {
-      toast.error('Failed to send friend request');
-    }
+  // Search users with filters
+  const { data: users, isLoading } = useQuery({
+    queryKey: ['userSearch', filters],
+    queryFn: () => searchService.searchUsers(filters),
+    enabled: filters.query.length >= 2
   });
+
+  // Update URL and filters when query changes
+  const updateQuery = (newQuery: string) => {
+    setFilters(prev => ({ ...prev, query: newQuery }));
+    setSearchParams(newQuery ? { q: newQuery } : {});
+  };
+
+  // Memoized filtered users
+  const filteredUsers = useMemo(() => {
+    if (!users) return [];
+
+    return users.filter(user => {
+      const statusMatch = filters.status === 'all' || 
+        (filters.status === 'online' && user.Status === 'online') ||
+        (filters.status === 'offline' && user.Status === 'offline');
+      
+      return statusMatch;
+    });
+  }, [users, filters.status]);
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -62,59 +65,98 @@ export const UserSearch = () => {
         </div>
       </div>
 
-   {/* Search Bar */}
-   <div className="max-w-2xl mx-auto mb-8">
-        <div className={cn(
-          "relative",
-          "focus-within:ring-2 focus-within:ring-indigo-500 rounded-xl"
-        )}>
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search users by username..."
+      {/* Search and Filters */}
+      <div className="flex flex-col md:flex-row gap-4 mb-8">
+        {/* Search Bar */}
+        <div className="flex-1">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              value={filters.query}
+              onChange={(e) => updateQuery(e.target.value)}
+              placeholder="Search users by username..."
+              className={cn(
+                "w-full pl-10 pr-4 py-3 bg-stone-800 rounded-lg",
+                "text-white placeholder:text-gray-400",
+                "focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              )}
+            />
+          </div>
+        </div>
+
+        {/* Filters */}
+        <div className="flex gap-4">
+          {/* Status Filter */}
+          <select
+            value={filters.status}
+            onChange={(e) => setFilters(prev => ({ 
+              ...prev, 
+              status: e.target.value as 'online' | 'offline' | 'all' 
+            }))}
             className={cn(
-              "w-full pl-12 pr-4 py-3 bg-stone-800 rounded-xl",
-              "text-white placeholder:text-gray-400",
-              "focus:outline-none"
+              "px-4 py-2 bg-stone-800 rounded-lg",
+              "text-white border-none",
+              "focus:outline-none focus:ring-2 focus:ring-indigo-500"
             )}
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-stone-700"
-            >
-              <X className="w-4 h-4 text-gray-400" />
-            </button>
-          )}
+          >
+            <option value="all">All Users</option>
+            <option value="online">Online</option>
+            <option value="offline">Offline</option>
+          </select>
+
+          {/* Mutual Friends Filter */}
+          <button
+            onClick={() => setFilters(prev => ({ 
+              ...prev, 
+              mutualFriends: !prev.mutualFriends 
+            }))}
+            className={cn(
+              "px-4 py-2 rounded-lg flex items-center gap-2",
+              "transition-colors",
+              filters.mutualFriends
+                ? "bg-indigo-500/20 text-indigo-400"
+                : "bg-stone-800 text-gray-400"
+            )}
+          >
+            <Users className="w-4 h-4" />
+            Mutual Friends
+          </button>
+
+          {/* Mutual Games Filter */}
+          <button
+            onClick={() => setFilters(prev => ({ 
+              ...prev, 
+              mutualGames: !prev.mutualGames 
+            }))}
+            className={cn(
+              "px-4 py-2 rounded-lg flex items-center gap-2",
+              "transition-colors",
+              filters.mutualGames
+                ? "bg-indigo-500/20 text-indigo-400"
+                : "bg-stone-800 text-gray-400"
+            )}
+          >
+            <Gamepad className="w-4 h-4" />
+            Mutual Games
+          </button>
         </div>
       </div>
 
       {/* Results Section */}
-      <div className="space-y-6">
+      <div>
         {isLoading ? (
-          <div className="flex justify-center items-center h-48">
+          <div className="flex justify-center items-center h-64">
             <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
           </div>
-        ) : searchQuery.length < 2 ? (
+        ) : filteredUsers.length === 0 ? (
           <div className="text-center py-12">
             <Users className="w-16 h-16 mx-auto text-gray-600 mb-4" />
-            <h2 className="text-xl font-medium text-white mb-2">
-              Enter at least 2 characters to search
-            </h2>
-            <p className="text-gray-400">
-              Find friends by typing their username
-            </p>
-          </div>
-        ) : searchResults?.length === 0 ? (
-          <div className="text-center py-12">
-            <User className="w-16 h-16 mx-auto text-gray-600 mb-4" />
             <h2 className="text-xl font-medium text-white mb-2">
               No users found
             </h2>
             <p className="text-gray-400">
-              Try searching with a different username
+              Try a different search or adjust filters
             </p>
           </div>
         ) : (
@@ -123,72 +165,52 @@ export const UserSearch = () => {
             animate={{ opacity: 1 }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
-            {searchResults?.map((user: UserProfile) => (
-              <UserCard
-                key={user.id}
-                user={user}
-                onAddFriend={() => sendFriendRequestMutation.mutate(user.id)}
-                onMessage={() => navigate(`/messages/${user.id}`)}
-              />
+            {filteredUsers.map((user) => (
+              <UserCard key={user.Id} user={user} />
             ))}
           </motion.div>
         )}
       </div>
     </div>
   );
-};
+}
 
 // User Card Component
-const UserCard = ({ user, onAddFriend, onMessage }: UserCardProps) => {
+const UserCard = ({ user }: { user: UserProfileDTO }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className={cn(
         "bg-stone-900 rounded-xl p-6 border border-stone-800",
-        "hover:border-indigo-500/30 transition-all duration-300",
-        "group relative overflow-hidden"
+        "hover:border-indigo-500/30 transition-all duration-300"
       )}
     >
-      {/* Status Indicator */}
-      <div className={cn(
-        "absolute top-4 right-4 px-2 py-1 rounded-full text-xs font-medium",
-        user.status === 'online' 
-          ? "bg-green-500/20 text-green-400" 
-          : user.status === 'ingame' 
-            ? "bg-indigo-500/20 text-indigo-400" 
-            : "bg-stone-800 text-gray-400"
-      )}>
-        {user.status}
-      </div>
-
       {/* User Info */}
       <div className="flex items-start gap-4">
         <div className="relative">
           <img
-            src={user.avatar || '/default-avatar.png'}
-            alt={user.username}
+            src={user.Avatar || '/default-avatar.png'}
+            alt={user.Username}
             className="w-16 h-16 rounded-xl object-cover"
           />
           <div className={cn(
-            "absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-stone-900",
-            user.status === 'online' 
+            "absolute bottom-0 right-0 w-4 h-4 rounded-full border-2 border-stone-900",
+            user.Status === 'online' 
               ? "bg-green-500" 
-              : user.status === 'ingame' 
-                ? "bg-indigo-500" 
-                : "bg-gray-500"
+              : "bg-gray-500"
           )} />
         </div>
         
         <div className="flex-1">
-          <h3 className="text-xl font-bold text-white">{user.username}</h3>
+          <h3 className="text-xl font-bold text-white">{user.Username}</h3>
           <div className="flex items-center gap-2 mt-2">
             <span className="text-sm text-gray-400">
-              {user.friendsCount} friends
+              {user.FriendsCount} friends
             </span>
             <span className="text-gray-600">•</span>
             <span className="text-sm text-gray-400">
-              {user.gamesCount} games
+              {user.GamesCount} games
             </span>
           </div>
         </div>
@@ -196,52 +218,8 @@ const UserCard = ({ user, onAddFriend, onMessage }: UserCardProps) => {
 
       {/* Action Buttons */}
       <div className="flex items-center gap-3 mt-6">
-        <button
-          onClick={onAddFriend}
-          disabled={user.friendStatus === 'pending'}
-          className={cn(
-            "flex items-center justify-center gap-2 px-4 py-2 rounded-lg flex-1",
-            "transition-colors text-sm font-medium",
-            user.friendStatus === 'pending'
-              ? "bg-green-500/20 text-green-400"
-              : "bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30"
-          )}
-        >
-          {user.friendStatus === 'pending' ? (
-            <>
-              <Check className="w-4 h-4" />
-              <span>Request Sent</span>
-            </>
-          ) : (
-            <>
-              <UserPlus className="w-4 h-4" />
-              <span>Add Friend</span>
-            </>
-          )}
-        </button>
-
-        <button
-          onClick={onMessage}
-          className={cn(
-            "flex items-center justify-center gap-2 px-4 py-2 rounded-lg flex-1",
-            "transition-colors text-sm font-medium",
-            user.status === 'online'
-              ? "bg-green-500/20 text-green-400 hover:bg-green-500/30"
-              : "bg-stone-800 text-gray-400 hover:bg-stone-700"
-          )}
-        >
-          {user.status === 'online' ? (
-            <>
-              <MessageSquare className="w-4 h-4" />
-              <span>Chat</span>
-            </>
-          ) : (
-            <>
-              <Mail className="w-4 h-4" />
-              <span>Message</span>
-            </>
-          )}
-        </button>
+        <FriendActionButton targetUser={user} />
+        <ChatActionButton targetUser={user} />
       </div>
     </motion.div>
   );
