@@ -11,14 +11,14 @@ public class DataContext : DbContext
     }
 
     // Define DbSets for all models
-    public DbSet<UserModel>? UserInfo { get; set; }
-    public DbSet<BlogItemModel>? BlogInfo { get; set; }
-    public DbSet<FriendModel>? Friends { get; set; }
-    public DbSet<UserGameModel>? UserGames { get; set; }
-    public DbSet<ChatRoomModel>? ChatRooms { get; set; }
-    public DbSet<ChatRoomMemberModel>? ChatRoomMembers { get; set; }
-    public DbSet<ChatMessageModel>? ChatMessages { get; set; }
-    public DbSet<DirectMessageModel>? DirectMessages { get; set; }
+    public DbSet<UserModel> UserInfo { get; set; }
+    public DbSet<BlogItemModel> BlogInfo { get; set; }
+    public DbSet<FriendModel> Friends { get; set; }
+    public DbSet<UserGameModel> UserGames { get; set; }
+    public DbSet<ChatRoomModel> ChatRooms { get; set; }
+    public DbSet<ChatRoomMemberModel> ChatRoomMembers { get; set; }
+    public DbSet<ChatMessageModel> ChatMessages { get; set; }
+    public DbSet<DirectMessageModel> DirectMessages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -45,10 +45,10 @@ public class DataContext : DbContext
 
         // Blog Item Relationships
         modelBuilder.Entity<BlogItemModel>()
-    .HasOne<UserModel>()
-    .WithMany()
-   .HasForeignKey(b => b.UserId)
-.OnDelete(DeleteBehavior.Restrict);
+            .HasOne<UserModel>()
+            .WithMany()
+            .HasForeignKey(b => b.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         // Chat Room Relationships
         modelBuilder.Entity<ChatRoomModel>()
@@ -96,10 +96,24 @@ public class DataContext : DbContext
             .HasForeignKey(m => m.ReceiverId)
             .OnDelete(DeleteBehavior.Restrict);
 
+
         // Friend Relationships
+        modelBuilder.Entity<FriendModel>()
+            .HasOne(f => f.Requester)
+            .WithMany(u => u.FriendshipsInitiated)
+            .HasForeignKey(f => f.RequesterId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<FriendModel>()
+            .HasOne(f => f.Addressee)
+            .WithMany(u => u.FriendshipsReceived)
+            .HasForeignKey(f => f.AddresseeId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         modelBuilder.Entity<FriendModel>()
             .HasIndex(f => new { f.RequesterId, f.AddresseeId })
             .IsUnique();
+    
 
         // User Game Relationships
         modelBuilder.Entity<UserGameModel>()

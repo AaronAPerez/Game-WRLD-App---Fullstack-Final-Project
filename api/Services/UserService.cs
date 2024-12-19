@@ -224,6 +224,44 @@ public class UserService : ControllerBase
         return await _context.SaveChangesAsync() > 0;
     }
 
+    // Get Friends
+    public async Task<IEnumerable<UserProfileDTO>> GetFriends(int userId)
+    {
+        if (_context.Friends == null || _context.UserInfo == null)
+            return Enumerable.Empty<UserProfileDTO>();
+
+        // Get all accepted friend relationships for user
+        var friendships = await _context.Friends
+            .Include(f => f.Requester)
+            .Include(f => f.Addressee)
+            .Where(f => (f.RequesterId == userId || f.AddresseeId == userId) &&
+                        f.Status.ToLower() == "accepted")
+            .ToListAsync();
+
+        // Map the friend records to UserProfileDTOs
+        var friends = friendships.Select(f =>
+        {
+            // Get the friend user (either requester or addressee, depending on which one is not the current user)
+            var friendUser = f.RequesterId == userId ? f.Addressee : f.Requester;
+
+            return new UserProfileDTO
+            {
+                Id = friendUser.Id,
+                Username = friendUser.Username ?? string.Empty,
+                Avatar = friendUser.Avatar ?? string.Empty,
+                Status = friendUser.Status ?? "offline",
+                LastActive = friendUser.LastActive,
+                FriendsCount = _context.Friends.Count(fr =>
+                    (fr.RequesterId == friendUser.Id || fr.AddresseeId == friendUser.Id) &&
+                    fr.Status.ToLower() == "accepted"),
+                GamesCount = friendUser.UserGames?.Count ?? 0
+            };
+        });
+
+        return friends;
+    }
+
+
     public async Task<bool> SendFriendRequest(int requesterId, int addresseeId)
     {
         if (_context.Friends == null)
@@ -273,90 +311,21 @@ public class UserService : ControllerBase
         return await _context.SaveChangesAsync() > 0;
     }
 
-    // public async Task<IEnumerable<UserProfileDTO>> GetFriends(int userId)
-    // {
-    //     if (_context.Friends == null || _context.UserInfo == null)
-    //         return Enumerable.Empty<UserProfileDTO>();
-
-    //     var friends = await _context.Friends
-    //         .Where(f => (f.RequesterId == userId || f.AddresseeId == userId) &&
-    //                    (f.Status ?? "").Equals("accepted", StringComparison.OrdinalIgnoreCase))
-    //         .Select(f => f.RequesterId == userId ? f.Addressee : f.Requester)
-    //         .Select(u => new UserProfileDTO
-    //         {
-    //             Id = u!.Id,
-    //             Username = u.Username ?? string.Empty,
-    //             Avatar = u.Avatar ?? string.Empty,
-    //             Status = u.Status ?? "offline",
-    //             LastActive = u.LastActive,
-    //             FriendsCount = _context.Friends.Count(fr =>
-    //                 (fr.RequesterId == u.Id || fr.AddresseeId == u.Id) &&
-    //                 (fr.Status ?? "").Equals("accepted", StringComparison.OrdinalIgnoreCase)),
-    //             GamesCount = u.UserGames != null ? u.UserGames.Count : 0
-    //         })
-    //         .ToListAsync();
-
-    //     return friends;
-    // }
-
-    public async Task<bool> AddUserGame(int userId, UserGameDTO gameDto)
-    {
-        if (_context.UserGames == null)
-            return false;
-
-        var existingGame = await _context.UserGames
-            .FirstOrDefaultAsync(ug => ug.UserId == userId && ug.GameId == gameDto.GameId);
-
-        if (existingGame != null)
-        {
-            existingGame.IsFavorite = gameDto.IsFavorite;
-        }
-        else
-        {
-            var userGame = new UserGameModel
-            {
-                UserId = userId,
-                GameId = gameDto.GameId,
-                IsFavorite = gameDto.IsFavorite,
-                AddedAt = DateTime.UtcNow
-            };
-            _context.UserGames.Add(userGame);
-        }
-
-        return await _context.SaveChangesAsync() > 0;
-    }
-
-    public async Task<IEnumerable<UserGameDTO>> GetUserGames(int userId)
-    {
-        if (_context.UserGames == null)
-            return Enumerable.Empty<UserGameDTO>();
-
-        return await _context.UserGames
-            .Where(ug => ug.UserId == userId)
-            .Select(ug => new UserGameDTO
-            {
-                GameId = ug.GameId,
-                IsFavorite = ug.IsFavorite
-            })
-            .ToListAsync();
-    }
-
-
     // Handle null Status
     private int GetFriendsCount(UserModel user)
     {
         if (_context.Friends == null)
             return 0;
 
-        return _context.Friends.Count(f => 
-            (f.RequesterId == user.Id || f.AddresseeId == user.Id) && 
+        return _context.Friends.Count(f =>
+            (f.RequesterId == user.Id || f.AddresseeId == user.Id) &&
             (f.Status != null && f.Status.ToLower() == "accepted")
         );
     }
 
-   private string GenerateJwtToken(UserModel user)
+    private string GenerateJwtToken(UserModel user)
     {
-        var rawKey = _config["Jwt:Key"] 
+        var rawKey = _config["Jwt:Key"]
             ?? throw new InvalidOperationException("JWT key not configured");
 
 
@@ -389,15 +358,15 @@ public class UserService : ControllerBase
         return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
     }
 
-   public async Task<IEnumerable<UserProfileDTO>> SearchUsers(int v, string query)
+    public async Task<IEnumerable<UserProfileDTO>> SearchUsers(int v, string query)
     {
         if (_context.UserInfo == null)
             return Enumerable.Empty<UserProfileDTO>();
 
         // Search users by username, case-insensitive
         var users = await _context.UserInfo
-            .Where(u => !u.IsDeleted && 
-                       u.Username != null && 
+            .Where(u => !u.IsDeleted &&
+                       u.Username != null &&
                        u.Username.ToLower().Contains(query.ToLower()))
             .Select(u => new UserProfileDTO
             {
@@ -406,9 +375,9 @@ public class UserService : ControllerBase
                 Avatar = u.Avatar ?? string.Empty,
                 Status = u.Status ?? "offline",
                 LastActive = u.LastActive,
-                FriendsCount = _context.Friends != null ? 
-                    _context.Friends.Count(f => 
-                        (f.RequesterId == u.Id || f.AddresseeId == u.Id) && 
+                FriendsCount = _context.Friends != null ?
+                    _context.Friends.Count(f =>
+                        (f.RequesterId == u.Id || f.AddresseeId == u.Id) &&
                         f.Status == "accepted") : 0,
                 GamesCount = u.UserGames != null ? u.UserGames.Count : 0
             })
@@ -468,51 +437,60 @@ public class UserService : ControllerBase
         };
     }
 
-    public async Task<IEnumerable<UserProfileDTO>> GetFriends(int userId)
-    {
-        if (_context.Friends == null || _context.UserInfo == null)
-            return Enumerable.Empty<UserProfileDTO>();
-
-        var friends = await _context.Friends
-            .Where(f => (f.RequesterId == userId || f.AddresseeId == userId) && 
-                       f.Status == "accepted")
-            .Select(f => f.RequesterId == userId ? f.Addressee : f.Requester)
-            .Select(u => new UserProfileDTO
-            {
-                Id = u.Id,
-                Username = u.Username ?? string.Empty,
-                Avatar = u.Avatar ?? string.Empty,
-                Status = u.Status ?? "offline",
-                LastActive = u.LastActive,
-                FriendsCount = _context.Friends.Count(fr => 
-                    (fr.RequesterId == u.Id || fr.AddresseeId == u.Id) && 
-                    fr.Status == "accepted"),
-                GamesCount = u.UserGames != null ? u.UserGames.Count : 0
-            })
-            .ToListAsync();
-
-        return friends;
-    }
-
-    // Additional helper methods if needed
     private async Task<bool> AreUsersFriends(int userId1, int userId2)
     {
         if (_context.Friends == null)
             return false;
 
         return await _context.Friends
-            .AnyAsync(f => 
+            .AnyAsync(f =>
                 ((f.RequesterId == userId1 && f.AddresseeId == userId2) ||
                  (f.RequesterId == userId2 && f.AddresseeId == userId1)) &&
                 f.Status == "accepted");
     }
 
-
     
-
-    internal async Task RespondToFriendRequest(int v, object requestId, object accept)
+    public async Task<bool> AddUserGame(int userId, UserGameDTO gameDto)
     {
-        throw new NotImplementedException();
+        if (_context.UserGames == null)
+            return false;
+
+        var existingGame = await _context.UserGames
+            .FirstOrDefaultAsync(ug => ug.UserId == userId && ug.GameId == gameDto.GameId);
+
+        if (existingGame != null)
+        {
+            existingGame.IsFavorite = gameDto.IsFavorite;
+        }
+        else
+        {
+            var userGame = new UserGameModel
+            {
+                UserId = userId,
+                GameId = gameDto.GameId,
+                IsFavorite = gameDto.IsFavorite,
+                AddedAt = DateTime.UtcNow
+            };
+            _context.UserGames.Add(userGame);
+        }
+
+        return await _context.SaveChangesAsync() > 0;
+    }
+
+    public async Task<IEnumerable<UserGameDTO>> GetUserGames(int userId)
+    {
+        if (_context.UserGames == null)
+            return Enumerable.Empty<UserGameDTO>();
+
+        return await _context.UserGames
+            .Where(ug => ug.UserId == userId)
+            .Select(ug => new UserGameDTO
+            {
+                GameId = ug.GameId,
+                IsFavorite = ug.IsFavorite
+            })
+            .ToListAsync();
     }
 
 }
+

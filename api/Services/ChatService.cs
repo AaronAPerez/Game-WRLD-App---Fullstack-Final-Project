@@ -290,6 +290,86 @@ public class ChatService
         return messages;
     }
 
+
+     // Mark multiple messages as read
+    public async Task MarkMessagesAsRead(List<int> messageIds, int userId)
+    {
+        if (_context.DirectMessages == null)
+            return;
+
+        var messages = await _context.DirectMessages
+            .Where(m => messageIds.Contains(m.Id) && m.ReceiverId == userId)
+            .ToListAsync();
+
+        foreach (var message in messages)
+        {
+            message.IsRead = true;
+        }
+
+        await _context.SaveChangesAsync();
+    }
+
+    // Get message by ID
+    public async Task<DirectMessageModel?> GetMessage(int messageId)
+    {
+        if (_context.DirectMessages == null)
+            return null;
+
+        return await _context.DirectMessages
+            .Include(m => m.Sender)
+            .Include(m => m.Receiver)
+            .FirstOrDefaultAsync(m => m.Id == messageId);
+    }
+
+    // Get multiple messages by IDs
+    public async Task<List<DirectMessageModel>> GetMessagesByIds(List<int> messageIds)
+    {
+        if (_context.DirectMessages == null)
+            return new List<DirectMessageModel>();
+
+        return await _context.DirectMessages
+            .Include(m => m.Sender)
+            .Include(m => m.Receiver)
+            .Where(m => messageIds.Contains(m.Id))
+            .ToListAsync();
+    }
+
+    public async Task<DirectMessageDTO?> GetMessageDTO(int messageId)
+    {
+        var message = await GetMessage(messageId);
+        if (message == null)
+            return null;
+
+        return new DirectMessageDTO
+        {
+            Id = message.Id,
+            Content = message.Content,
+            MessageType = message.MessageType,
+            SentAt = message.SentAt,
+            IsRead = message.IsRead,
+            IsEdited = message.IsEdited,
+            Sender = new UserProfileDTO
+            {
+                Id = message.Sender.Id,
+                Username = message.Sender.Username ?? string.Empty,
+                Avatar = message.Sender.Avatar ?? string.Empty,
+                Status = message.Sender.Status ?? "offline",
+                LastActive = message.Sender.LastActive
+            },
+            Receiver = new UserProfileDTO
+            {
+                Id = message.Receiver.Id,
+                Username = message.Receiver.Username ?? string.Empty,
+                Avatar = message.Receiver.Avatar ?? string.Empty,
+                Status = message.Receiver.Status ?? "offline",
+                LastActive = message.Receiver.LastActive
+            }
+        };
+    }
+
+
+
+
     public async Task<bool> JoinRoom(int userId, int roomId)
     {
         if (_context.ChatRoomMembers == null)

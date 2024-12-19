@@ -19,7 +19,7 @@ builder.Services.AddCors(options =>
                 .WithOrigins(
                     "http://localhost:5173",    // Vite default
                     "http://127.0.0.1:5173",    // Alternative localhost
-                    "http://localhost:3000",     // In case you use a different port
+                    "http://localhost:3000",     // different port
                     "http://127.0.0.1:3000"     // Alternative localhost
                 )
                 .AllowAnyMethod()
@@ -138,8 +138,8 @@ else
     app.UseHsts();
 }
 
-// Important: Place UseCors before other middleware that might use routing
-app.UseCors("GameWorldPolicy"); // Use the more restrictive policy
+
+app.UseCors("GameWorldPolicy"); 
 
 app.UseHttpsRedirection();
 
