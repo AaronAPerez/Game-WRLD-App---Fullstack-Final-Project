@@ -191,13 +191,14 @@ const LoginPage = () => {
               type="submit"
               disabled={isLoading}
               className={cn(
-                "w-full relative px-4 py-2 font-medium text-white rounded-full",
+                "w-full relative px-4 py-2 font-medium text-white rounded-full outline",
                 "transition-all duration-300",
-                "bg-blue-900 hover:bg-indigo-500",
+                "bg-indigo-900 hover:bg-indigo-600",
+                // Enhanced glow for primary button
                 "before:absolute before:inset-0 before:rounded-full before:opacity-0",
                 "before:bg-[radial-gradient(circle_at_center,rgba(79,70,229,0.3)_0%,transparent_70%)]",
                 "hover:before:opacity-100",
-                "disabled:opacity-50 disabled:cursor-not-allowed",
+                // Shadow effect
                 "shadow-lg shadow-indigo-500/20"
               )}
             >

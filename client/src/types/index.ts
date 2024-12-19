@@ -1,3 +1,5 @@
+import { ReactNode } from "react"
+
 export interface UserProfile {
   id: number
   username: string
@@ -10,6 +12,11 @@ export interface UserProfile {
 }
 
 export interface User {
+  gamesCount: ReactNode
+  friendsCount: ReactNode
+  status: string
+  username: string | undefined
+  avatar: string
   id: string
   email: string
   firstName: string
@@ -50,6 +57,7 @@ export interface ChatUser {
 }
 
 export interface ChatMessage {
+  roomId: number
   timestamp: string | number | Date
   chatRoomId: any
   id: number

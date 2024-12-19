@@ -1,13 +1,14 @@
 import { HTMLAttributes } from 'react';
+import { cn } from '../utils/styles';
 
-type LogoProps = HTMLAttributes<SVGElement> & {
+interface LogoProps extends HTMLAttributes<SVGElement> {
   className?: string;
-};
+}
 
-export default function Logo({ className = "w-32", ...props }: LogoProps) {
+export default function Logo({ className, ...props }: LogoProps) {
   return (
     <svg 
-      className={className}
+      className={cn("w-32", className)}
       viewBox="0 0 290 85" 
       xmlns="http://www.w3.org/2000/svg"
       aria-label="Game WRLD Logo"
@@ -51,6 +52,7 @@ export default function Logo({ className = "w-32", ...props }: LogoProps) {
         </linearGradient>
       </defs>
 
+      {/* Controller Shape */}
       <path 
         d="M40 30 C40 18 50 10 62 10 L78 10 C90 10 100 18 100 30 L100 50 C100 62 90 70 78 70 L62 70 C50 70 40 62 40 50 Z" 
         fill="none" 
@@ -58,6 +60,7 @@ export default function Logo({ className = "w-32", ...props }: LogoProps) {
         strokeWidth="3"
       />
       
+      {/* D-Pad */}
       <rect 
         x="50" 
         y="35" 
@@ -75,6 +78,7 @@ export default function Logo({ className = "w-32", ...props }: LogoProps) {
         fill="#4F46E5"
       />
       
+      {/* Buttons */}
       <circle 
         cx="85" 
         cy="40" 
@@ -88,6 +92,7 @@ export default function Logo({ className = "w-32", ...props }: LogoProps) {
         fill="#06B6D4"
       />
       
+      {/* Text */}
       <text 
         x="110" 
         y="48" 

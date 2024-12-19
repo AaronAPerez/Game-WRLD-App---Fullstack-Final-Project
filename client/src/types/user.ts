@@ -15,6 +15,17 @@ export interface User {
     createdAt: Date;
     updatedAt: Date;
   }
+
+export interface UserProfileDTO {
+     Id: string; 
+     Username: string;
+     Avatar: string;
+     Status: string;
+     LastActive: Date;
+     FriendsCount: number; 
+     GamesCount: number; 
+    //  IsOnline: booleon; 
+  }
   
   // types/message.ts
   export interface Message {

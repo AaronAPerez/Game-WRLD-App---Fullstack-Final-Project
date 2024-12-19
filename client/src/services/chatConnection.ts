@@ -4,7 +4,8 @@ import {
     HubConnectionState,
     LogLevel,
   } from '@microsoft/signalr';
-import { BASE_URL } from '../constant';
+import { BASE_URL } from '../constants';
+
 
   
   export class ChatConnectionManager {

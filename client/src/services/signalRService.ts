@@ -1,5 +1,5 @@
 import { HubConnectionBuilder, HubConnection, LogLevel } from '@microsoft/signalr';
-import { useAuthStore } from '../components/store/authStore';
+import { useAuthStore } from '../store/authStore';
 
 export class SignalRService {
   private static instance: SignalRService;

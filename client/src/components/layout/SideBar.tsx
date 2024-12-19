@@ -75,6 +75,7 @@ const Sidebar = ({ isCollapsed, onClose }: SidebarProps) => {
     if (item.requiresAuth && !isAuthenticated) return null;
 
     return (
+      <div className='absolute'>
       <NavLink
         key={item.path}
         to={item.path}
@@ -102,6 +103,7 @@ const Sidebar = ({ isCollapsed, onClose }: SidebarProps) => {
           </div>
         )}
       </NavLink>
+      </div>
     );
   }, [isCollapsed, isAuthenticated]);
 
@@ -150,6 +152,7 @@ const Sidebar = ({ isCollapsed, onClose }: SidebarProps) => {
         <ChevronLeft className="w-5 h-5" />
       </button>
     </motion.aside>
+  
   );
 };
 

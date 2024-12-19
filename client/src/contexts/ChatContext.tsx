@@ -1,131 +1,163 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { HubConnection, HubConnectionState } from '@microsoft/signalr';
-import { chatService } from '../services/chatService';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { toast } from 'react-hot-toast';
-import { useAuth } from '../hooks/useAuth';
-import type { SendMessageRequest } from '../types/chat';
+import { CHAT_HUB_URL } from '../constants';
+import type { ChatMessage, DirectMessage, UserProfileDTO } from '../types/chat';
 
 interface ChatContextType {
+  connection: HubConnection | null;
   isConnected: boolean;
-  connect: () => Promise<void>;
-  disconnect: () => Promise<void>;
-  sendMessage: (roomId: number, content: string) => Promise<void>;
-  sendDirectMessage: (userId: number, content: string) => Promise<void>;
-  isTyping: (roomId: number) => Promise<void>;
-  connectionState: HubConnectionState;
+  sendMessage: (message: { 
+    roomId?: number; 
+    receiverId?: number; 
+    content: string; 
+    type?: string; 
+  }) => Promise<void>;
+  startTyping: (roomId: number) => Promise<void>;
+  onlineUsers: Set<number>;
+  typingUsers: Map<number, Set<number>>;
+  unreadMessages: DirectMessage[];
 }
 
-const ChatContext = createContext<ChatContextType | null>(null);
+const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
-export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated } = useAuth();
+export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [connection, setConnection] = useState<HubConnection | null>(null);
-  const [connectionState, setConnectionState] = useState<HubConnectionState>(
-    HubConnectionState.Disconnected
-  );
+  const [isConnected, setIsConnected] = useState(false);
+  const [onlineUsers, setOnlineUsers] = useState<Set<number>>(new Set());
+  const [typingUsers, setTypingUsers] = useState<Map<number, Set<number>>>(new Map());
+  const [unreadMessages, setUnreadMessages] = useState<DirectMessage[]>([]);
 
-  // Auto-connect when authenticated
+  // Initialize SignalR connection
   useEffect(() => {
-    if (isAuthenticated) {
-      const token = localStorage.getItem('token');
-      if (token) {
-        // Using void operator to handle Promise without checking result
-        void connect();
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    const newConnection = new HubConnectionBuilder()
+      .withUrl(`${CHAT_HUB_URL}?access_token=${token}`)
+      .withAutomaticReconnect()
+      .configureLogging(LogLevel.Information)
+      .build();
+
+    async function startConnection() {
+      try {
+        await newConnection.start();
+        setIsConnected(true);
+        toast.success('Connected to chat server');
+      } catch (err) {
+        toast.error('Failed to connect to chat server');
+        setTimeout(startConnection, 5000);
       }
-    } else {
-      void disconnect();
     }
-  }, [isAuthenticated]);
 
-  const connect = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No auth token found');
-      }
-
-      // Connect to chat service
-      await chatService.connect(token);
-
-      // Get the connection after connecting
-      const conn = chatService.getConnection();
-      if (conn) {
-        setConnection(conn);
-        setConnectionState(HubConnectionState.Connected);
+    // Set up event handlers
+    newConnection.on('ReceiveMessage', (message: ChatMessage | DirectMessage) => {
+      if ('roomId' in message) {
+        // Handle room message
       } else {
-        throw new Error('Failed to establish chat connection');
+        // Handle direct message
+        setUnreadMessages(prev => [...prev, message]);
       }
-    } catch (error) {
-      console.error('Failed to connect to chat:', error);
-      setConnectionState(HubConnectionState.Disconnected);
-      toast.error('Failed to connect to chat');
-    }
-  };
+    });
 
-  const disconnect = async () => {
-    if (connection) {
-      await chatService.disconnect();
-      setConnection(null);
-      setConnectionState(HubConnectionState.Disconnected);
-    }
-  };
+    newConnection.on('UserOnlineStatus', (user: UserProfileDTO, isOnline: boolean) => {
+      setOnlineUsers(prev => {
+        const newSet = new Set(prev);
+        isOnline ? newSet.add(user.id) : newSet.delete(user.id);
+        return newSet;
+      });
+    });
 
-  const sendMessage = async (roomId: number, content: string) => {
-    if (!connection || connectionState !== HubConnectionState.Connected) {
-      throw new Error('Not connected to chat');
-    }
+    newConnection.on('UserTyping', (roomId: number, userId: number, isTyping: boolean) => {
+      setTypingUsers(prev => {
+        const newMap = new Map(prev);
+        const roomTyping = new Set(newMap.get(roomId) || []);
+        isTyping ? roomTyping.add(userId) : roomTyping.delete(userId);
+        newMap.set(roomId, roomTyping);
+        return newMap;
+      });
+    });
 
-    const message: SendMessageRequest = {
-      roomId,
-      content,
-      type: 'text'
+    startConnection();
+    setConnection(newConnection);
+
+    return () => {
+      newConnection.stop();
     };
+  }, []);
 
-    await chatService.sendMessage(message);
-  };
+  // Send message handler
+  const sendMessage = async (message: { 
+    roomId?: number; 
+    receiverId?: number; 
+    content: string; 
+    type?: string; 
+  }) => {
+    if (!connection) throw new Error('No connection to server');
 
-  const sendDirectMessage = async (userId: number, content: string) => {
-    if (!connection || connectionState !== HubConnectionState.Connected) {
-      throw new Error('Not connected to chat');
+    try {
+      if (message.roomId) {
+        await connection.invoke('SendMessage', {
+          chatRoomId: message.roomId,
+          content: message.content,
+          messageType: message.type || 'text'
+        });
+      } else if (message.receiverId) {
+        await connection.invoke('SendDirectMessage', {
+          receiverId: message.receiverId,
+          content: message.content,
+          messageType: message.type || 'text'
+        });
+      }
+    } catch (err) {
+      toast.error('Failed to send message');
+      throw err;
     }
-
-    const message: SendMessageRequest = {
-      receiverId: userId,
-      content,
-      type: 'text'
-    };
-
-    await chatService.sendMessage(message);
   };
 
-  const isTyping = async (roomId: number) => {
-    if (connection?.state === HubConnectionState.Connected) {
-      await chatService.sendTypingStatus(roomId, true);
+  // Typing indicator handler
+  const startTyping = async (roomId: number) => {
+    if (!connection) return;
+    try {
+      await connection.invoke('UserTyping', roomId, true);
       setTimeout(async () => {
-        if (connection?.state === HubConnectionState.Connected) {
-          await chatService.sendTypingStatus(roomId, false);
-        }
-      }, 2000);
+        await connection.invoke('UserTyping', roomId, false);
+      }, 3000);
+    } catch (err) {
+      console.error('Failed to send typing indicator:', err);
     }
   };
 
-  const value: ChatContextType = {
-    isConnected: connectionState === HubConnectionState.Connected,
-    connect,
-    disconnect,
+  const contextValue: ChatContextType = {
+    connection,
+    isConnected,
     sendMessage,
-    sendDirectMessage,
-    isTyping,
-    connectionState
+    startTyping,
+    onlineUsers,
+    typingUsers,
+    unreadMessages
   };
+  // const value = {
+  //   connection,
+  //   isConnected,
+  //   sendMessage,
+  //   startTyping,
+  //   onlineUsers,
+  //   typingUsers,
+  //   unreadMessages
+  // };
 
-  return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
-};
+  return (
+    <ChatContext.Provider value={contextValue}>
+      {children}
+    </ChatContext.Provider>
+  );
+}
 
-export const useChat = () => {
+export function useChat() {
   const context = useContext(ChatContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useChat must be used within a ChatProvider');
   }
   return context;
-};
+}
