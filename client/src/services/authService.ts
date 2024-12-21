@@ -1,30 +1,8 @@
 import axios from 'axios';
 
-import { TokenRefreshResponse } from '../types';
+import { CreateAccountDTO, LoginDTO, LoginResponse, TokenRefreshResponse, UserIdDTO } from '../types';
 import { BASE_URL } from '../constants';
 
-export interface LoginResponse {
-  token: string;
-  avatar?: string;
-  userId: number;
-  publisherName: string;
-}
-
-export interface CreateAccountDTO {
-  id: number;
-  username: string;
-  password: string;
-}
-
-export interface LoginDTO {
-  userName: string;
-  password: string;
-}
-
-export interface UserIdDTO {
-  userId: number;
-  publisherName: string;
-}
 
 const api = axios.create({
   baseURL: BASE_URL,

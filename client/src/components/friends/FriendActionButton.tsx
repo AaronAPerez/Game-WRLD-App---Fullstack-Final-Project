@@ -1,44 +1,36 @@
 import { useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { UserPlus, Check, Loader2 } from 'lucide-react';
+import { userService } from '../../api/user';
 import { cn } from '../../utils/styles';
-import { userService } from '../../services/userService';
 import { toast } from 'react-hot-toast';
+<<<<<<< HEAD
 import type { UserProfileDTO } from '../../types/index';
+=======
+import type { UserProfileDTO } from '../../types';
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
 
 interface FriendActionButtonProps {
   targetUser: UserProfileDTO;
 }
 
+interface SendFriendRequestParams {
+  addresseeId: number;
+}
 
 export const FriendActionButton = ({ targetUser }: FriendActionButtonProps) => {
   const queryClient = useQueryClient();
   const [isRequested, setIsRequested] = useState(false);
 
-  // Query to check existing friend requests
-  const { data: friendRequests } = useQuery({
-    queryKey: ['friendRequests'],
-    queryFn: userService.getFriendRequests,
-  });
-
-  // Check if there's already a pending request
-  const isPending = friendRequests?.sent?.some(
-    (    request: { addressee: { id: number; }; }) => request.addressee.id === targetUser.id
-  );
-
-  // Check if users are already friends
-  const isFriend = friendRequests?.received?.some(
-    (    request: { status: string; requester: { id: number; }; addressee: { id: number; }; }) => 
-      request.status === 'accepted' && 
-      (request.requester.id === targetUser.id || request.addressee.id === targetUser.id)
-  );
-
-  // Mutation for sending friend requests
-  const { mutate: sendFriendRequest, isLoading } = useMutation({
-    mutationFn: () => userService.sendFriendRequest(targetUser.id),
+  // Friend request mutation
+  const sendRequestMutation = useMutation({
+    mutationFn: (params: SendFriendRequestParams) => 
+      userService.sendFriendRequest(params.addresseeId),
     onSuccess: () => {
       setIsRequested(true);
-      queryClient.invalidateQueries({ queryKey: ['friendRequests'] });
+      queryClient.invalidateQueries({
+        queryKey: ['friendRequests']
+      });
       toast.success(`Friend request sent to ${targetUser.username}`);
     },
     onError: () => {
@@ -46,39 +38,30 @@ export const FriendActionButton = ({ targetUser }: FriendActionButtonProps) => {
     }
   });
 
-  if (isFriend) {
-    return (
-      <button
-        className={cn(
-          "flex items-center gap-2 px-4 py-2 rounded-lg flex-1",
-          "bg-green-500/20 text-green-400"
-        )}
-        disabled
-      >
-        <Check className="w-4 h-4" />
-        <span>Friends</span>
-      </button>
-    );
-  }
+  const handleSendRequest = () => {
+    sendRequestMutation.mutate({ 
+      addresseeId: targetUser.id
+    });
+  };
 
   return (
     <button
-      onClick={() => sendFriendRequest()}
-      disabled={isLoading || isPending || isRequested}
+      onClick={handleSendRequest}
+      disabled={isRequested || sendRequestMutation.isPending}
       className={cn(
         "flex items-center gap-2 px-4 py-2 rounded-lg flex-1",
         "transition-colors",
-        (isPending || isRequested) 
+        isRequested 
           ? "bg-green-500/20 text-green-400"
           : "bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30"
       )}
     >
-      {isLoading ? (
+      {sendRequestMutation.isPending ? (
         <>
           <Loader2 className="w-4 h-4 animate-spin" />
           <span>Sending...</span>
         </>
-      ) : isPending || isRequested ? (
+      ) : isRequested ? (
         <>
           <Check className="w-4 h-4" />
           <span>Request Sent</span>
@@ -92,20 +75,3 @@ export const FriendActionButton = ({ targetUser }: FriendActionButtonProps) => {
     </button>
   );
 };
-
-
-
-// User card component
-// export const UserCard = ({ user }: { user: UserProfile }) => {
-//   return (
-//     <div className="bg-stone-900 rounded-xl p-6 border border-stone-800">
-//       {/* User info... */}
-      
-//       {/* Action Buttons */}
-//       <div className="flex items-center gap-3 mt-6">
-//         <FriendActionButton targetUser={user} />
-//         <ChatActionButton targetUser={user} />
-//       </div>
-//     </div>
-//   );
-// };

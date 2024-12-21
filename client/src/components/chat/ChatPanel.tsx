@@ -10,12 +10,20 @@ import {
   ArrowLeft,
   X 
 } from 'lucide-react';
+<<<<<<< HEAD
 
 import { cn } from '../../utils/styles';
 import { UserProfileDTO } from '../../types';
 import { ChatMessages } from './ChatMessages';
 
 
+=======
+import { userService } from '../../services/userService';
+import { cn } from '../../utils/styles';
+import type { UserProfileDTO } from '../../types/index';
+import { ChatMessages } from './ChatMessages';
+
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
 // Types
 interface ConversationListProps {
   onUserSelect: (user: UserProfileDTO) => void;
@@ -33,7 +41,11 @@ const ConversationList = ({ onUserSelect, selectedUser }: ConversationListProps)
   // Fetch friends list
   const { data: friends, isLoading } = useQuery({
     queryKey: ['friends'],
+<<<<<<< HEAD
     queryFn: UserService.getFriends
+=======
+    queryFn: userService.getFriends
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
   });
 
   // Filter friends based on search

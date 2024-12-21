@@ -3,12 +3,21 @@ import { motion } from 'framer-motion';
 import { Send, Search, Plus, MessageSquare, Loader2 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { cn } from '../../utils/styles';
+<<<<<<< HEAD:client/src/components/chat/Messages.tsx
 
+=======
+import type { DirectMessage, UserProfileDTO } from '../../types/index';
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17:client/src/components/message/Messages.tsx
 import { chatService } from '../../services/chatService';
 import { useAuth } from '../../hooks/useAuth';
 import { toast } from 'react-hot-toast';
 import { useChatStore } from '../../store/chatStore';
+<<<<<<< HEAD:client/src/components/chat/Messages.tsx
 import { DirectMessage, UserProfileDTO } from '../../types';
+=======
+
+
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17:client/src/components/message/Messages.tsx
 
 const Messages = () => {
   const { user } = useAuth();

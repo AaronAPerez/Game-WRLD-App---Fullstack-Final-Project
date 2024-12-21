@@ -1,6 +1,32 @@
-// src/components/Button.tsx
+// import { cn } from "../../utils/styles";
+
+// interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+//   variant?: 'primary' | 'secondary' | 'outline';
+//   isLoading?: boolean;
+// }
+
+// export const Button = ({
+//   children,
+//   variant = 'primary',
+//   isLoading,
+//   ...props
+// }: ButtonProps) => {
+//   return (
+//     <button 
+//       className={cn(
+//         'px-4 py-2 rounded-lg transition-colors',
+//         variants[variant]
+//       )}
+//       disabled={isLoading}
+//       {...props}
+//     >
+//       {isLoading ? <Spinner /> : children}
+//     </button>
+//   );
+// };
+// // src/components/Button.tsx
 import { ButtonHTMLAttributes, forwardRef } from 'react'
-import { cn } from '../utils/styles'
+import { cn } from '../../utils/styles'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'default' | 'primary' | 'secondary' | 'outline'

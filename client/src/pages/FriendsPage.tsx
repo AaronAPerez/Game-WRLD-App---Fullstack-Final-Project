@@ -1,80 +1,26 @@
+<<<<<<< HEAD
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, UserPlus, MessageSquare, Gamepad2, X, User } from 'lucide-react';
 
+=======
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
 import { FriendRequests } from '../components/friends/FriendRequests';
-import FriendList from '../components/friends/FriendList';
 import { FriendSuggestions } from '../components/friends/FriendSuggestions';
+<<<<<<< HEAD
 // import { ActivityFeed } from '../components/friends/ActivityFeed';
+=======
+import { ActivityFeed } from '../components/friends/ActivityFeed';
+import { FriendList } from '../components/friends/FriendList';
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
 
 
 const FriendsPage = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showAddFriend, setShowAddFriend] = useState(false);
-  const [friendUsername, setFriendUsername] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState('all');
-
-  const filters = ['all', 'online', 'offline', 'in-game'];
-
-  const sendFriendRequest = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      
-      if (!token) {
-        alert('No token found, please login again.');
-        return;
-      }
-  
-      const userResponse = await fetch(`http://localhost:5182/api/User/GetUserByUsername/${friendUsername}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-  
-      const user = await userResponse.json();
-  
-      if (!user || !user.id) {
-        alert('User not found');
-        return;
-      }
-  
-      const userId = localStorage.getItem('userId'); 
-      if (!userId) {
-        alert('Unable to get user ID.');
-        return;
-      }
-  
-      const response = await fetch('http://localhost:5182/api/User/Friends/Request', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          requesterId: userId, 
-          addresseeId: user.id,  
-          status: 'pending',  
-        }),
-      });
-  
-      if (!response.ok) {
-        throw new Error('Failed to send friend request');
-      }
-  
-      setShowAddFriend(false);
-      alert('Friend request sent!');
-    } catch (error) {
-      console.error('Error sending friend request:', error);
-      alert('Failed to send friend request');
-    }
-  };
-  
 
   return (
     <div className="container mx-auto px-4">
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Friends List */}
         <div className="lg:col-span-2">
           <FriendList />
@@ -82,8 +28,13 @@ const FriendsPage = () => {
 
          {/* Activity Feed */}
          <div>
+<<<<<<< HEAD
           <h2 className="text-xl font-bold mb-4">Friend Activity</h2>
        
+=======
+            <h2 className="text-xl font-bold mb-4">Friend Activity</h2>
+            <ActivityFeed />
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
                {/* Friend Requests */}
                <div className="mb-2">
         <h2 className="text-xl font-bold mb-4">Friend Requests</h2>
@@ -91,11 +42,12 @@ const FriendsPage = () => {
       </div> 
                {/* Suggestions */}
       <div className="mt-8">
-        <h2 className="text-xl font-bold mb-4">Suggested Friends</h2>
-        <FriendSuggestions />
+            <h2 className="text-xl font-bold mb-4">Suggested Friends</h2>
+            <FriendSuggestions />
       </div>
         </div>
       </div>
+<<<<<<< HEAD
     
 
       <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -239,6 +191,9 @@ const FriendsPage = () => {
       </div>
     </div>
 
+=======
+    </div>
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
   );
 };
 

@@ -7,6 +7,8 @@ using api.Models;
 using api.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace api.Controllers;
 
@@ -90,81 +92,100 @@ public class ChatController : ControllerBase
     }
 
     [HttpPost("rooms")]
-    public ActionResult<ChatRoomDTO> CreateChatRoom(CreateChatRoomDTO createRoom)
-    {
-        try
-        {
-            var userId = User.FindFirst("userId")?.Value;
-            if (userId == null) return Unauthorized();
-
-            var newRoom = _chatService.CreateChatRoom(int.Parse(userId), createRoom);
-            return Ok(newRoom);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
-    }
-
-    [HttpGet("rooms/{roomId}")]
-    public ActionResult<ChatRoomDTO> GetChatRoom(int roomId)
+public async Task<ActionResult<ChatRoomDTO>> CreateChatRoom(CreateChatRoomDTO createRoom)
+{
+    try
     {
         var userId = User.FindFirst("userId")?.Value;
         if (userId == null) return Unauthorized();
 
-        var room = _chatService.GetChatRoom(int.Parse(userId), roomId);
+        var newRoom = await _chatService.CreateChatRoom(int.Parse(userId), createRoom);
+        return Ok(newRoom);
+    }
+    catch (Exception ex)
+    {
+        return BadRequest(new { message = ex.Message });
+    }
+}
+
+   [HttpGet("rooms/{id}")]
+public async Task<ActionResult<ChatRoomDTO>> GetChatRoom(int id)
+{
+    var userId = User.FindFirst("userId")?.Value;
+    if (userId == null) return Unauthorized();
+
+    try 
+    {
+        var room = await _chatService.GetChatRoom(int.Parse(userId), id);
         if (room == null) return NotFound();
 
-        return Ok(room);
-    }
+        var jsonString = JsonSerializer.Serialize(room, new JsonSerializerOptions
+        {
+            ReferenceHandler = ReferenceHandler.IgnoreCycles,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            WriteIndented = true
+        });
 
-    [HttpGet("rooms/{roomId}/messages")]
-    public ActionResult<IEnumerable<ChatMessageDTO>> GetRoomMessages(
-        int roomId,
-        [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 50)
+        return Content(jsonString, "application/json");
+    }
+    catch (Exception ex)
     {
-        var userId = User.FindFirst("userId")?.Value;
-        if (userId == null) return Unauthorized();
-
-        var result = _chatService.GetRoomMessages(int.Parse(userId), roomId, page, pageSize);
-        return Ok(result);
+        Console.WriteLine($"Error in GetChatRoom: {ex.Message}");
+        return StatusCode(500, "An error occurred while processing your request.");
     }
+}
 
-    // [HttpGet("direct")]
-    // public ActionResult<IEnumerable<DirectMessageDTO>> DirectMessages(
-    //     [FromQuery] int userId,
-    //     [FromQuery] int page = 1,
-    //     [FromQuery] int pageSize = 50)
-    // {
-    //     var currentUserId = User.FindFirst("userId")?.Value;
-    //     if (currentUserId == null) return Unauthorized();
+[HttpPost("rooms/{roomId}/messages")]
+public async Task<ActionResult<ChatMessageDTO>> SendMessage(
+    int roomId, 
+    [FromBody] SendMessageDTO message)
+{
+    var userId = User.FindFirst("userId")?.Value;
+    if (userId == null) return Unauthorized();
 
-    //     var result = _chatService.DirectMessages(int.Parse(currentUserId), userId, page, pageSize);
-    //     return Ok(result);
-    // }
+    // Set the room ID from the URL parameter
+    message.ChatRoomId = roomId;
 
-    [HttpPost("rooms/{roomId}/join")]
-    public async Task<ActionResult> JoinRoom(int roomId)
-    {
-        var userId = User.FindFirst("userId")?.Value;
-        if (userId == null) return Unauthorized();
+    var result = await _chatService.AddMessage(int.Parse(userId), message);
+    if (result == null) return BadRequest("Failed to send message");
 
-        var result = await _chatService.JoinRoom(int.Parse(userId), roomId);
-        if (!result) return BadRequest("Failed to join room");
+    return Ok(result);
+}
 
-        return Ok();
-    }
+[HttpGet("rooms/{id}/messages")]
+public async Task<ActionResult<IEnumerable<ChatMessageDTO>>> GetRoomMessages(
+    int id,
+    [FromQuery] int page = 1,
+    [FromQuery] int pageSize = 50)
+{
+    var userId = User.FindFirst("userId")?.Value;
+    if (userId == null) return Unauthorized();
 
-    [HttpPost("rooms/{roomId}/leave")]
-    public async Task<ActionResult> LeaveRoom(int roomId)
-    {
-        var userId = User.FindFirst("userId")?.Value;
-        if (userId == null) return Unauthorized();
+    var result = await _chatService.GetRoomMessages(int.Parse(userId), id, page, pageSize);
+    return Ok(result);
+}
 
-        var result = await _chatService.LeaveRoom(int.Parse(userId), roomId);
-        if (!result) return BadRequest("Failed to leave room");
+[HttpPost("rooms/{id}/join")]
+public async Task<ActionResult> JoinRoom(int id)
+{
+    var userId = User.FindFirst("userId")?.Value;
+    if (userId == null) return Unauthorized();
 
-        return Ok();
-    }
+    var result = await _chatService.JoinRoom(int.Parse(userId), id);
+    if (!result) return BadRequest("Failed to join room");
+
+    return Ok();
+}
+
+[HttpPost("rooms/{id}/leave")]
+public async Task<ActionResult> LeaveRoom(int id)
+{
+    var userId = User.FindFirst("userId")?.Value;
+    if (userId == null) return Unauthorized();
+
+    var result = await _chatService.LeaveRoom(int.Parse(userId), id);
+    if (!result) return BadRequest("Failed to leave room");
+
+    return Ok();
+}
 }

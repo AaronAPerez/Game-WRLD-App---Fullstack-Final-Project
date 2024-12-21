@@ -187,33 +187,36 @@ public class ChatService
         };
     }
 
-    public async Task<ChatRoomDTO?> GetChatRoom(int userId, int roomId)
+  public async Task<ChatRoomDTO?> GetChatRoom(int userId, int roomId)
+{
+    if (_context.ChatRooms == null)
+        return null;
+
+    var room = await _context.ChatRooms
+        .AsNoTracking()
+        .Include(r => r.Members)
+        .FirstOrDefaultAsync(r => r.Id == roomId && !r.IsDeleted);
+
+    if (room == null || (room.IsPrivate && !room.Members.Any(m => m.UserId == userId)))
+        return null;
+
+    var creator = await _userService.GetUserProfile(room.CreatorId);
+    
+   
+    var dto = new ChatRoomDTO
     {
-        if (_context.ChatRooms == null)
-            return null;
+        Id = room.Id,
+        Name = room.Name ?? "",
+        Description = room.Description ?? "",
+        Image = room.Image ?? "",
+        MembersCount = room.Members?.Count ?? 0,
+        CreatedAt = room.CreatedAt,
+        Creator = creator,
+        IsPrivate = room.IsPrivate
+    };
 
-        var room = await _context.ChatRooms
-            .Include(r => r.Creator)
-            .Include(r => r.Members)
-            .FirstOrDefaultAsync(r => r.Id == roomId && !r.IsDeleted);
-
-        if (room == null || (room.IsPrivate && !room.Members.Any(m => m.UserId == userId)))
-            return null;
-
-        var creator = await _userService.GetUserProfile(room.CreatorId);
-
-        return new ChatRoomDTO
-        {
-            Id = room.Id,
-            Name = room.Name,
-            Description = room.Description,
-            Image = room.Image,
-            MembersCount = room.Members.Count,
-            CreatedAt = room.CreatedAt,
-            Creator = creator,
-            IsPrivate = room.IsPrivate
-        };
-    }
+    return dto;
+}
 
     public async Task<IEnumerable<ChatMessageDTO>> GetRoomMessages(int userId, int roomId, int page = 1, int pageSize = 50)
     {

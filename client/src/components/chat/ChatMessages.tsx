@@ -12,17 +12,27 @@ import {
 } from 'lucide-react';
 import { chatService } from '../../services/chatService';
 import { cn } from '../../utils/styles';
+<<<<<<< HEAD
 
 import { toast } from 'react-hot-toast';
 import { DirectMessage, UserProfileDTO } from '../../types';
 
+=======
+import { useAuth } from '../../hooks/useAuth';
+import { toast } from 'react-hot-toast';
+import type { UserProfileDTO } from '../../types/index';
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
 
 interface ChatMessagesProps {
   selectedUser: UserProfileDTO;
 }
 
 interface MessageBubbleProps {
+<<<<<<< HEAD
   message: DirectMessage;
+=======
+  message: DirectMessageDTO;
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
   isOwn: boolean;
 }
 
@@ -235,8 +245,12 @@ export const ChatMessages = ({ selectedUser }: ChatMessagesProps) => {
       </div>
     </div>
   );
+<<<<<<< HEAD
 };
 
 function useAuth(): { user: any; } {
   throw new Error('Function not implemented.');
 }
+=======
+};
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17

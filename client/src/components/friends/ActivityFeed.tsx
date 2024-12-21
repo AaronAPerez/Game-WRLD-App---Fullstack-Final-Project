@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useEffect, useRef } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -149,63 +150,28 @@ export function ActivityFeed() {
       </div>
     );
   }
+=======
+import { Clock, Gamepad2 } from 'lucide-react';
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
 
+export const ActivityFeed = () => {
   return (
-    <div className="space-y-4">
-      <AnimatePresence>
-        {data?.pages.map((page, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="space-y-4"
-          >
-            {page.activities.map((activity: Activity) => {
-              const Icon = ACTIVITY_ICONS[activity.type];
-              
-              return (
-                <motion.div
-                  key={activity.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={cn(
-                    "p-4 bg-stone-900 rounded-xl",
-                    "border border-stone-800",
-                    "hover:border-indigo-500/30 transition-all duration-300"
-                  )}
-                >
-                  <div className="flex items-start gap-4">
-                    <div className={cn(
-                      "p-2 rounded-xl",
-                      "bg-indigo-500/20 text-indigo-400"
-                    )}>
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <div className="flex-1">
-                      {getActivityContent(activity)}
-                      <p className="text-sm text-gray-500 mt-2">
-                        {formatDistanceToNow(new Date(activity.createdAt), { 
-                          addSuffix: true 
-                        })}
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        ))}
-      </AnimatePresence>
-
-      {/* Load More Trigger */}
-      <div ref={loadMoreRef} className="h-4">
-        {isFetchingNextPage && (
-          <div className="flex justify-center p-4">
-            <Loader2 className="w-6 h-6 animate-spin text-indigo-500" />
+    <div className="bg-stone-900 rounded-xl border border-stone-800">
+      <div className="divide-y divide-stone-800">
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="p-4 flex items-center gap-4">
+            <div className="w-10 h-10 rounded-full bg-stone-800 flex items-center justify-center">
+              <Gamepad2 className="w-5 h-5 text-gray-400" />
+            </div>
+            <div>
+              <p className="text-gray-400">
+                <span className="text-white font-medium">User Name</span> started playing Game Name
+              </p>
+              <p className="text-sm text-gray-500">2 hours ago</p>
+            </div>
           </div>
-        )}
+        ))}
       </div>
     </div>
   );
-}
+};

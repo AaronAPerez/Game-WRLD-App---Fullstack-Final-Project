@@ -27,6 +27,19 @@ export interface Message {
   sender: string;
   text: string;
 }
+<<<<<<< HEAD
+=======
+export interface DirectMessageDTO {
+  id: number
+  sender: UserProfileDTO
+  receiver: UserProfileDTO
+  content: string
+  isRead: boolean
+  sentAt: Date
+  isEdited: boolean
+  messageType: string
+}
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
 
 export interface DirectMessage extends BaseMessage {
   receiverId: number;
@@ -44,6 +57,14 @@ export interface SendDirectMessageRequest {
   type: 'text'
 }
 
+<<<<<<< HEAD
+=======
+export interface UserIdDTO {
+  userId: number;
+  publisherName: string;
+}
+
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
 export interface UserProfileDTO{
   id: number;
   username: string;
@@ -84,6 +105,30 @@ export interface User {
   status: string
 }
 
+<<<<<<< HEAD
+=======
+export interface LoginDTO{
+  userName:	string
+  password: string
+}
+
+export interface LoginResponse {
+  token: string;
+  avatar?: string;
+  userId: number;
+  publisherName: string;
+}
+
+export interface CreateAccountDTO{
+  id: number
+  username:	string
+  password: string
+}
+export interface UpdateUserProfileDTO {
+  username:	string
+  avatar: string
+}
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
 
 export interface Chat {
   id: number
@@ -174,6 +219,29 @@ export interface FriendRequests {
 }
 
 
+<<<<<<< HEAD
+=======
+export interface FriendRequestDTO {
+  requesterName:	string
+  AddresseeName: string
+  AddresseeId: number
+  SentAt: Date
+  ReceiverName: string
+  ReceiverId: string
+  SenderName: string
+  SenderId: string
+  Status: FriendStatus
+  RequestId: number
+  Requester: string
+  CreatedAt: Date
+  }
+
+  export interface FriendResponseDTO{
+    requestId: number
+  }
+
+
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
 export interface Post {
   id: number
   content: string

@@ -1,7 +1,13 @@
 import axios from 'axios';
 
+<<<<<<< HEAD
 import { UserProfileDTO } from '../types';
+=======
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
 import { API_ENDPOINTS, BASE_URL } from '../constants';
+
+import { FriendRequests, UserProfileDTO } from '../types/index';
+
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -62,6 +68,30 @@ export const userService = {
     const response = await api.get(API_ENDPOINTS.USER.GET_BY_USERNAME(username));
     return response.data;
   },
+
+
+  // User Friends
+  async sendFriendRequest(userId: number): Promise<void> {
+    await api.post(`${BASE_URL}/User/Friends/Request`, {
+      addresseeId: userId
+    });
+  },
+
+  async respondToFriendRequest(requestId: number, accept: boolean): Promise<void> {
+    await api.post(`${BASE_URL}/User/Friends/Respond`, {
+      requestId,
+      accept
+    });
+  },
+
+  async getFriendRequests(): Promise<{
+    sent: FriendRequests[];
+    received: FriendRequests[];
+  }> {
+    const response = await api.get(`${BASE_URL}/User/Friends/Requests`);
+    return response.data;
+  },
+
 
   // User Games
   async getUserGames(): Promise<any[]> {

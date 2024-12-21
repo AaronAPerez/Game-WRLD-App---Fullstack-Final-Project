@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Plus, Loader2, Edit3, Trash2, Image } from 'lucide-react';
-import { BlogPost, blogService } from '../services/BlogService';
+import { BlogPost, blogService } from '../api/blog';
 import { useAuth } from '../hooks/useAuth';
 import { toast } from 'react-hot-toast';
 import BlogEditor from '../components/blog/BlogEditor';

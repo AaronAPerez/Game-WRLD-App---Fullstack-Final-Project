@@ -5,7 +5,17 @@ import { Loader2 } from 'lucide-react';
 import { cn } from '../../utils/styles';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+<<<<<<< HEAD:client/src/components/chat/MessageList.tsx
 import { DirectMessage, UserProfileDTO } from '../../types';
+=======
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { chatService } from '../../services/chatService';
+
+import { MessageStatus } from '../message/MessageStatus';
+import { MessageReactions } from '../message/MessageReactions';
+import type { ChatMessage } from '../../types';
+import { MessageBubble } from './MessageBubble';
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17:client/src/components/message/MessageList.tsx
 
 interface MessageListProps {
   contactId: number;

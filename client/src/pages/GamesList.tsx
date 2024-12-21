@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { GameCard } from '../components/GameCard';
+import { GameCard } from '../components/game/GameCard';
 import { gameService } from '../services/gameService';
 import { useState } from 'react';
 import { GameDetailsModal } from '../components/GameDetailsModal';

@@ -54,3 +54,43 @@ export function useSearch() {
     handleSearchClear
   };
 }
+// import { useState, useCallback, useEffect } from 'react';
+// import { useQuery, useQueryClient } from '@tanstack/react-query';
+// import { userService } from '../api/user';
+// import { useDebounce } from './useDebounce';
+// import type { UserProfileDTO } from '../types';
+
+// export const useSearch = () => {
+//   const [query, setQuery] = useState('');
+//   const debouncedQuery = useDebounce(query, 300);
+//   const queryClient = useQueryClient();
+
+//   // Search users query
+//   const { 
+//     data: results = [], 
+//     isLoading,
+//     error 
+//   } = useQuery({
+//     queryKey: ['userSearch', debouncedQuery],
+//     queryFn: () => userService.searchUsers(debouncedQuery),
+//     enabled: debouncedQuery.length >= 2,
+//     staleTime: 1000 * 60 // 1 minute
+//   });
+
+//   // Prefetch user profiles on hover
+//   const prefetchUserProfile = useCallback((userId: number) => {
+//     queryClient.prefetchQuery({
+//       queryKey: ['userProfile', userId],
+//       queryFn: () => userService.getUserProfile(userId)
+//     });
+//   }, [queryClient]);
+
+//   return {
+//     query,
+//     setQuery,
+//     results,
+//     isLoading,
+//     error,
+//     prefetchUserProfile
+//   };
+// };
