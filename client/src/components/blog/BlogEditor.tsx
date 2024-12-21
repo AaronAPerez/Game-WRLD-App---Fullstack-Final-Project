@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { Plus, X, Loader2, ImagePlus } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { blogService } from '../../services/BlogService';
+import { blogService } from '../../api/blog';
 import { Post } from '../../types';
 import { CreateBlogPostDTO } from '../../types/blog';
 

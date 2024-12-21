@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
 import { Calendar, Star, Eye, ChartLine } from "lucide-react";
 import { useState } from 'react';
-import type { Game } from '../types/rawg';
+import type { Game } from "../../types/rawg";
 import { useGameStore } from "../store/gameStore";
-import { cn } from "../utils/styles";
+import { cn } from "../../utils/styles";
 
 // Props interface for GameCard component
 interface GameCardProps {

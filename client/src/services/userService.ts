@@ -1,7 +1,9 @@
 import axios from 'axios';
 
-import { UserProfile } from '../types';
 import { API_ENDPOINTS, BASE_URL } from '../constants';
+
+import { FriendRequests, UserProfileDTO } from '../types/index';
+
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -37,7 +39,7 @@ export const userService = {
   },
 
   // User Profile
-  async getUserProfile(): Promise<UserProfile> {
+  async getUserProfile(): Promise<UserProfileDTO> {
     const response = await api.get(API_ENDPOINTS.AUTH.PROFILE);
     return response.data;
   },
@@ -51,17 +53,41 @@ export const userService = {
   },
 
   // User Search
-  async searchUsers(query: string): Promise<UserProfile[]> {
+  async searchUsers(query: string): Promise<UserProfileDTO[]> {
     const response = await api.get(API_ENDPOINTS.USER.SEARCH, {
       params: { query }
     });
     return response.data;
   },
 
-  async getUserByUsername(username: string): Promise<UserProfile> {
+  async getUserByUsername(username: string): Promise<UserProfileDTO> {
     const response = await api.get(API_ENDPOINTS.USER.GET_BY_USERNAME(username));
     return response.data;
   },
+
+
+  // User Friends
+  async sendFriendRequest(userId: number): Promise<void> {
+    await api.post(`${BASE_URL}/User/Friends/Request`, {
+      addresseeId: userId
+    });
+  },
+
+  async respondToFriendRequest(requestId: number, accept: boolean): Promise<void> {
+    await api.post(`${BASE_URL}/User/Friends/Respond`, {
+      requestId,
+      accept
+    });
+  },
+
+  async getFriendRequests(): Promise<{
+    sent: FriendRequests[];
+    received: FriendRequests[];
+  }> {
+    const response = await api.get(`${BASE_URL}/User/Friends/Requests`);
+    return response.data;
+  },
+
 
   // User Games
   async getUserGames(): Promise<any[]> {

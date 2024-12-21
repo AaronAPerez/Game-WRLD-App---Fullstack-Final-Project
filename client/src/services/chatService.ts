@@ -4,8 +4,9 @@ import type {
   ChatRoom, 
   ChatMessage, 
   DirectMessage, 
-  SendMessageRequest 
-} from '../types/chat';
+  SendMessageRequest, 
+  DirectMessageDTO
+} from '../types/index';
 
 // Create axios instance with default config
 const api = axios.create({
@@ -23,6 +24,12 @@ api.interceptors.request.use(config => {
   }
   return config;
 });
+
+export interface ChatService {
+  getDirectMessages: (userId: number) => Promise<DirectMessageDTO[]>;
+  sendDirectMessage: (userId: number, content: string) => Promise<DirectMessageDTO>;
+  sendTypingStatus: (userId: number, isTyping: boolean) => Promise<void>;
+}
 
 export const chatService = {
   // Chat Rooms
@@ -75,9 +82,9 @@ export const chatService = {
   async markMessageAsRead(messageId: number): Promise<void> {
     await api.post(`/messages/${messageId}/read`);
   },
-
-  // async getUnreadMessagesCount(): Promise<Record<number, number>> {
-  //   const response = await api.get('/messages/unread/count');
-  //   return response.data;
-  // }
-};
+}
+//   // async getUnreadMessagesCount(): Promise<Record<number, number>> {
+//   //   const response = await api.get('/messages/unread/count');
+//   //   return response.data;
+//   // }
+// };

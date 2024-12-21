@@ -11,10 +11,10 @@ import BlogPage from './pages/BlogPage';
 import { UserSearch } from './components/UserSearch/UserSearch';
 import GamesList from './pages/GamesList';
 import { Gamepad2, Flame, Clock, BarChart, Calendar } from 'lucide-react';
-import ChatComponent from './components/chat/ChatComponent';
-import Messages from './components/chat/Messages';
+
 import FriendsPage from './pages/FriendsPage';
-import ChatRoom from './components/chat/ChatRoom';
+import Messages from './components/message/Messages';
+import GamingTimeline from './pages/GamingTimeline';
 
 
 // Protected Route Component
@@ -37,6 +37,7 @@ const AppRoutes = () => {
         <Route path="login" element={<LoginPage />} />
         <Route path="signup" element={<SignUpPage />} />
         <Route path="game/:id" element={<GameDetailsWrapper />} />
+        <Route path="timeline" element={<GamingTimeline />} />
 
         {/* Game Discovery Routes */}
         <Route path="trending" element={
@@ -121,9 +122,9 @@ const AppRoutes = () => {
         } />
         {/* <Route path="chat" element={
           <ProtectedRoute>
-            
-          </ProtectedRoute>
-        } /> */}
+            <ChatRoom/>
+          </ProtectedRoute> */}
+        {/* } /> */}
         <Route path="messages/:userId?" element={
           <ProtectedRoute>
             <Messages/>
@@ -135,3 +136,115 @@ const AppRoutes = () => {
 };
 
 export default AppRoutes;
+// import { Routes, Route, Navigate } from 'react-router-dom';
+// import { useAuth } from './hooks/useAuth';
+// import Layout from './components/layout/Layout';
+// import { lazy, Suspense } from 'react';
+// import { UserSearch } from './components/search/UserSearch';
+// import SignUpPage from './pages/SignUpPage';
+// import Dashboard from './pages/Dashboard';
+// import GamingTimeline from './pages/GamingTimeline';
+// // import Messages from './components/message/Messages';
+
+
+// // Lazy loaded components
+// const Home = lazy(() => import('./pages/HomePage'));
+// const Login = lazy(() => import('./pages/LoginPage'));
+// const SignUp = lazy(() => import('./pages/SignUpPage'));
+// // const Dashboard = lazy(() => import('./pages/Dashboard'));
+// const Chat = lazy(() => import('./pages/ChatPage'));
+// const Profile = lazy(() => import('./pages/Profile'));
+// const Friends = lazy(() => import('./pages/FriendsPage'));
+
+// // Protected Route Component
+// const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+//   const { isAuthenticated, isLoading } = useAuth();
+
+//   if (isLoading) {
+//     return <div>Loading...</div>;
+//   }
+
+//   if (!isAuthenticated) {
+//     return <Navigate to="profile" replace />;
+//   }
+
+//   return children;
+// };
+
+// export default function AppRoutes() {
+//   return (
+//     <Routes>
+//       <Route element={<Layout />}>
+//         {/* Public Routes */}
+//         <Route path="/" element={
+//           <Suspense fallback={<div>Loading...</div>}>
+//             <Home />
+//           </Suspense>
+//         } />
+//        <Route path="/" element={
+//           <Suspense fallback={<div>Loading...</div>}> 
+//             <GamingTimeline />
+//            </Suspense> 
+//          } />
+//         <Route path="login" element={
+//           <Suspense fallback={<div>Loading...</div>}>
+//             <Login />
+//           </Suspense>
+//         } />
+//         <Route path="signup" element={
+//           <Suspense fallback={<div>Loading...</div>}>
+//             <SignUpPage />
+//           </Suspense>
+//         } />
+
+//         {/* Protected Routes */}
+//         <Route path="dashboard" element={
+//           <ProtectedRoute>
+//             <Suspense fallback={<div>Loading...</div>}>
+//               <Dashboard />
+//             </Suspense>
+//           </ProtectedRoute>
+//         } />
+//         {/* Protected Routes */}
+//         <Route path="chat" element={
+//           <ProtectedRoute>
+//             <Suspense fallback={<div>Loading...</div>}>
+//               <Chat />
+//             </Suspense>
+//           </ProtectedRoute>
+//         } />
+//         <Route path="profile" element={
+//           <ProtectedRoute>
+//             <Suspense fallback={<div>Loading...</div>}>
+//               <Profile />
+//             </Suspense>
+//             <Route path="search" element={
+//           <ProtectedRoute>
+//               <Suspense fallback={<div>Loading...</div>}>
+//             <UserSearch />
+//             </Suspense>
+//           </ProtectedRoute>
+//         } />
+//           </ProtectedRoute>
+//         } />
+//         <Route path="friends" element={
+//           <ProtectedRoute>
+//             <Suspense fallback={<div>Loading...</div>}>
+//               <Friends />
+//             </Suspense>
+//                       </ProtectedRoute>
+//         } />
+//                 {/* <Route path="chat" element={
+//           <ProtectedRoute>
+            
+//           </ProtectedRoute>
+//         } /> */}
+//         {/* <Route path="messages/:userId?" element={
+//           <ProtectedRoute>
+//             <Messages/>
+//           </ProtectedRoute> */}
+//         {/* } /> */}
+//       </Route>
+//     </Routes>
+//   );
+// }

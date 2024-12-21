@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { toast } from 'react-hot-toast';
 import { CHAT_HUB_URL } from '../constants';
-import type { ChatMessage, DirectMessage, UserProfileDTO } from '../types/chat';
+import type { ChatMessage, DirectMessage, UserProfileDTO } from '../types/index';
 
 interface ChatContextType {
   connection: HubConnection | null;

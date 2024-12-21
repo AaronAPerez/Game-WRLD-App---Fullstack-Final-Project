@@ -6,7 +6,7 @@ import {
   ChevronRight, 
 } from 'lucide-react';
 import { gameService } from '../services/gameService';
-import { GameCard } from '../components/GameCard';
+import { GameCard } from '../components/game/GameCard';
 import type { Game } from '../types/rawg';
 import FeaturedGames from '../components/FeaturedGames';
 import { GameDetailsModal } from '../components/GameDetailsModal';

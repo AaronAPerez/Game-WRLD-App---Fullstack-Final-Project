@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { UserProfile } from "../types/chat";
+import { UserProfileDTO } from "../types/index";
 import { chatService } from "../services/chatService";
 
 export function useChatUserStatus() {
-    const [onlineUsers, setOnlineUsers] = useState<UserProfile[]>([]);
+    const [onlineUsers, setOnlineUsers] = useState<UserProfileDTO[]>([]);
   
     useEffect(() => {
-      const handleUserStatus = (user: UserProfile, isOnline: boolean) => {
+      const handleUserStatus = (user: UserProfileDTO, isOnline: boolean) => {
         setOnlineUsers(prev => {
           if (isOnline) {
             // Add user if not already in the list

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
 import { Loader2, MessageCircle, ThumbsUp, Flag, Trash } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
-import { blogService } from '../../services/BlogService';
+import { blogService } from '../../api/blog';
 import toast from 'react-hot-toast';
 
 

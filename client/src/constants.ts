@@ -1,8 +1,8 @@
-const isDevelopment = process.env.NODE_ENV === 'development';
-const DEV_API_URL = 'http://localhost:5182/api';
-const PROD_API_URL = '/api'; // This will use relative path in production
+
+export const BASE_URL= 'http://localhost:5182/api';
+ // This will use relative path in production
 // API Base URLs
-export const BASE_URL = isDevelopment ? DEV_API_URL : PROD_API_URL;
+// export const BASE_URL = isDevelopment ? DEV_API_URL : PROD_API_URL;
 export const CHAT_HUB_URL = `${BASE_URL.replace('/api', '')}/hubs/chat`;
 
 // API Endpoints

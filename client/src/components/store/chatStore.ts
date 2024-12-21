@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { HubConnection, HubConnectionState } from '@microsoft/signalr';
-import { ChatRoom, UserProfile, ChatMessage, DirectMessage } from '../../types/chat';
+import { ChatMessage, ChatRoom, DirectMessage, UserProfileDTO } from '../../types/index';
 
 
 interface ChatState {
@@ -8,7 +8,7 @@ interface ChatState {
   connectionState: HubConnectionState;
   connectionError: string | null;
   activeRoom: ChatRoom | null;
-  activeConversation: UserProfile | null;
+  activeConversation: UserProfileDTO | null;
   messages: Record<number, ChatMessage[]>;
   directMessages: Record<number, DirectMessage[]>;
   isTyping: Record<number, Set<number>>;
@@ -20,7 +20,7 @@ interface ChatState {
   setActiveRoom: (room: ChatRoom | null) => void;
   addMessage: (roomId: number, message: ChatMessage) => void;
   // Method to set active conversation
-  setActiveConversation: (user: UserProfile | null) => void;
+  setActiveConversation: (user: UserProfileDTO | null) => void;
   addDirectMessage: (userId: number, message: DirectMessage) => void;
   setUserTyping: (roomId: number, userId: number, isTyping: boolean) => void;
   setUserOnline: (userId: number, isOnline: boolean) => void;

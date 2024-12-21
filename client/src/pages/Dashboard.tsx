@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
-import { Heart, MessageSquare, Users, Gamepad2, BookOpen, Star } from 'lucide-react';
+import { color, motion } from 'framer-motion';
+import { Heart, MessageSquare, Users, Gamepad2, BookOpen, Star, Icon } from 'lucide-react';
 import { gameService } from '../services/gameService';
-import { GameCard } from '../components/GameCard';
+import { GameCard } from '../components/game/GameCard';
 import { useAuth } from '../hooks/useAuth';
 import { AvatarUpload } from '../components/AvatarUpload';
 import { Game } from '../types/rawg';
 import { MessageCircle, Send, Plus, X } from 'lucide-react';
+
 
 // Define type interfaces
 interface ChatMessage {
@@ -33,14 +34,14 @@ const DashboardCard = ({ }) => (
     className="bg-stone-900 rounded-xl p-6 border border-stone-800"
   >
     <div className="flex items-start justify-between">
-      {/* <div>
+      <div>
         <p className="text-gray-400 text-sm">{title}</p>
         <h3 className="text-2xl font-bold text-white mt-1">{value}</h3>
         <p className="text-sm text-gray-500 mt-1">{description}</p>
       </div>
       <div className={`p-3 rounded-lg ${color}`}>
-        <Icon className="w-6 h-6" />
-      </div> */}
+        <Icon className="w-6 h-6" iconNode={[]} />
+      </div>
     </div>
   </motion.div>
 );
@@ -264,7 +265,7 @@ const Dashboard = () => {
                           type="text"
                           value={message}
                           onChange={(e) => setMessage(e.target.value)}
-                          onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                          onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                           placeholder="Type your message..."
                           className="flex-1 bg-stone-800 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
                         />

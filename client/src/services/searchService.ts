@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { BASE_URL } from '../constants';
-import { UserProfileDTO } from '../types/user';
+import { UserProfileDTO } from '../types/index';
+import { FriendStatus } from '../components/friends/FriendStatus';
 
 
 export interface SearchResult {
@@ -37,15 +38,15 @@ export const searchService = {
 
       return [
         ...users.map(user => ({
-          id: user.Id,
+          id: user.id,
           type: 'user' as const,
-          title: user.Username,
-          subtitle: user.Status,
-          image: user.Avatar,
-          url: `/profile/${user.Id}`,
+          title: user.username,
+          FriendStatus: user.status,
+        //   image: user.avatar,
+          url: `/profile/${user.id}`,
           metadata: {
-            friendCount: user.FriendsCount,
-            status: user.Status
+            friendCount: user.friendsCount,
+            // status: user.Status
           }
         })),
         ...games,

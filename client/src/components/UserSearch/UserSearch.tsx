@@ -15,8 +15,11 @@ import { cn } from '../../utils/styles';
 
 import { FriendActionButton } from '../friends/FriendActionButton';
 import { ChatActionButton } from '../ChatActionButton';
+
+import { UserProfileDTO } from '../../types/index';
 import { searchService, UserSearchFilters } from '../../services/searchService';
-import { UserProfileDTO } from '../../types/user';
+
+
 
 
 export function UserSearch() {
@@ -47,8 +50,8 @@ export function UserSearch() {
 
     return users.filter(user => {
       const statusMatch = filters.status === 'all' || 
-        (filters.status === 'online' && user.Status === 'online') ||
-        (filters.status === 'offline' && user.Status === 'offline');
+        (filters.status === 'online' && user.status === 'online') ||
+        (filters.status === 'offline' && user.status === 'offline');
       
       return statusMatch;
     });
@@ -166,7 +169,7 @@ export function UserSearch() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {filteredUsers.map((user) => (
-              <UserCard key={user.Id} user={user} />
+              <UserCard key={user.id} user={user} />
             ))}
           </motion.div>
         )}
@@ -190,27 +193,27 @@ const UserCard = ({ user }: { user: UserProfileDTO }) => {
       <div className="flex items-start gap-4">
         <div className="relative">
           <img
-            src={user.Avatar || '/default-avatar.png'}
-            alt={user.Username}
+            src={user?.avatar || '/default-avatar.png'}
+            alt={user.username}
             className="w-16 h-16 rounded-xl object-cover"
           />
           <div className={cn(
             "absolute bottom-0 right-0 w-4 h-4 rounded-full border-2 border-stone-900",
-            user.Status === 'online' 
+            user.status === 'online' 
               ? "bg-green-500" 
               : "bg-gray-500"
           )} />
         </div>
         
         <div className="flex-1">
-          <h3 className="text-xl font-bold text-white">{user.Username}</h3>
+          <h3 className="text-xl font-bold text-white">{user.username}</h3>
           <div className="flex items-center gap-2 mt-2">
             <span className="text-sm text-gray-400">
-              {user.FriendsCount} friends
+              {user.friendsCount} friends
             </span>
             <span className="text-gray-600">•</span>
             <span className="text-sm text-gray-400">
-              {user.GamesCount} games
+              {user.gamesCount} games
             </span>
           </div>
         </div>
@@ -218,8 +221,8 @@ const UserCard = ({ user }: { user: UserProfileDTO }) => {
 
       {/* Action Buttons */}
       <div className="flex items-center gap-3 mt-6">
-        <FriendActionButton targetUser={user} />
-        <ChatActionButton targetUser={user} />
+        <FriendActionButton targetUser={user.username} />
+        <ChatActionButton targetUser={user.username} />
       </div>
     </motion.div>
   );

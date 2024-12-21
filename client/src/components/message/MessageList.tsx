@@ -3,8 +3,8 @@ import { useInView } from 'react-intersection-observer';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { chatService } from '../../services/chatService';
 
-import { MessageStatus } from './MessageStatus';
-import { MessageReactions } from './MessageReactions';
+import { MessageStatus } from '../message/MessageStatus';
+import { MessageReactions } from '../message/MessageReactions';
 import type { ChatMessage } from '../../types';
 import { MessageBubble } from './MessageBubble';
 

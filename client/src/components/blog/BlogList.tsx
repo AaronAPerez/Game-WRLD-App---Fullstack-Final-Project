@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, Filter } from 'lucide-react';
 import { useState } from 'react';
 import { BlogCard } from './BlogCard';
-import { blogService } from '../../services/BlogService';
+import { blogService } from '../../api/blog';
 import type { BlogPostDTO } from '@/types/blog';
 
 const ITEMS_PER_PAGE = 9;
