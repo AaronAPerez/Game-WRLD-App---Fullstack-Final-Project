@@ -3,36 +3,29 @@ import { MessageSquare, Mail, Loader2 } from 'lucide-react';
 import { cn } from '../../utils/styles';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import type { UserProfileDTO } from '../../types/chat';
-import { useChatStore } from '../../store/chatStore';
-import { HubConnectionState } from '@microsoft/signalr';
-import { useChat } from '../../hooks/useChat';
 
+import { useChatStore } from '../../store/chatStore';
+import { UserProfileDTO } from '../../types/index';
 
 
 interface ChatActionButtonProps {
   targetUser: UserProfileDTO;
 }
 
-
-
-export const ChatActionButton = ({ targetUser }: ChatActionButtonProps) => {
+export function ChatActionButton({ targetUser }: ChatActionButtonProps) {
   const navigate = useNavigate();
   const [isStartingChat, setIsStartingChat] = useState(false);
-  const connectionState = useChatStore(state => state.connectionState);
-  const { connect } = useChat();
+  const { setActiveConversation } = useChatStore();
 
   const handleStartChat = async () => {
     try {
       setIsStartingChat(true);
 
-      // Check if we need to connect
-      if (connectionState !== HubConnectionState.Connected) {
-        await connect();
-      }
+      // Set the active conversation to the target user
+      setActiveConversation(targetUser);
 
-      // Navigate to messages with the user ID
-      navigate(`/messages/${targetUser.id}`);
+      // Navigate to messages with the user selected
+      navigate('/messages');
     } catch (error) {
       console.error('Chat error:', error);
       toast.error('Failed to start chat');
@@ -71,22 +64,4 @@ export const ChatActionButton = ({ targetUser }: ChatActionButtonProps) => {
       )}
     </button>
   );
-};
-
-
-
-
-// Example usage in a user card component
-// export const UserCard = ({ user }: { user: UserProfile }) => {
-//   return (
-//     <div className="bg-stone-900 rounded-xl p-6 border border-stone-800">
-//       {/* User info... */}
-      
-//       {/* Action Buttons */}
-//       <div className="flex items-center gap-3 mt-6">
-//         <FriendActionButton targetUser={user} />
-//         <ChatActionButton targetUser={user} />
-//       </div>
-//     </div>
-//   );
-// };
+}

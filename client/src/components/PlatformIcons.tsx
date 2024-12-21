@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../utils/styles';
 
-// Platform-specific icons using SVG for better visual quality
+// Platform-specific icons 
 const ConsoleIcons = {
   PlayStation: ({ className }: { className?: string }) => (
     <svg className={className} viewBox="0 0 50 50" fill="currentColor">

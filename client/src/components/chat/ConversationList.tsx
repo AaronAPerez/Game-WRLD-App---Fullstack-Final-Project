@@ -2,8 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { MessageSquare, Users } from 'lucide-react';
 import { cn } from '../../utils/styles';
-import type { UserProfileDTO } from '../../types/chat';
+
 import { chatService } from '../../services/chatService';
+import { UserProfileDTO } from '../../types';
 
 interface ConversationListProps {
   onUserClick: (user: UserProfileDTO) => void;

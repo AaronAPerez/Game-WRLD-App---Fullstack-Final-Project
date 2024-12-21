@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import { Calendar, Star, Eye, ChartLine } from "lucide-react";
-import { useState } from 'react';
 import type { Game } from '../types/rawg';
 import { useGameStore } from "../store/gameStore";
 import { cn } from "../utils/styles";
@@ -14,8 +13,6 @@ interface GameCardProps {
 
 
 export function GameCard({ game, onClick, rank }: GameCardProps) {
-  // State management
-  const [isHovering, setIsHovering] = useState(false);
   // Global state management for favorites
   const { addToFavorites, isGameInCollection } = useGameStore();
   const isFavorite = isGameInCollection(game.id, 'favorites');
@@ -63,8 +60,6 @@ export function GameCard({ game, onClick, rank }: GameCardProps) {
         "before:bg-[radial-gradient(circle_at_center,rgba(79,70,229,0.15)_0%,transparent_70%)]",
         "hover:before:opacity-100"
       )}
-      onHoverStart={() => setIsHovering(true)}
-      onHoverEnd={() => setIsHovering(false)}
     >
 
 

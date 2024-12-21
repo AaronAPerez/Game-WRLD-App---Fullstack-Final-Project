@@ -49,8 +49,8 @@ const navigationSections: NavSection[] = [
     title: 'Discover',
     items: [
       { icon: Flame, label: 'Trending', path: '/trending' },
-      { icon: Clock, label: 'New Releases', path: '/new-releases' },
-      { icon: BarChart, label: 'Top Rated', path: '/top-rated' },
+      // { icon: Clock, label: 'New Releases', path: '/new-releases' },
+      // { icon: BarChart, label: 'Top Rated', path: '/top-rated' },
       { icon: Trophy, label: 'Popular', path: '/popular' },
       { icon: Calendar, label: 'Upcoming', path: '/upcoming' }
     ]

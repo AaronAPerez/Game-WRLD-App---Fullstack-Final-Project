@@ -11,7 +11,6 @@ import BlogPage from './pages/BlogPage';
 import { UserSearch } from './components/UserSearch/UserSearch';
 import GamesList from './pages/GamesList';
 import { Gamepad2, Flame, Clock, BarChart, Calendar } from 'lucide-react';
-import ChatComponent from './components/chat/ChatComponent';
 import Messages from './components/chat/Messages';
 import FriendsPage from './pages/FriendsPage';
 import ChatRoom from './components/chat/ChatRoom';
@@ -51,7 +50,7 @@ const AppRoutes = () => {
             }}
           />
         } />
-        <Route path="new-releases" element={
+        {/* <Route path="new-releases" element={
           <GamesList 
             title="New Releases"
             icon={Clock}
@@ -62,7 +61,7 @@ const AppRoutes = () => {
               page_size: 21
             }}
           />
-        } />
+        } /> */}
         <Route path="top-rated" element={
           <GamesList 
             title="Top Rated Games"
@@ -119,11 +118,11 @@ const AppRoutes = () => {
             <FriendsPage />
           </ProtectedRoute>
         } />
-        {/* <Route path="chat" element={
+        <Route path="chat" element={
           <ProtectedRoute>
-            
-          </ProtectedRoute>
-        } /> */}
+            <ChatRoom roomId={0}/>
+          </ProtectedRoute> 
+         } />
         <Route path="messages/:userId?" element={
           <ProtectedRoute>
             <Messages/>

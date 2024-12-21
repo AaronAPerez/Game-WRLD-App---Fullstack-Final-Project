@@ -1,7 +1,7 @@
 import axios from 'axios';
-import type { FriendRequest } from '../types/chat';
+import type { UserProfileDTO } from '../types/index';
 import { API_ENDPOINTS, BASE_URL } from '../constants';
-import { UserProfile } from '../types';
+
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -21,8 +21,8 @@ api.interceptors.request.use(config => {
 export const friendService = {
   // Friend Requests
   async getFriendRequests(): Promise<{
-    received: FriendRequest[];
-    sent: FriendRequest[];
+    received: IDBRequest[];
+    sent: IDBRequest[];
   }> {
     const response = await api.get(API_ENDPOINTS.USER.FRIEND_REQUESTS);
     return response.data;
@@ -45,7 +45,7 @@ export const friendService = {
   },
 
   // Friends Management
-  async getFriends(): Promise<UserProfile[]> {
+  async getFriends(): Promise<UserProfileDTO[]> {
     const response = await api.get(API_ENDPOINTS.USER.FRIENDS);
     return response.data;
   },
@@ -65,7 +65,7 @@ export const friendService = {
   },
 
   // Friend Search
-  async searchFriends(query: string): Promise<UserProfile[]> {
+  async searchFriends(query: string): Promise<UserProfileDTO[]> {
     const response = await api.get(`${API_ENDPOINTS.USER.FRIENDS}/search`, {
       params: { query }
     });

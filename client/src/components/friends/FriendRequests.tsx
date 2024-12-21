@@ -12,7 +12,7 @@ import {
 import { chatService } from '../../services/chatService';
 import { toast } from 'react-hot-toast';
 import { cn } from '../../utils/styles';
-import type { FriendRequest } from '../../types/chat';
+
 
 export function FriendRequests() {
   const queryClient = useQueryClient();

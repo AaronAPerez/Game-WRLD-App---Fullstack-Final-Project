@@ -12,7 +12,8 @@ import {
 import { useChatRoom } from '../../hooks/useChatRoom';
 import { MessageComponent } from './MessageComponent';
 import { cn } from '../../utils/styles';
-import { ChatMessage, ChatRoom as ChatRoomType, UserProfileDTO } from '../../types/chat';
+import { ChatMessage, UserProfileDTO } from '../../types';
+
 
 interface ChatRoomProps {
   roomId: number;

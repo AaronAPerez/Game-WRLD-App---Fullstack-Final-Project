@@ -17,19 +17,19 @@ export default function  HomePage() {
 
 
   // Fetch New Releases (last 30 days)
-  const { data: newReleases } = useQuery({
-    queryKey: ['newReleases'],
-    queryFn: () => {
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  // const { data: newReleases } = useQuery({
+  //   queryKey: ['newReleases'],
+  //   queryFn: () => {
+  //     const thirtyDaysAgo = new Date();
+  //     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       
-      return gameService.getGames({
-        dates: `${thirtyDaysAgo.toISOString().split('T')[0]},${new Date().toISOString().split('T')[0]}`,
-        ordering: '-released',
-        page_size: 4
-      });
-    }
-  });
+  //     return gameService.getGames({
+  //       dates: `${thirtyDaysAgo.toISOString().split('T')[0]},${new Date().toISOString().split('T')[0]}`,
+  //       ordering: '-released',
+  //       page_size: 4
+  //     });
+  //   }
+  // });
 
   // Fetch Upcoming Games (next 6 months)
   const { data: upcomingGames } = useQuery({
@@ -41,7 +41,7 @@ export default function  HomePage() {
       return gameService.getGames({
         dates: `${new Date().toISOString().split('T')[0]},${sixMonthsLater.toISOString().split('T')[0]}`,
         ordering: 'released',
-        page_size: 4
+        page_size: 6
       });
     }
   });
@@ -52,7 +52,7 @@ export default function  HomePage() {
     queryFn: () => gameService.getGames({
       ordering: '-metacritic',
       metacritic: '80,100',
-      page_size: 4
+      page_size: 6
     })
   });
 
@@ -63,23 +63,16 @@ export default function  HomePage() {
 
 
       {/* Game Categories */}
-      <div className="container mx-auto px-4 space-y-12">
+      <div className="container mx-auto">
         {/* New Releases */}
-        <GameSection
+        {/* <GameSection
           title="New Releases"
           icon={Calendar}
           games={newReleases?.results || []}
           onGameSelect={setSelectedGame}
-        />
+        /> */}
 
-        {/* Upcoming Games */}
-        <GameSection
-          title="Upcoming Games"
-          icon={Gamepad}
-          games={upcomingGames?.results || []}
-          onGameSelect={setSelectedGame}
-        />
-
+   
         {/* Trending Now */}
         <GameSection
           title="Trending Now"
@@ -88,6 +81,14 @@ export default function  HomePage() {
           onGameSelect={setSelectedGame}
         />
       </div>
+
+              {/* Upcoming Games */}
+              <GameSection
+          title="Upcoming Games"
+          icon={Gamepad}
+          games={upcomingGames?.results || []}
+          onGameSelect={setSelectedGame}
+        />
 
       {/* Game Details Modal */}
       <AnimatePresence>
@@ -105,29 +106,28 @@ export default function  HomePage() {
 // Game Section Component
 interface GameSectionProps {
   title: string;
-  icon: React.FC<{ className?: string }>;
   games: Game[];
   onGameSelect: (game: Game) => void;
 }
 
-function GameSection({ title, icon: Icon, games, onGameSelect }: GameSectionProps) {
+function GameSection({ title, games, onGameSelect }: GameSectionProps) {
   return (
     <section className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Icon className="w-6 h-6 text-app-accent-primary" />
           <h2 className="text-2xl font-bold">{title}</h2>
         </div>
         
-        <button className="text-app-accent-primary hover:text-app-accent-primary/80 
+        {/* <button className="text-app-accent-primary hover:text-app-accent-primary/80 
                         flex items-center gap-1">
           View All
           <ChevronRight className="w-4 h-4" />
-        </button>
+        </button> */}
       </div>
     {/* Games Grid */}
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {games.map((game) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2
+    xl:grid-cols-3 gap-2">
+    {games.map((game: Game, index: number) => (
           <motion.div
             key={game.id}
             initial={{ opacity: 0, y: 20 }}
@@ -137,7 +137,7 @@ function GameSection({ title, icon: Icon, games, onGameSelect }: GameSectionProp
               game={game} 
               onClick={() => 
               onGameSelect(game)}
-              rank={0} />
+              rank={index + 1} />
           </motion.div>
         ))}
       </div>

@@ -5,7 +5,7 @@ import type {
   ChatMessage, 
   DirectMessage, 
   SendMessageRequest 
-} from '../types/chat';
+} from '../types/index';
 
 // Create axios instance with default config
 const api = axios.create({
@@ -25,6 +25,7 @@ api.interceptors.request.use(config => {
 });
 
 export const chatService = {
+  
   // Chat Rooms
   async getRooms(): Promise<ChatRoom[]> {
     const response = await api.get(API_ENDPOINTS.CHAT.ROOMS);

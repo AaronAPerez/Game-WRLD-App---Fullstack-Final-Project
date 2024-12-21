@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import type { ChatRoom, DirectMessage } from '../types/chat';
-import { UserProfile } from '../types';
+import { ChatRoom, DirectMessage } from '../types';
+
 
 interface ChatState {
   connectionState: any;

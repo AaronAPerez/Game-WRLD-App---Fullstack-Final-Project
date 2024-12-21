@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { UserProfile } from '../types';
+import { UserProfileDTO } from '../types';
 import { API_ENDPOINTS, BASE_URL } from '../constants';
 
 const api = axios.create({
@@ -37,7 +37,7 @@ export const userService = {
   },
 
   // User Profile
-  async getUserProfile(): Promise<UserProfile> {
+  async getUserProfile(): Promise<UserProfileDTO> {
     const response = await api.get(API_ENDPOINTS.AUTH.PROFILE);
     return response.data;
   },
@@ -51,14 +51,14 @@ export const userService = {
   },
 
   // User Search
-  async searchUsers(query: string): Promise<UserProfile[]> {
+  async searchUsers(query: string): Promise<UserProfileDTO[]> {
     const response = await api.get(API_ENDPOINTS.USER.SEARCH, {
       params: { query }
     });
     return response.data;
   },
 
-  async getUserByUsername(username: string): Promise<UserProfile> {
+  async getUserByUsername(username: string): Promise<UserProfileDTO> {
     const response = await api.get(API_ENDPOINTS.USER.GET_BY_USERNAME(username));
     return response.data;
   },

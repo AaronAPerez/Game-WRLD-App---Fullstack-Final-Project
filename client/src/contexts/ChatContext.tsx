@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { toast } from 'react-hot-toast';
 import { CHAT_HUB_URL } from '../constants';
-import type { ChatMessage, DirectMessage, UserProfileDTO } from '../types/chat';
+import type { ChatMessage, DirectMessage, UserProfileDTO } from '../types/index';
 
 interface ChatContextType {
   connection: HubConnection | null;
@@ -154,10 +154,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function useChat() {
-  const context = useContext(ChatContext);
-  if (context === undefined) {
-    throw new Error('useChat must be used within a ChatProvider');
-  }
-  return context;
-}
+// export function useChat() {
+//   const context = useContext(ChatContext);
+//   if (context === undefined) {
+//     throw new Error('useChat must be used within a ChatProvider');
+//   }
+//   return context;
+// }

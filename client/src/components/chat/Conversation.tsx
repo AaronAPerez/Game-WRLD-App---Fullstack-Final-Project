@@ -18,7 +18,7 @@ import { useChat } from '../../hooks/useChat';
 import { chatService } from '../../services/chatService';
 import { cn } from '../../utils/styles';
 import { TypingIndicator } from '../TypingIndicator';
-import type { DirectMessage, UserProfileDTO } from '../../types/chat';
+import type { DirectMessage, UserProfileDTO } from '../../types/index';
 import { useAuth } from '../../hooks/useAuth';
 
 interface ConversationProps {

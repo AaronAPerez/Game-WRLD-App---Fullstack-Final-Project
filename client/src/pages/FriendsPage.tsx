@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, UserPlus, MessageSquare, Gamepad2, X, User } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth';
+
 import { FriendRequests } from '../components/friends/FriendRequests';
 import FriendList from '../components/friends/FriendList';
 import { FriendSuggestions } from '../components/friends/FriendSuggestions';
-import { ActivityFeed } from '../components/friends/ActivityFeed';
+// import { ActivityFeed } from '../components/friends/ActivityFeed';
 
 
 const FriendsPage = () => {
@@ -83,7 +83,7 @@ const FriendsPage = () => {
          {/* Activity Feed */}
          <div>
           <h2 className="text-xl font-bold mb-4">Friend Activity</h2>
-          <ActivityFeed />
+       
                {/* Friend Requests */}
                <div className="mb-2">
         <h2 className="text-xl font-bold mb-4">Friend Requests</h2>
@@ -98,7 +98,7 @@ const FriendsPage = () => {
       </div>
     
 
-      {/* <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
     
         <div className="flex justify-between items-center mb-8">
           <div>
@@ -139,11 +139,11 @@ const FriendsPage = () => {
               </button>
             ))}
           </div>
-        </div> */}
+        </div>
 
         {/* Friends Grid */}
-        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mockFriends.map((friend) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Friends.map((friend) => (
             <motion.div
               key={friend.id}
               initial={{ opacity: 0, y: 20 }}
@@ -180,9 +180,9 @@ const FriendsPage = () => {
               </div>
             </motion.div>
           ))}
-        </div> */}
+        </div>
 
-        {/* Add Friend Modal
+        {/* Add Friend Modal */}
         <AnimatePresence>
           {showAddFriend && (
             <motion.div
@@ -235,8 +235,9 @@ const FriendsPage = () => {
               </motion.div>
             </motion.div>
           )}
-        </AnimatePresence> */}
+        </AnimatePresence>
       </div>
+    </div>
 
   );
 };

@@ -26,6 +26,7 @@ function App() {
                 },
               }}
             />
+        
             <AppRoutes />
           </ChatProvider>
         </AuthProvider>

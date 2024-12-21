@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { BASE_URL } from '../constants';
-import { UserProfileDTO } from '../types/user';
+import { UserProfileDTO } from '../types/index';
 
 
 export interface SearchResult {

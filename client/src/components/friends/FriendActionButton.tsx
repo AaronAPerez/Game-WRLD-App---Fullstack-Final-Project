@@ -4,7 +4,7 @@ import { UserPlus, Check, Loader2 } from 'lucide-react';
 import { cn } from '../../utils/styles';
 import { userService } from '../../services/userService';
 import { toast } from 'react-hot-toast';
-import type { UserProfileDTO } from '../../types/chat';
+import type { UserProfileDTO } from '../../types/index';
 
 interface FriendActionButtonProps {
   targetUser: UserProfileDTO;

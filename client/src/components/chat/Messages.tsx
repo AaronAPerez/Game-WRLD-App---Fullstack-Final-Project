@@ -3,17 +3,18 @@ import { motion } from 'framer-motion';
 import { Send, Search, Plus, MessageSquare, Loader2 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { cn } from '../../utils/styles';
-import type { UserProfile, DirectMessage } from '../../types/chat';
+
 import { chatService } from '../../services/chatService';
 import { useAuth } from '../../hooks/useAuth';
 import { toast } from 'react-hot-toast';
-import { useChatStore } from '../store/chatStore';
+import { useChatStore } from '../../store/chatStore';
+import { DirectMessage, UserProfileDTO } from '../../types';
 
-export const Messages = () => {
+const Messages = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const { activeConversation } = useChatStore();
-  const [selectedContact, setSelectedContact] = useState<UserProfile | null>(activeConversation);
+  const [selectedContact, setSelectedContact] = useState<UserProfileDTO | null>(activeConversation);
   const [messageText, setMessageText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [isTyping, setIsTyping] = useState(false);

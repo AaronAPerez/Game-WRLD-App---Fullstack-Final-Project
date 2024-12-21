@@ -14,7 +14,7 @@ import {
 import { format, formatDistanceToNow } from 'date-fns';
 import { cn } from '../../utils/styles';
 import { Activity, ActivityType } from '../../types/activity';
-import { useChat } from '../../contexts/ChatContext';
+import { useChat } from '../../hooks/useChat';
 
 // Activity service (add to your services)
 const activityService = {
@@ -136,7 +136,7 @@ export function ActivityFeed() {
           </div>
         );
 
-      // Add other activity type renderers...
+      // other activity 
       default:
         return null;
     }
