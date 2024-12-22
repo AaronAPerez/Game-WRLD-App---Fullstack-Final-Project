@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { AlertCircle, Loader2, User, EyeOff, Eye, Lock } from 'lucide-react';
@@ -30,6 +30,17 @@ const LoginPage = () => {
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
+
+  // useEffect to autofill the username if it was saved in localStorage
+  useEffect(() => {
+    const rememberedUser = localStorage.getItem('rememberedUser');
+    if (rememberedUser) {
+      setFormData((prev) => ({
+        ...prev,
+        userName: rememberedUser,
+      }));
+    }
+  }, []); // This effect runs once when the component is mounted
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};

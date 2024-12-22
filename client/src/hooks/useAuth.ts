@@ -32,8 +32,9 @@ export function AuthProvider(props: AuthProviderProps) {
         userName: username,
         password: password
       });
-      
-      localStorage.setItem('user', JSON.stringify(response));
+  
+      localStorage.setItem('user', JSON.stringify(response)); 
+      localStorage.setItem('authToken', response.token); 
       setUser(response);
       navigate('/');
     } catch (error) {
@@ -41,6 +42,7 @@ export function AuthProvider(props: AuthProviderProps) {
       throw error;
     }
   }, [navigate]);
+  
 
   const logout = useCallback(() => {
     authService.logout();
