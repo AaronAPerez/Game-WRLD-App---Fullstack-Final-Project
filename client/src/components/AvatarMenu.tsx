@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useAuth } from '../hooks/useAuth';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { 
   LogOut, 
@@ -13,6 +12,7 @@ import {
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { userService } from '../services/userService';
+import { useAuth } from '../hooks/useAuth';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];

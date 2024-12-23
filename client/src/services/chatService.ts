@@ -4,8 +4,12 @@ import type {
   ChatRoom, 
   ChatMessage, 
   DirectMessage, 
+<<<<<<< HEAD
+  SendMessageRequest 
+=======
   SendMessageRequest, 
   DirectMessageDTO
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
 } from '../types/index';
 
 // Create axios instance with default config
@@ -32,6 +36,7 @@ export interface ChatService {
 }
 
 export const chatService = {
+  
   // Chat Rooms
   async getRooms(): Promise<ChatRoom[]> {
     const response = await api.get(API_ENDPOINTS.CHAT.ROOMS);

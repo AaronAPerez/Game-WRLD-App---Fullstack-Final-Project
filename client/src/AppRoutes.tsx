@@ -11,7 +11,11 @@ import BlogPage from './pages/BlogPage';
 import { UserSearch } from './components/UserSearch/UserSearch';
 import GamesList from './pages/GamesList';
 import { Gamepad2, Flame, Clock, BarChart, Calendar } from 'lucide-react';
+<<<<<<< HEAD
+import Messages from './components/chat/Messages';
+=======
 
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
 import FriendsPage from './pages/FriendsPage';
 import Messages from './components/message/Messages';
 import GamingTimeline from './pages/GamingTimeline';
@@ -52,7 +56,7 @@ const AppRoutes = () => {
             }}
           />
         } />
-        <Route path="new-releases" element={
+        {/* <Route path="new-releases" element={
           <GamesList 
             title="New Releases"
             icon={Clock}
@@ -63,7 +67,7 @@ const AppRoutes = () => {
               page_size: 21
             }}
           />
-        } />
+        } /> */}
         <Route path="top-rated" element={
           <GamesList 
             title="Top Rated Games"
@@ -120,11 +124,17 @@ const AppRoutes = () => {
             <FriendsPage />
           </ProtectedRoute>
         } />
-        {/* <Route path="chat" element={
+        <Route path="chat" element={
           <ProtectedRoute>
+<<<<<<< HEAD
+            <ChatRoom roomId={0}/>
+          </ProtectedRoute> 
+         } />
+=======
             <ChatRoom/>
           </ProtectedRoute> */}
         {/* } /> */}
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
         <Route path="messages/:userId?" element={
           <ProtectedRoute>
             <Messages/>

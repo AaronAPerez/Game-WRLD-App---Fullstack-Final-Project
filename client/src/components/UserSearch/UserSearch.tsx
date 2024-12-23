@@ -14,11 +14,17 @@ import {
 import { cn } from '../../utils/styles';
 
 import { FriendActionButton } from '../friends/FriendActionButton';
+<<<<<<< HEAD
+import { ChatActionButton } from '../chat/ChatActionButton';
+import { searchService, UserSearchFilters } from '../../services/searchService';
+import { UserProfileDTO } from '../../types';
+=======
 import { ChatActionButton } from '../ChatActionButton';
 
 import { UserProfileDTO } from '../../types/index';
 import { searchService, UserSearchFilters } from '../../services/searchService';
 
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
 
 
 
@@ -193,7 +199,11 @@ const UserCard = ({ user }: { user: UserProfileDTO }) => {
       <div className="flex items-start gap-4">
         <div className="relative">
           <img
+<<<<<<< HEAD
+            src={user.avatar || '/default-avatar.png'}
+=======
             src={user?.avatar || '/default-avatar.png'}
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
             alt={user.username}
             className="w-16 h-16 rounded-xl object-cover"
           />

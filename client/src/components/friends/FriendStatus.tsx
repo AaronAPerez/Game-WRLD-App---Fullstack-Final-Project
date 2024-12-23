@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useChat } from '../../contexts/ChatContext';
 import { cn } from '../../utils/styles';
+import { useChat } from '../../hooks/useChat';
 
 interface FriendStatusProps {
   friendId: number;

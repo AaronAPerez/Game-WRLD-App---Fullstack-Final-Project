@@ -1,10 +1,19 @@
 import { useQuery } from '@tanstack/react-query';
+<<<<<<< HEAD
+import { motion } from 'framer-motion';
+import { MessageSquare, Users } from 'lucide-react';
+import { cn } from '../../utils/styles';
+
+import { chatService } from '../../services/chatService';
+import { UserProfileDTO } from '../../types';
+=======
 import { motion, AnimatePresence } from 'framer-motion';
 import { Users, Loader2 } from 'lucide-react';
 import { chatService } from '../../services/chatService';
 import { UserProfileDTO } from '../../types';
 import { ConversationItem } from './ConversationItem';
 
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
 
 interface ConversationListProps {
   searchQuery: string;

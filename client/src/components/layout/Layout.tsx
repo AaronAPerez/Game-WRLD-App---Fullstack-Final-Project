@@ -4,9 +4,13 @@ import { AnimatePresence, motion } from 'framer-motion';
 import {
   Search,
   Menu,
+<<<<<<< HEAD
+  X} from 'lucide-react';
+=======
   X,
   User as UserIcon
 } from 'lucide-react';
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
 import { cn } from '../../utils/styles';
 import Logo from '../Logo';
 import AvatarMenu from '../AvatarMenu';
@@ -15,7 +19,10 @@ import { useSearch } from '../../hooks/useSearch';
 import { navigationConfig } from '../../navigation.config';
 import { ChatNotifications } from '../chat/ChatNotifications';
 import { useAuth } from '../../hooks/useAuth';
+<<<<<<< HEAD
+=======
 import { ChatPanel } from '../chat/ChatPanel';
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
 
 
 interface NavLinkProps {
@@ -80,9 +87,17 @@ const Layout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-full w-full">
       {/* Header */}
       <motion.header
+<<<<<<< HEAD
+        className={cn(
+          "fixed top-0 w-full z-50 transition-colors duration-200",
+          "border-slate-800/50"
+        )}
+      >
+        <div className="container w-full mx-auto px-2 h-16 flex items-center justify-between gap-4">
+=======
         initial={false}
         animate={{
           y: isHeaderVisible ? 0 : -80,
@@ -95,6 +110,7 @@ const Layout = () => {
         )}
       >
         <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -108,14 +124,22 @@ const Layout = () => {
           </button>
 
           {/* Logo */}
+<<<<<<< HEAD
+          <Link to="/" className="flex-shrink-1">
+=======
           <Link to="/" className="flex-shrink-0">
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
             <Logo className="w-48" />
           </Link>
 
           {/* Search Bar */}
+<<<<<<< HEAD
+          <div className="rounded-full bg-stone-900 hidden md:flex flex-1 max-w-xl relative">
+=======
           <div className="hidden md:flex flex-1 max-w-xl relative">
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
             <div className={cn(
-              "w-full bg-stone-800/50 rounded-full overflow-hidden transition-all",
+              "w-full bg-stone-950/50 rounded-full overflow-hidden transition-all", 
               isSearchOpen && "ring-2 ring-indigo-500/50",
             )}>
               <div className="flex items-center px-4 py-1">
@@ -125,7 +149,7 @@ const Layout = () => {
                   value={searchQuery}
                   onChange={(e) => handleSearchChange(e.target.value)}
                   onFocus={() => setIsSearchOpen(true)}
-                  placeholder="Search games..."
+                  placeholder="Search games, friends, or posts..."
                   className="w-full bg-transparent text-white px-3 focus:outline-none"
                 />
                 {searchQuery && (
@@ -155,11 +179,14 @@ const Layout = () => {
           <div className="flex items-center gap-2">
             {isAuthenticated ? (
               <>
+<<<<<<< HEAD
+=======
 
 {/* <div className="h-[calc(100vh-4rem)]">
       <ChatPanel />
     </div> */}
 
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
                 <ChatNotifications onOpenChat={function (): void {
                   throw new Error('Function not implemented.');
                 } } />
@@ -189,6 +216,10 @@ const Layout = () => {
           </div>
         </div>
       </motion.header>
+<<<<<<< HEAD
+    
+=======
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
 
       {/* Mobile Menu */}
       <AnimatePresence>
@@ -222,9 +253,16 @@ const Layout = () => {
           </motion.div>
         )}
       </AnimatePresence>
+<<<<<<< HEAD
+   
+
+      {/* Desktop Layout */}
+      <div className="bg-black w-full pt-16 lg:grid lg:grid-cols-[220px,1fr]">
+=======
 
       {/* Desktop Layout */}
       <div className="pt-16 lg:grid lg:grid-cols-[240px,1fr]">
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
         {/* Desktop Sidebar */}
         <aside className="hidden lg:block h-[calc(100vh-4rem)] sticky top-16 overflow-y-auto border-r border-stone-800/50">
           <nav className="p-4 space-y-0">
@@ -238,13 +276,22 @@ const Layout = () => {
         </aside>
 
         {/* Main Content */}
+<<<<<<< HEAD
+        <main className="bg-stone-850">
+=======
         <main className="min-h-screen bg-black">
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
           <div className="container mx-auto p-4">
             <Outlet />
           </div>
         </main>
       </div>
     </div>
+<<<<<<< HEAD
+ 
+  );
+};
+=======
   );
 };
 
@@ -256,6 +303,7 @@ export default Layout;
 // import { cn } from '../../utils/styles';
 // import { Navbar } from '../NavBar';
 
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
 
 
 // export default function Layout() {

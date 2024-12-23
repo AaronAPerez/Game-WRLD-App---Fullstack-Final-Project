@@ -1,4 +1,5 @@
-import type { ChatMessage, UserProfileDTO } from '../types/chat';
+import { ChatMessage, UserProfileDTO } from "../types";
+
 
 export const formatChatTime = (date: string | Date): string => {
   const messageDate = new Date(date);

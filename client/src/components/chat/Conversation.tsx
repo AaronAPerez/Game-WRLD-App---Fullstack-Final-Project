@@ -15,11 +15,19 @@
 // } from 'lucide-react';
 // import { useChat } from '../../hooks/useChat';
 
+<<<<<<< HEAD
+import { chatService } from '../../services/chatService';
+import { cn } from '../../utils/styles';
+import { TypingIndicator } from '../TypingIndicator';
+import type { DirectMessage, UserProfileDTO } from '../../types/index';
+import { useAuth } from '../../hooks/useAuth';
+=======
 // import { chatService } from '../../services/chatService';
 // import { cn } from '../../utils/styles';
 // import { TypingIndicator } from '../TypingIndicator';
 // import type { DirectMessage, UserProfileDTO } from '../../types/index';
 // import { useAuth } from '../../hooks/useAuth';
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
 
 // interface ConversationProps {
 //   contact: UserProfileDTO;

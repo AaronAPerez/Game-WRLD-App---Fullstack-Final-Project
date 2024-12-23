@@ -3,7 +3,6 @@ import { Calendar, Star, Tag } from 'lucide-react';
 import type { Game } from '../types/rawg';
 import { PlatformIcons } from './PlatformIcons';
 import { cn } from '../utils/styles';
-import GameDetails from './GameDetails';
 
 interface GameCardDetailsProps {
   game: Game;

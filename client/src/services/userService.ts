@@ -1,5 +1,9 @@
 import axios from 'axios';
 
+<<<<<<< HEAD
+import { UserProfileDTO } from '../types';
+=======
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
 import { API_ENDPOINTS, BASE_URL } from '../constants';
 
 import { FriendRequests, UserProfileDTO } from '../types/index';

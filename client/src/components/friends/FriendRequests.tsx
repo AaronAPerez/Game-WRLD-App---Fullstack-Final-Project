@@ -3,7 +3,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { userService } from '../../api/user';
 import { Users } from 'lucide-react';
 import { cn } from '../../utils/styles';
+<<<<<<< HEAD
+
+=======
 import type { FriendRequestDTO } from '../../types';
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
 
 export const FriendRequests = () => {
   const [selectedTab, setSelectedTab] = useState<'received' | 'sent'>('received');

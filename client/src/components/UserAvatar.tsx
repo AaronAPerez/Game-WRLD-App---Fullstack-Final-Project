@@ -1,5 +1,6 @@
+import { UserProfileDTO } from '../types';
 import { cn } from '../utils/styles';
-import type { UserProfileDTO } from '../types/chat';
+
 
 interface UserAvatarProps {
   user?: UserProfileDTO;

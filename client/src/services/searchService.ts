@@ -1,7 +1,10 @@
 import axios from 'axios';
 import { BASE_URL } from '../constants';
 import { UserProfileDTO } from '../types/index';
+<<<<<<< HEAD
+=======
 import { FriendStatus } from '../components/friends/FriendStatus';
+>>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
 
 
 export interface SearchResult {
