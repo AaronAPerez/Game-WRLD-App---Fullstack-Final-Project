@@ -6847,27 +6847,23 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-<<<<<<< HEAD
       "projectUniqueName": "C:\\Users\\aaper\\Documents\\.CodeStack Academy\\React\\Final Project\\1.Fullstack_Final_Project\\Game_WRLD-Fullstack-Final-App-Project\\api\\api.csproj",
       "projectName": "api",
       "projectPath": "C:\\Users\\aaper\\Documents\\.CodeStack Academy\\React\\Final Project\\1.Fullstack_Final_Project\\Game_WRLD-Fullstack-Final-App-Project\\api\\api.csproj",
       "packagesPath": "C:\\Users\\aaper\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\aaper\\Documents\\.CodeStack Academy\\React\\Final Project\\1.Fullstack_Final_Project\\Game_WRLD-Fullstack-Final-App-Project\\api\\obj\\",
-=======
-<<<<<<< HEAD
+
       "projectUniqueName": "C:\\Users\\aaper\\Documents\\.CodeStack Academy\\React\\Final Project\\FINAL\\Game_WRLD-Fullstack-Final-App-Project\\api\\api.csproj",
       "projectName": "api",
       "projectPath": "C:\\Users\\aaper\\Documents\\.CodeStack Academy\\React\\Final Project\\FINAL\\Game_WRLD-Fullstack-Final-App-Project\\api\\api.csproj",
       "packagesPath": "C:\\Users\\aaper\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\aaper\\Documents\\.CodeStack Academy\\React\\Final Project\\FINAL\\Game_WRLD-Fullstack-Final-App-Project\\api\\obj\\",
-=======
+
       "projectUniqueName": "C:\\Users\\silve\\Documents\\Academy Full Stack\\wrld\\gameth\\gmm2\\gmwd\\gw3\\Game_WRLD-Fullstack-Final-App-Project\\api\\api.csproj",
       "projectName": "api",
       "projectPath": "C:\\Users\\silve\\Documents\\Academy Full Stack\\wrld\\gameth\\gmm2\\gmwd\\gw3\\Game_WRLD-Fullstack-Final-App-Project\\api\\api.csproj",
       "packagesPath": "C:\\Users\\silve\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\silve\\Documents\\Academy Full Stack\\wrld\\gameth\\gmm2\\gmwd\\gw3\\Game_WRLD-Fullstack-Final-App-Project\\api\\obj\\",
->>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
->>>>>>> abbaf96551a2b46aa4d8610cddcc43ef4a8e1ff2
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\aaper\\AppData\\Roaming\\NuGet\\NuGet.Config"

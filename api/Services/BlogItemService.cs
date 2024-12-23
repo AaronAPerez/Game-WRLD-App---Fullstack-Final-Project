@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using api.Models;
 using api.Services.Context;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Services;
@@ -96,4 +91,8 @@ public IEnumerable<BlogItemModel> GetAllBlogItems()
         return _context.BlogInfo.Where(item => item.IsPublished && item.IsDeleted == false);
     }
 
+    internal bool DeleteBlogItem(BlogItemModel blogDelete)
+    {
+        throw new NotImplementedException();
+    }
 }

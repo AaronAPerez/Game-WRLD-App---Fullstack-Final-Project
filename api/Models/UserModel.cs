@@ -1,19 +1,32 @@
-using System;
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace api.Models;
 
 public class UserModel
 {
+    [Key]
     public int Id { get; set; }
+
+    [Required(ErrorMessage = "Username is required")]
+    [StringLength(50, MinimumLength = 3, ErrorMessage = "Username must be between 3 and 50 characters")]
     public string? Username { get; set; }
+
+    [Required]
     public string? Salt { get; set; }
+
+    [Required]
     public string? Hash { get; set; }
+
+    [Url(ErrorMessage = "Invalid avatar URL")]
     public string? Avatar { get; set; }
-    public string? Status { get; set; } // online, offline, in-game
+
+    [StringLength(20)]
+    public string? Status { get; set; }
+
     public DateTime LastActive { get; set; }
     public DateTime CreatedAt { get; set; }
     public bool IsDeleted { get; set; }
+
 
     // Navigation properties
     public virtual ICollection<FriendModel>? FriendshipsInitiated { get; set; }
@@ -42,21 +55,3 @@ public class UserGameModel
     public virtual UserModel? User { get; set; }
 }
 
-// public class FriendModel
-// {
-//     public int Id { get; set; }
-//     public int RequesterId { get; set; }
-//     public int AddresseeId { get; set; }
-//     public string Status { get; set; } = "pending"; // Default value 
-//     public DateTime CreatedAt { get; set; }
-//     public DateTime? AcceptedAt { get; set; }
-
-//     public virtual UserModel? Requester { get; set; }
-//     public virtual UserModel? Addressee { get; set; }
-
-//     public FriendModel()
-//     {
-//         CreatedAt = DateTime.UtcNow;
-//         Status = "pending"; // Ensure Status is initialized
-//     }
-// }

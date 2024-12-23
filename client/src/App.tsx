@@ -30,11 +30,11 @@ export function App() {
                 duration: 4000
               }}
             />
-<<<<<<< HEAD
+
         
             <AppRoutes />
-=======
->>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
+
+
           </ChatProvider>
         </AuthProvider>
       </QueryClientProvider>

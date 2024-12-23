@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using api.Models;
 using api.Models.DTO;
@@ -9,7 +5,7 @@ using api.Services.Context;
 
 namespace api.Services
 {
-public class ChatService
+    public class ChatService
 {
     private readonly DataContext _context;
     private readonly UserService _userService;
