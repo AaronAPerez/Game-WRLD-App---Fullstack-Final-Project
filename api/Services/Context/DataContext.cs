@@ -4,21 +4,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.Services.Context;
 
-public class DataContext : DbContext
+public class DataContext(DbContextOptions options) : DbContext(options)
 {
-    public DataContext(DbContextOptions options) : base(options)
-    {
-    }
 
     // Define DbSets for all models
-    public DbSet<UserModel> UserInfo { get; set; }
-    public DbSet<BlogItemModel> BlogInfo { get; set; }
-    public DbSet<FriendModel> Friends { get; set; }
-    public DbSet<UserGameModel> UserGames { get; set; }
-    public DbSet<ChatRoomModel> ChatRooms { get; set; }
-    public DbSet<ChatRoomMemberModel> ChatRoomMembers { get; set; }
-    public DbSet<ChatMessageModel> ChatMessages { get; set; }
-    public DbSet<DirectMessageModel> DirectMessages { get; set; }
+    public DbSet<UserModel>? UserInfo { get; set; }
+    public DbSet<BlogItemModel>? BlogInfo { get; set; }
+    public DbSet<FriendModel>? Friends { get; set; }
+    public DbSet<UserGameModel>? UserGames { get; set; }
+    public DbSet<ChatRoomModel>? ChatRooms { get; set; }
+    public DbSet<ChatRoomMemberModel>? ChatRoomMembers { get; set; }
+    public DbSet<ChatMessageModel>? ChatMessages { get; set; }
+    public DbSet<DirectMessageModel>? DirectMessages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

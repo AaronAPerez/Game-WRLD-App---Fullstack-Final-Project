@@ -46,7 +46,7 @@ public class FriendDTO
 
 public class FriendRequestResponseDTO
 {
-    internal int SenderId;
+    // internal int SenderId;
 
     public bool Success { get; internal set; }
     public string? Message { get; internal set; }

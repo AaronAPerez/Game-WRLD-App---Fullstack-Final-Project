@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
@@ -9,6 +7,7 @@ import { useAuth } from '../hooks/useAuth';
 import { toast } from 'react-hot-toast';
 import BlogEditor from '../components/blog/BlogEditor';
 import { cn } from '../utils/styles';
+import BlogCard from '../components/blog/BlogCard';
 
 
 

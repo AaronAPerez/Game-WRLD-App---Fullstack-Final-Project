@@ -1,0 +1,1191 @@
+{
+  "openapi": "3.0.1",
+  "info": { "title": "GameWorld API", "version": "v1" },
+  "paths": {
+    "/api/Blog/AddBlogItems": {
+      "post": {
+        "tags": ["Blog"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/BlogItemModel" }
+            },
+            "text/json": {
+              "schema": { "$ref": "#/components/schemas/BlogItemModel" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/BlogItemModel" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": { "schema": { "type": "boolean" } },
+              "application/json": { "schema": { "type": "boolean" } },
+              "text/json": { "schema": { "type": "boolean" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/Blog/GetBlogItems": {
+      "get": {
+        "tags": ["Blog"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/BlogItemModel" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/BlogItemModel" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/BlogItemModel" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Blog/GetBlogItemByCategory/{Category}": {
+      "get": {
+        "tags": ["Blog"],
+        "parameters": [
+          {
+            "name": "Category",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/BlogItemModel" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/BlogItemModel" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/BlogItemModel" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Blog/GetItemsByTag/{Tag}": {
+      "get": {
+        "tags": ["Blog"],
+        "parameters": [
+          {
+            "name": "Tag",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/BlogItemModel" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/BlogItemModel" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/BlogItemModel" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Blog/GetItemsByDate/{Date}": {
+      "get": {
+        "tags": ["Blog"],
+        "parameters": [
+          {
+            "name": "Date",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/BlogItemModel" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/BlogItemModel" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/BlogItemModel" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Blog/UpdateBlogItems": {
+      "post": {
+        "tags": ["Blog"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/BlogItemModel" }
+            },
+            "text/json": {
+              "schema": { "$ref": "#/components/schemas/BlogItemModel" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/BlogItemModel" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": { "schema": { "type": "boolean" } },
+              "application/json": { "schema": { "type": "boolean" } },
+              "text/json": { "schema": { "type": "boolean" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/Blog/DeleteBlogItem/{userId}/{blogId}": {
+      "delete": {
+        "tags": ["Blog"],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "blogId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": { "schema": { "type": "boolean" } },
+              "application/json": { "schema": { "type": "boolean" } },
+              "text/json": { "schema": { "type": "boolean" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/Blog/GetItemsByUserId/{UserId}": {
+      "get": {
+        "tags": ["Blog"],
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/BlogItemModel" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/BlogItemModel" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/BlogItemModel" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Blog/GetPublishedItems": {
+      "get": {
+        "tags": ["Blog"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/BlogItemModel" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/BlogItemModel" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/BlogItemModel" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Chat/direct/start": {
+      "post": {
+        "tags": ["Chat"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartDirectMessageRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartDirectMessageRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartDirectMessageRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/DirectMessageDTO" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DirectMessageDTO" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/DirectMessageDTO" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Chat/direct/{userId}": {
+      "get": {
+        "tags": ["Chat"],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32", "default": 1 }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32", "default": 50 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/DirectMessageDTO" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/DirectMessageDTO" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/DirectMessageDTO" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Chat/direct/send": {
+      "post": {
+        "tags": ["Chat"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SendDirectMessageDTO" }
+            },
+            "text/json": {
+              "schema": { "$ref": "#/components/schemas/SendDirectMessageDTO" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/SendDirectMessageDTO" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/DirectMessageDTO" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DirectMessageDTO" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/DirectMessageDTO" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Chat/rooms": {
+      "get": {
+        "tags": ["Chat"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ChatRoomDTO" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ChatRoomDTO" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ChatRoomDTO" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Chat"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateChatRoomDTO" }
+            },
+            "text/json": {
+              "schema": { "$ref": "#/components/schemas/CreateChatRoomDTO" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/CreateChatRoomDTO" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ChatRoomDTO" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ChatRoomDTO" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ChatRoomDTO" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Chat/rooms/{id}": {
+      "get": {
+        "tags": ["Chat"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ChatRoomDTO" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ChatRoomDTO" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ChatRoomDTO" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Chat/rooms/{roomId}/messages": {
+      "post": {
+        "tags": ["Chat"],
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SendMessageDTO" }
+            },
+            "text/json": {
+              "schema": { "$ref": "#/components/schemas/SendMessageDTO" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/SendMessageDTO" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ChatMessageDTO" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ChatMessageDTO" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ChatMessageDTO" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Chat/rooms/{id}/messages": {
+      "get": {
+        "tags": ["Chat"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32", "default": 1 }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32", "default": 50 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ChatMessageDTO" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ChatMessageDTO" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ChatMessageDTO" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Chat/rooms/{id}/join": {
+      "post": {
+        "tags": ["Chat"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/api/Chat/rooms/{id}/leave": {
+      "post": {
+        "tags": ["Chat"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/api/User/AddUsers": {
+      "post": {
+        "tags": ["User"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateAccountDTO" }
+            },
+            "text/json": {
+              "schema": { "$ref": "#/components/schemas/CreateAccountDTO" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/CreateAccountDTO" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": { "schema": { "type": "boolean" } },
+              "application/json": { "schema": { "type": "boolean" } },
+              "text/json": { "schema": { "type": "boolean" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/User/GetAllUsers": {
+      "get": {
+        "tags": ["User"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/UserModel" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/UserModel" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/UserModel" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/User/GetUserByUsername/{username}": {
+      "get": {
+        "tags": ["User"],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/api/User/Login": {
+      "post": {
+        "tags": ["User"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginDTO" }
+            },
+            "text/json": {
+              "schema": { "$ref": "#/components/schemas/LoginDTO" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/LoginDTO" }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/api/User/Profile": {
+      "get": {
+        "tags": ["User"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/UserProfileDTO" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserProfileDTO" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/UserProfileDTO" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["User"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateUserProfileDTO" }
+            },
+            "text/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateUserProfileDTO" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/UpdateUserProfileDTO" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": { "schema": { "type": "boolean" } },
+              "application/json": { "schema": { "type": "boolean" } },
+              "text/json": { "schema": { "type": "boolean" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/User/Friends/Request": {
+      "post": {
+        "tags": ["User"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/FriendRequestDTO" }
+            },
+            "text/json": {
+              "schema": { "$ref": "#/components/schemas/FriendRequestDTO" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/FriendRequestDTO" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": { "schema": { "type": "boolean" } },
+              "application/json": { "schema": { "type": "boolean" } },
+              "text/json": { "schema": { "type": "boolean" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/User/Friends/Respond": {
+      "post": {
+        "tags": ["User"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/FriendResponseDTO" }
+            },
+            "text/json": {
+              "schema": { "$ref": "#/components/schemas/FriendResponseDTO" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/FriendResponseDTO" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": { "schema": { "type": "boolean" } },
+              "application/json": { "schema": { "type": "boolean" } },
+              "text/json": { "schema": { "type": "boolean" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/User/Friends": {
+      "get": {
+        "tags": ["User"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/UserProfileDTO" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/UserProfileDTO" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/UserProfileDTO" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/User/Friends/Requests": {
+      "get": {
+        "tags": ["User"],
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/api/User/Games": {
+      "post": {
+        "tags": ["User"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserGameDTO" }
+            },
+            "text/json": {
+              "schema": { "$ref": "#/components/schemas/UserGameDTO" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/UserGameDTO" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": { "schema": { "type": "boolean" } },
+              "application/json": { "schema": { "type": "boolean" } },
+              "text/json": { "schema": { "type": "boolean" } }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["User"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/UserGameDTO" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/UserGameDTO" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/UserGameDTO" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/User/search": {
+      "get": {
+        "tags": ["User"],
+        "parameters": [
+          { "name": "query", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/UserProfileDTO" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/UserProfileDTO" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/UserProfileDTO" }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BlogItemModel": {
+        "type": "object",
+        "properties": {
+          "Id": { "type": "integer", "format": "int32" },
+          "UserId": { "type": "integer", "format": "int32" },
+          "PublisherName": { "type": "string", "nullable": true },
+          "Tag": { "type": "string", "nullable": true },
+          "Title": { "type": "string", "nullable": true },
+          "Image": { "type": "string", "nullable": true },
+          "Description": { "type": "string", "nullable": true },
+          "Date": { "type": "string", "nullable": true },
+          "Category": { "type": "string", "nullable": true },
+          "IsPublished": { "type": "boolean" },
+          "IsDeleted": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "ChatMessageDTO": {
+        "type": "object",
+        "properties": {
+          "Id": { "type": "integer", "format": "int32" },
+          "ChatRoomId": { "type": "integer", "format": "int32" },
+          "Sender": { "$ref": "#/components/schemas/UserProfileDTO" },
+          "Content": { "type": "string", "nullable": true },
+          "MessageType": { "type": "string", "nullable": true },
+          "SentAt": { "type": "string", "format": "date-time" },
+          "IsEdited": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "ChatRoomDTO": {
+        "type": "object",
+        "properties": {
+          "Id": { "type": "integer", "format": "int32" },
+          "Name": { "type": "string", "nullable": true },
+          "Description": { "type": "string", "nullable": true },
+          "Image": { "type": "string", "nullable": true },
+          "MembersCount": { "type": "integer", "format": "int32" },
+          "CreatedAt": { "type": "string", "format": "date-time" },
+          "Creator": { "$ref": "#/components/schemas/UserProfileDTO" },
+          "IsPrivate": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "CreateAccountDTO": {
+        "type": "object",
+        "properties": {
+          "Id": { "type": "integer", "format": "int32" },
+          "Username": { "type": "string", "nullable": true },
+          "Password": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "CreateChatRoomDTO": {
+        "type": "object",
+        "properties": {
+          "roomId": { "type": "integer", "format": "int32" },
+          "Name": { "type": "string", "nullable": true },
+          "Description": { "type": "string", "nullable": true },
+          "Image": { "type": "string", "nullable": true },
+          "IsPrivate": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "DirectMessageDTO": {
+        "type": "object",
+        "properties": {
+          "Id": { "type": "integer", "format": "int32" },
+          "Sender": { "$ref": "#/components/schemas/UserProfileDTO" },
+          "Receiver": { "$ref": "#/components/schemas/UserProfileDTO" },
+          "Content": { "type": "string", "nullable": true },
+          "MessageType": { "type": "string", "nullable": true },
+          "SentAt": { "type": "string", "format": "date-time" },
+          "IsRead": { "type": "boolean" },
+          "IsEdited": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "FriendModel": {
+        "type": "object",
+        "properties": {
+          "Id": { "type": "integer", "format": "int32" },
+          "RequesterId": { "type": "integer", "format": "int32" },
+          "AddresseeId": { "type": "integer", "format": "int32" },
+          "Status": { "type": "string", "nullable": true },
+          "CreatedAt": { "type": "string", "format": "date-time" },
+          "AcceptedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "Requester": { "$ref": "#/components/schemas/UserModel" },
+          "Addressee": { "$ref": "#/components/schemas/UserModel" }
+        },
+        "additionalProperties": false
+      },
+      "FriendRequestDTO": {
+        "type": "object",
+        "properties": {
+          "RequestId": { "type": "integer", "format": "int32" },
+          "RequesterId": { "type": "integer", "format": "int32" },
+          "RequesterName": { "type": "string", "nullable": true },
+          "AddresseeId": { "type": "integer", "format": "int32" },
+          "AddresseeName": { "type": "string", "nullable": true },
+          "Status": { "type": "string", "nullable": true },
+          "CreatedAt": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": false
+      },
+      "FriendResponseDTO": {
+        "type": "object",
+        "properties": {
+          "RequestId": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoginDTO": {
+        "type": "object",
+        "properties": {
+          "UserName": { "type": "string", "nullable": true },
+          "Password": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "SendDirectMessageDTO": {
+        "type": "object",
+        "properties": {
+          "ReceiverId": { "type": "integer", "format": "int32" },
+          "Content": { "type": "string", "nullable": true },
+          "MessageType": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "SendMessageDTO": {
+        "type": "object",
+        "properties": {
+          "ChatRoomId": { "type": "integer", "format": "int32" },
+          "Content": { "type": "string", "nullable": true },
+          "MessageType": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "StartDirectMessageRequest": {
+        "type": "object",
+        "properties": {
+          "ReceiverId": { "type": "integer", "format": "int32" }
+        },
+        "additionalProperties": false
+      },
+      "UpdateUserProfileDTO": {
+        "type": "object",
+        "properties": {
+          "Username": { "type": "string", "nullable": true },
+          "Avatar": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "UserGameDTO": {
+        "type": "object",
+        "properties": {
+          "GameId": { "type": "integer", "format": "int32" },
+          "IsFavorite": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "UserGameModel": {
+        "type": "object",
+        "properties": {
+          "Id": { "type": "integer", "format": "int32" },
+          "UserId": { "type": "integer", "format": "int32" },
+          "GameId": { "type": "integer", "format": "int32" },
+          "IsFavorite": { "type": "boolean" },
+          "AddedAt": { "type": "string", "format": "date-time" },
+          "User": { "$ref": "#/components/schemas/UserModel" }
+        },
+        "additionalProperties": false
+      },
+      "UserModel": {
+        "type": "object",
+        "properties": {
+          "Id": { "type": "integer", "format": "int32" },
+          "Username": { "type": "string", "nullable": true },
+          "Salt": { "type": "string", "nullable": true },
+          "Hash": { "type": "string", "nullable": true },
+          "Avatar": { "type": "string", "nullable": true },
+          "Status": { "type": "string", "nullable": true },
+          "LastActive": { "type": "string", "format": "date-time" },
+          "CreatedAt": { "type": "string", "format": "date-time" },
+          "IsDeleted": { "type": "boolean" },
+          "FriendshipsInitiated": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/FriendModel" },
+            "nullable": true
+          },
+          "FriendshipsReceived": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/FriendModel" },
+            "nullable": true
+          },
+          "UserGames": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/UserGameModel" },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserProfileDTO": {
+        "type": "object",
+        "properties": {
+          "Id": { "type": "integer", "format": "int32" },
+          "Username": { "type": "string", "nullable": true },
+          "Avatar": { "type": "string", "nullable": true },
+          "Status": { "type": "string", "nullable": true },
+          "LastActive": { "type": "string", "format": "date-time" },
+          "FriendsCount": { "type": "integer", "format": "int32" },
+          "GamesCount": { "type": "integer", "format": "int32" },
+          "IsOnline": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "Please enter your JWT token",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "security": [{ "Bearer": [] }]
+}

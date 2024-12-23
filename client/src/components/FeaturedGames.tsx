@@ -118,8 +118,8 @@ export default FeaturedGames;
 //   const currentGame = featured.results[currentIndex];
 
 //   return (
-//     <div className="relative group">
 //       {/* Section Title Overlay */}
+//     <div className="relative group">
 //       <div className="absolute top-0 left-0 z-20 p-6 bg-gradient-to-r from-stone-950 to-transparent">
 //         <h2 className="text-3xl font-bold text-white">Featured Games</h2>
 //       </div>

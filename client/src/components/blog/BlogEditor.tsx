@@ -93,12 +93,13 @@ export const BlogEditor = ({ onSuccess, initialData, isEditing, blogId }: BlogEd
   const removeTag = (tagToRemove: string) => {
     setTags(tags.filter((tag) => tag !== tagToRemove));
   };
-}
+
   const onSubmit = (data: BlogFormData) => {
     mutation.mutate({
       ...data,
       tags,
-    })
+    });
+  };
   
 
 

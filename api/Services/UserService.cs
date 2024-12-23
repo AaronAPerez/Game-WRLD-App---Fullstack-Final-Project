@@ -175,6 +175,7 @@ public class UserService : ControllerBase
         }
     }
 
+    // GET UseProfileDTO
     public async Task<UserProfileDTO> GetUserProfile(int userId)
 {
     var user = await _context.UserInfo!
@@ -198,8 +199,7 @@ public class UserService : ControllerBase
         GamesCount = user.UserGames?.Count ?? 0
     };
 
-    // Log the UserProfileDTO for debugging
-    Console.WriteLine("User Profile DTO: " + JsonConvert.SerializeObject(userProfile));
+
 
     return userProfile;
 }
@@ -501,5 +501,14 @@ public class UserService : ControllerBase
             .ToListAsync();
     }
 
+    internal async Task RespondToFriendRequest(int v, int requestId, object accept)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal async Task FriendResponseDTO(int v, int requestId)
+    {
+        throw new NotImplementedException();
+    }
 }
 

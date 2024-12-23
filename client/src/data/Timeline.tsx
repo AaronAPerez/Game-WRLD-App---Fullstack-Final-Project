@@ -203,8 +203,7 @@ export default function Timeline() {
                   >
                     <GameCard
                       game={game}
-                      onClick={() => handleGameSelect(game)}
-                    />
+                      onClick={() => handleGameSelect(game)} rank={0}                    />
                   </motion.div>
                 ))
               )}
