@@ -8,77 +8,124 @@ namespace api.Controllers;
 [Route("api/[controller]")]
 public class BlogController : ControllerBase
 {
+    //  Field name Blog to match constructor
+    private readonly BlogItemService _blogService; 
+ 
 
-    private readonly BlogItemService _data;
-
-    public BlogController(BlogItemService dataFromService)
+    public BlogController(BlogItemService blogService)
     {
-        _data = dataFromService;
+        _blogService  = blogService;
     }
 
     [HttpPost("AddBlogItems")]
-
-    public bool AddBlogItems(BlogItemModel newBlogItem)
+    public async Task<IActionResult> AddBlogItems([FromBody] BlogItemModel newBlogItem)
     {
-        return _data.AddBlogItems(newBlogItem);
+        if (newBlogItem == null)
+        {
+            return BadRequest("Blog item data is required");
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var (success, message) = await _blogService.AddBlogItems(newBlogItem);
+        
+        if (!success)
+        {
+            return BadRequest(message);
+        }
+        
+        return Ok(new { message });
     }
 
-    //GetAllBlogItems 
     [HttpGet("GetBlogItems")]
-
     public IEnumerable<BlogItemModel> GetAllBlogItems()
     {
-        return _data.GetAllBlogItems();
+        return _blogService.GetAllBlogItems(); 
     }
 
-    //GetBlogItemsByCategory
+    
     [HttpGet("GetBlogItemByCategory/{Category}")]
     public IEnumerable<BlogItemModel> GetItemByCategory(string Category)
     {
-        return _data.GetItemByCategory(Category);
+        return _blogService.GetItemByCategory(Category);
     }
+
+ 
+    // GetBlogItemsByDate
+    [HttpGet("GetItemsByDate/{Date}")]
+    public IActionResult GetItemsByDate(string Date)
+    {
+        try
+        {
+            var items = _blogService.GetItemsByDate(Date);
+            
+            if (!items.Any())
+            {
+                return NotFound($"No blog items found for date: {Date}");
+            }
+
+            return Ok(items);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "An error occurred while retrieving blog items");
+        }
+    }
+
+    [HttpGet("GetItemsByUserId/{UserId}")]
+    public IEnumerable<BlogItemModel> GetItemsByUserId(int UserId)
+    {
+        return _blogService.GetItemsByUserId(UserId);
+    }
+
 
     //GetItemsByTags
 
     [HttpGet("GetItemsByTag/{Tag}")]
     public List<BlogItemModel> GetItemsByTag(string Tag)
     {
-        return _data.GetItemsByTag(Tag);
+        return _blogService.GetItemsByTag(Tag);
     }
 
-    //GetBlogItemsByDate
-
-    [HttpGet("GetItemsByDate/{Date}")]
-
-    public IEnumerable<BlogItemModel> GetItemsByDate(string Date)
-    {
-        return _data.GetItemsByDate(Date);
-    }
 
     //UpdateBlogItems
     [HttpPost("UpdateBlogItems")]
     public bool UpdateBlogItems(BlogItemModel BlogUpdate)
     {
-        return _data.UpdateBlogItems(BlogUpdate);
+        return _blogService.UpdateBlogItems(BlogUpdate);
     }
 
-    [HttpDelete("DeleteBlogItem/{userId}/{blogId}")]
-    public bool DeleteBlogItem(int userId, int blogId)
+    
+    // DeleteBlogItem
+    [HttpPost("DeleteBlogItem/{userId}/{blogId}")]
+    public async Task<IActionResult> DeleteBlogItem(int userId, int blogId)
     {
-        return _data.DeleteBlogItem(userId, blogId);
-    }
+        if (userId <= 0 || blogId <= 0)
+        {
+            return BadRequest("Invalid user ID or blog ID");
+        }
 
-    //GetItemsByUserId 
-    [HttpGet("GetItemsByUserId/{UserId}")]
+        var result = await _blogService.DeleteBlogItem(userId, blogId);
 
-    public IEnumerable<BlogItemModel> GetItemsByUserId(int UserId)
-    {
-        return _data.GetItemsByUserId(UserId);
+        if (!result)
+        {
+            return NotFound("Blog item not found or you don't have permission to delete it");
+        }
+
+        return Ok(new { message = "Blog item deleted successfully" });
     }
 
     [HttpGet("GetPublishedItems")]
     public IEnumerable<BlogItemModel> GetPublishedItems()
     {
-        return _data.GetPublishedItems();
+        return _blogService.GetPublishedItems();
     }
 }
+

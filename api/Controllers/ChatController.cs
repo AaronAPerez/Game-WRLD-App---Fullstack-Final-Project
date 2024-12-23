@@ -1,12 +1,7 @@
-using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using api.Models.DTO;
 using api.Services;
-using api.Models;
-using api.Services;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 

@@ -1,20 +1,8 @@
 {
   "version": 2,
-<<<<<<< HEAD
   "dgSpecHash": "iI6KolunRmZY/ZpYq+AuYuv4DJWHRhBQwagOtttbJ+snWgTexheg2o0lCB6E4OzzvzYZE2hkHFEhy67lK2TIAw==",
   "success": true,
   "projectFilePath": "C:\\Users\\aaper\\Documents\\.CodeStack Academy\\React\\Final Project\\1.Fullstack_Final_Project\\Game_WRLD-Fullstack-Final-App-Project\\api\\api.csproj",
-=======
-<<<<<<< HEAD
-  "dgSpecHash": "TyE1YFibhslkg+VVAH2p0kX2C05P8Qu39ZnPYhMBA51BeGUPElFY8GW61tLHCRWAm5/iDLprIR8456x5LD2LYg==",
-  "success": true,
-  "projectFilePath": "C:\\Users\\aaper\\Documents\\.CodeStack Academy\\React\\Final Project\\FINAL\\Game_WRLD-Fullstack-Final-App-Project\\api\\api.csproj",
-=======
-  "dgSpecHash": "iEkF70y3qrg=",
-  "success": true,
-  "projectFilePath": "C:\\Users\\silve\\Documents\\Academy Full Stack\\wrld\\gameth\\gmm2\\gmwd\\gw3\\Game_WRLD-Fullstack-Final-App-Project\\api\\api.csproj",
->>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
->>>>>>> abbaf96551a2b46aa4d8610cddcc43ef4a8e1ff2
   "expectedPackageFiles": [
     "C:\\Users\\aaper\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\aaper\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
@@ -145,5 +133,12 @@
     "C:\\Users\\aaper\\.nuget\\packages\\system.threading.tasks.extensions\\4.5.4\\system.threading.tasks.extensions.4.5.4.nupkg.sha512",
     "C:\\Users\\aaper\\.nuget\\packages\\system.windows.extensions\\6.0.0\\system.windows.extensions.6.0.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problem reading the cache file C:\\Users\\aaper\\Documents\\.CodeStack Academy\\React\\Final Project\\1.Fullstack_Final_Project\\Game_WRLD-Fullstack-Final-App-Project\\api\\obj\\project.nuget.cache : Invalid property identifier character: >. Path 'projectFilePath', line 10, position 0."
+    }
+  ]
 }

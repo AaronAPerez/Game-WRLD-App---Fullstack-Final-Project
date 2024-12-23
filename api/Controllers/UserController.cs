@@ -9,7 +9,7 @@ namespace api.Controllers;
 [Route("api/[controller]")]
 public class UserController : ControllerBase
 {
-     private readonly UserService _userService;
+    private readonly UserService _userService;
 
     public UserController(UserService userService)
     {
@@ -17,9 +17,15 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("AddUsers")]
-    public bool AddUser(CreateAccountDTO UserToAdd)
+    public IActionResult AddUser(CreateAccountDTO UserToAdd)
     {
-        return _userService.AddUser(UserToAdd);
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var result = _userService.AddUser(UserToAdd);
+        return Ok(result);
     }
 
     [HttpGet("GetAllUsers")]
@@ -29,23 +35,23 @@ public class UserController : ControllerBase
     }
 
 
-[HttpGet("GetUserByUsername/{username}")]
-public async Task<IActionResult> GetUserIdDTOByUserName(string username)
-{
-    try
+    [HttpGet("GetUserByUsername/{username}")]
+    public async Task<IActionResult> GetUserIdDTOByUserName(string username)
     {
-        var userIdDTO = await _userService.GetUserIdDTOByUserName(username);
-        return Ok(userIdDTO);  
+        try
+        {
+            var userIdDTO = await _userService.GetUserIdDTOByUserName(username);
+            return Ok(userIdDTO);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An error occurred", details = ex.Message });
+        }
     }
-    catch (KeyNotFoundException ex)
-    {
-        return NotFound(new { message = ex.Message });
-    }
-    catch (Exception ex)
-    {
-        return StatusCode(500, new { message = "An error occurred", details = ex.Message });
-    }
-}
 
     [HttpPost("Login")]
     public IActionResult Login([FromBody] LoginDTO User)
@@ -59,7 +65,7 @@ public async Task<IActionResult> GetUserIdDTOByUserName(string username)
     {
         var userId = User.FindFirst("userId")?.Value;
         if (userId == null) return Unauthorized();
-        
+
         var profile = await _userService.GetUserProfile(int.Parse(userId));
         return Ok(profile);
     }
@@ -70,29 +76,29 @@ public async Task<IActionResult> GetUserIdDTOByUserName(string username)
     {
         var userId = User.FindFirst("userId")?.Value;
         if (userId == null) return Unauthorized();
-        
+
         var result = await _userService.UpdateProfile(int.Parse(userId), updateProfile);
         return Ok(result);
     }
 
     [Authorize]
-[HttpPost("Friends/Request")]
-public async Task<ActionResult<bool>> SendFriendRequest([FromBody] FriendRequestDTO request)
-{
-    var userId = User.FindFirst("userId")?.Value;
-    if (userId == null) return Unauthorized();
-    
-    // Look up the AddresseeId using the provided username
-    var addressee = await _userService.GetUserIdDTOByUserName(request.AddresseeName);
-    if (addressee == null)
+    [HttpPost("Friends/Request")]
+    public async Task<ActionResult<bool>> SendFriendRequest([FromBody] FriendRequestDTO request)
     {
-        return NotFound(new { message = "User not found" });
-    }
+        var userId = User.FindFirst("userId")?.Value;
+        if (userId == null) return Unauthorized();
 
-    // Send the friend request using the userId and AddresseeId
-    var result = await _userService.SendFriendRequest(int.Parse(userId), addressee.UserId);
-    return Ok(result);
-}
+        // Look up the AddresseeId using the provided username
+        var addressee = await _userService.GetUserIdDTOByUserName(request.AddresseeName);
+        if (addressee == null)
+        {
+            return NotFound(new { message = "User not found" });
+        }
+
+        // Send the friend request using the userId and AddresseeId
+        var result = await _userService.SendFriendRequest(int.Parse(userId), addressee.UserId);
+        return Ok(result);
+    }
 
     [Authorize]
     [HttpPost("Friends/Respond")]
@@ -100,7 +106,7 @@ public async Task<ActionResult<bool>> SendFriendRequest([FromBody] FriendRequest
     {
         var userId = User.FindFirst("userId")?.Value;
         if (userId == null) return Unauthorized();
-        
+
         var result = await _userService.RespondToFriendRequest(int.Parse(userId), response.RequestId, response.Accept);
         return Ok(result);
     }
@@ -147,7 +153,7 @@ public async Task<ActionResult<bool>> SendFriendRequest([FromBody] FriendRequest
     {
         var userId = User.FindFirst("userId")?.Value;
         if (userId == null) return Unauthorized();
-        
+
         var result = await _userService.AddUserGame(int.Parse(userId), gameDto);
         return Ok(result);
     }
@@ -158,7 +164,7 @@ public async Task<ActionResult<bool>> SendFriendRequest([FromBody] FriendRequest
     {
         var userId = User.FindFirst("userId")?.Value;
         if (userId == null) return Unauthorized();
-        
+
         var games = await _userService.GetUserGames(int.Parse(userId));
         return Ok(games);
     }

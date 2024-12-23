@@ -1,14 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using api.Models;
 using api.Models.DTO;
 using api.Services.Context;
 
-namespace api.Services
-{
+namespace api.Services;
+
 public class ChatService
 {
     private readonly DataContext _context;
@@ -187,36 +183,36 @@ public class ChatService
         };
     }
 
-  public async Task<ChatRoomDTO?> GetChatRoom(int userId, int roomId)
-{
-    if (_context.ChatRooms == null)
-        return null;
-
-    var room = await _context.ChatRooms
-        .AsNoTracking()
-        .Include(r => r.Members)
-        .FirstOrDefaultAsync(r => r.Id == roomId && !r.IsDeleted);
-
-    if (room == null || (room.IsPrivate && !room.Members.Any(m => m.UserId == userId)))
-        return null;
-
-    var creator = await _userService.GetUserProfile(room.CreatorId);
-    
-   
-    var dto = new ChatRoomDTO
+    public async Task<ChatRoomDTO?> GetChatRoom(int userId, int roomId)
     {
-        Id = room.Id,
-        Name = room.Name ?? "",
-        Description = room.Description ?? "",
-        Image = room.Image ?? "",
-        MembersCount = room.Members?.Count ?? 0,
-        CreatedAt = room.CreatedAt,
-        Creator = creator,
-        IsPrivate = room.IsPrivate
-    };
+        if (_context.ChatRooms == null)
+            return null;
 
-    return dto;
-}
+        var room = await _context.ChatRooms
+            .AsNoTracking()
+            .Include(r => r.Members)
+            .FirstOrDefaultAsync(r => r.Id == roomId && !r.IsDeleted);
+
+        if (room == null || (room.IsPrivate && !room.Members.Any(m => m.UserId == userId)))
+            return null;
+
+        var creator = await _userService.GetUserProfile(room.CreatorId);
+
+
+        var dto = new ChatRoomDTO
+        {
+            Id = room.Id,
+            Name = room.Name ?? "",
+            Description = room.Description ?? "",
+            Image = room.Image ?? "",
+            MembersCount = room.Members?.Count ?? 0,
+            CreatedAt = room.CreatedAt,
+            Creator = creator,
+            IsPrivate = room.IsPrivate
+        };
+
+        return dto;
+    }
 
     public async Task<IEnumerable<ChatMessageDTO>> GetRoomMessages(int userId, int roomId, int page = 1, int pageSize = 50)
     {
@@ -251,7 +247,7 @@ public class ChatService
         return messages;
     }
 
-      public async Task<IEnumerable<DirectMessageDTO>> GetDirectMessages(int senderId, int receiverId, int page, int pageSize)
+    public async Task<IEnumerable<DirectMessageDTO>> GetDirectMessages(int senderId, int receiverId, int page, int pageSize)
     {
         if (_context.DirectMessages == null)
             return Enumerable.Empty<DirectMessageDTO>();
@@ -294,7 +290,7 @@ public class ChatService
     }
 
 
-     // Mark multiple messages as read
+    // Mark multiple messages as read
     public async Task MarkMessagesAsRead(List<int> messageIds, int userId)
     {
         if (_context.DirectMessages == null)
@@ -458,161 +454,162 @@ public class ChatService
                 LastActive = chatMessage.Sender.LastActive
             }
         };
+
     }
 
-        public async Task<DirectMessageDTO> SendDirectMessage(int senderId, SendDirectMessageDTO messageDto)
-{
-    if (_context.DirectMessages == null)
-        throw new InvalidOperationException("DirectMessages DbSet is null");
-
-    var sender = await _context.UserInfo!.FindAsync(senderId);
-    var receiver = await _context.UserInfo!.FindAsync(messageDto.ReceiverId);
-
-    if (sender == null || receiver == null)
-        throw new InvalidOperationException("Sender or receiver not found");
-
-    var newMessage = new DirectMessageModel
+    public async Task<DirectMessageDTO> SendDirectMessage(int senderId, SendDirectMessageDTO messageDto)
     {
-        SenderId = senderId,
-        ReceiverId = messageDto.ReceiverId,
-        Content = messageDto.Content,
-        MessageType = messageDto.MessageType,
-        SentAt = DateTime.UtcNow,
-        IsRead = false,
-        IsEdited = false,
-        IsDeleted = false
-    };
+        if (_context.DirectMessages == null)
+            throw new InvalidOperationException("DirectMessages DbSet is null");
 
-    _context.DirectMessages.Add(newMessage);
-    await _context.SaveChangesAsync();
+        var sender = await _context.UserInfo!.FindAsync(senderId);
+        var receiver = await _context.UserInfo!.FindAsync(messageDto.ReceiverId);
 
-    return new DirectMessageDTO
+        if (sender == null || receiver == null)
+            throw new InvalidOperationException("Sender or receiver not found");
+
+        var newMessage = new DirectMessageModel
+        {
+            SenderId = senderId,
+            ReceiverId = messageDto.ReceiverId,
+            Content = messageDto.Content,
+            MessageType = messageDto.MessageType,
+            SentAt = DateTime.UtcNow,
+            IsRead = false,
+            IsEdited = false,
+            IsDeleted = false
+        };
+
+        _context.DirectMessages.Add(newMessage);
+        await _context.SaveChangesAsync();
+
+        return new DirectMessageDTO
+        {
+            Id = newMessage.Id,
+            Content = newMessage.Content,
+            MessageType = newMessage.MessageType,
+            SentAt = newMessage.SentAt,
+            IsRead = newMessage.IsRead,
+            IsEdited = newMessage.IsEdited,
+            Sender = new UserProfileDTO
+            {
+                Id = sender.Id,
+                Username = sender.Username ?? string.Empty,
+                Avatar = sender.Avatar ?? string.Empty,
+                Status = sender.Status ?? "offline",
+                LastActive = sender.LastActive
+            },
+            Receiver = new UserProfileDTO
+            {
+                Id = receiver.Id,
+                Username = receiver.Username ?? string.Empty,
+                Avatar = receiver.Avatar ?? string.Empty,
+                Status = receiver.Status ?? "offline",
+                LastActive = receiver.LastActive
+            }
+        };
+    }
+
+
+    public async Task<DirectMessageDTO> AddDirectMessage(int senderId, SendDirectMessageDTO messageDto)
     {
-        Id = newMessage.Id,
-        Content = newMessage.Content,
-        MessageType = newMessage.MessageType,
-        SentAt = newMessage.SentAt,
-        IsRead = newMessage.IsRead,
-        IsEdited = newMessage.IsEdited,
-        Sender = new UserProfileDTO
+        if (_context.DirectMessages == null)
+            throw new InvalidOperationException("DirectMessages DbSet is null");
+
+        var sender = await _context.UserInfo!.FindAsync(senderId);
+        var receiver = await _context.UserInfo!.FindAsync(messageDto.ReceiverId);
+
+        if (sender == null || receiver == null)
+            throw new InvalidOperationException("Sender or receiver not found");
+
+        var newMessage = new DirectMessageModel
         {
-            Id = sender.Id,
-            Username = sender.Username ?? string.Empty,
-            Avatar = sender.Avatar ?? string.Empty,
-            Status = sender.Status ?? "offline",
-            LastActive = sender.LastActive
-        },
-        Receiver = new UserProfileDTO
+            SenderId = senderId,
+            ReceiverId = messageDto.ReceiverId,
+            Content = messageDto.Content,
+            MessageType = messageDto.MessageType,
+            SentAt = DateTime.UtcNow
+        };
+
+        _context.DirectMessages.Add(newMessage);
+        await _context.SaveChangesAsync();
+
+        // Load the related entities
+        await _context.Entry(newMessage)
+            .Reference(m => m.Sender)
+            .LoadAsync();
+        await _context.Entry(newMessage)
+            .Reference(m => m.Receiver)
+            .LoadAsync();
+
+        // Convert to DTO
+        return new DirectMessageDTO
         {
-            Id = receiver.Id,
-            Username = receiver.Username ?? string.Empty,
-            Avatar = receiver.Avatar ?? string.Empty,
-            Status = receiver.Status ?? "offline",
-            LastActive = receiver.LastActive
-        }
-    };
-}
-
-        public async Task<DirectMessageDTO> AddDirectMessage(int senderId, SendDirectMessageDTO messageDto)
-        {
-            if (_context.DirectMessages == null)
-                throw new InvalidOperationException("DirectMessages DbSet is null");
-
-            var sender = await _context.UserInfo!.FindAsync(senderId);
-            var receiver = await _context.UserInfo!.FindAsync(messageDto.ReceiverId);
-
-            if (sender == null || receiver == null)
-                throw new InvalidOperationException("Sender or receiver not found");
-
-            var newMessage = new DirectMessageModel
+            Id = newMessage.Id,
+            Content = newMessage.Content,
+            MessageType = newMessage.MessageType,
+            SentAt = newMessage.SentAt,
+            IsRead = newMessage.IsRead,
+            IsEdited = newMessage.IsEdited,
+            Sender = new UserProfileDTO
             {
-                SenderId = senderId,
-                ReceiverId = messageDto.ReceiverId,
-                Content = messageDto.Content,
-                MessageType = messageDto.MessageType,
-                SentAt = DateTime.UtcNow
-            };
-
-            _context.DirectMessages.Add(newMessage);
-            await _context.SaveChangesAsync();
-
-            // Load the related entities
-            await _context.Entry(newMessage)
-                .Reference(m => m.Sender)
-                .LoadAsync();
-            await _context.Entry(newMessage)
-                .Reference(m => m.Receiver)
-                .LoadAsync();
-
-            // Convert to DTO
-            return new DirectMessageDTO
+                Id = sender.Id,
+                Username = sender.Username ?? string.Empty,
+                Avatar = sender.Avatar ?? string.Empty,
+                Status = sender.Status ?? "offline",
+                LastActive = sender.LastActive
+            },
+            Receiver = new UserProfileDTO
             {
-                Id = newMessage.Id,
-                Content = newMessage.Content,
-                MessageType = newMessage.MessageType,
-                SentAt = newMessage.SentAt,
-                IsRead = newMessage.IsRead,
-                IsEdited = newMessage.IsEdited,
-                Sender = new UserProfileDTO
-                {
-                    Id = sender.Id,
-                    Username = sender.Username ?? string.Empty,
-                    Avatar = sender.Avatar ?? string.Empty,
-                    Status = sender.Status ?? "offline",
-                    LastActive = sender.LastActive
-                },
-                Receiver = new UserProfileDTO
-                {
-                    Id = receiver.Id,
-                    Username = receiver.Username ?? string.Empty,
-                    Avatar = receiver.Avatar ?? string.Empty,
-                    Status = receiver.Status ?? "offline",
-                    LastActive = receiver.LastActive
-                }
-            };
-        }
-    
-
-        public async Task<bool> MarkMessageAsRead(int userId, int messageId)
-        {
-            if (_context.DirectMessages == null)
-                return false;
-
-            var message = await _context.DirectMessages
-                .FirstOrDefaultAsync(m => m.Id == messageId && m.ReceiverId == userId);
-
-            if (message == null)
-                return false;
-
-            message.IsRead = true;
-            return await _context.SaveChangesAsync() > 0;
-        }
+                Id = receiver.Id,
+                Username = receiver.Username ?? string.Empty,
+                Avatar = receiver.Avatar ?? string.Empty,
+                Status = receiver.Status ?? "offline",
+                LastActive = receiver.LastActive
+            }
+        };
+    }
 
 
-        public async Task<IEnumerable<UserProfileDTO>> GetFriends(int userId)
-        {
-            if (_context.Friends == null || _context.UserInfo == null)
-                return Enumerable.Empty<UserProfileDTO>();
+    public async Task<bool> MarkMessageAsRead(int userId, int messageId)
+    {
+        if (_context.DirectMessages == null)
+            return false;
 
-            var friends = await _context.Friends
-                .Where(f => (f.RequesterId == userId || f.AddresseeId == userId) &&
-                            f.Status.ToLower() == "accepted")  
-                .Select(f => f.RequesterId == userId ? f.Addressee : f.Requester)
-                .Select(u => new UserProfileDTO
-                {
-                    Id = u.Id,
-                    Username = u.Username ?? string.Empty,
-                    Avatar = u.Avatar ?? string.Empty,
-                    Status = u.Status ?? "offline",
-                    LastActive = u.LastActive,
-                    FriendsCount = _context.Friends.Count(fr =>
-                        (fr.RequesterId == u.Id || fr.AddresseeId == u.Id) &&
-                        fr.Status.ToLower() == "accepted"), 
-                    GamesCount = u.UserGames != null ? u.UserGames.Count : 0
-                })
-                .ToListAsync();
+        var message = await _context.DirectMessages
+            .FirstOrDefaultAsync(m => m.Id == messageId && m.ReceiverId == userId);
 
-            return friends;
-        }
+        if (message == null)
+            return false;
+
+        message.IsRead = true;
+        return await _context.SaveChangesAsync() > 0;
+    }
+
+
+    public async Task<IEnumerable<UserProfileDTO>> GetFriends(int userId)
+    {
+        if (_context.Friends == null || _context.UserInfo == null)
+            return Enumerable.Empty<UserProfileDTO>();
+
+        var friends = await _context.Friends
+            .Where(f => (f.RequesterId == userId || f.AddresseeId == userId) &&
+                        f.Status.ToLower() == "accepted")
+            .Select(f => f.RequesterId == userId ? f.Addressee : f.Requester)
+            .Select(u => new UserProfileDTO
+            {
+                Id = u.Id,
+                Username = u.Username ?? string.Empty,
+                Avatar = u.Avatar ?? string.Empty,
+                Status = u.Status ?? "offline",
+                LastActive = u.LastActive,
+                FriendsCount = _context.Friends.Count(fr =>
+                    (fr.RequesterId == u.Id || fr.AddresseeId == u.Id) &&
+                    fr.Status.ToLower() == "accepted"),
+                GamesCount = u.UserGames != null ? u.UserGames.Count : 0
+            })
+            .ToListAsync();
+
+        return friends;
     }
 }

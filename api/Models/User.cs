@@ -1,20 +1,20 @@
-using System.ComponentModel.DataAnnotations;
+// using System.ComponentModel.DataAnnotations;
 
-namespace api.Models;
+// namespace api.Models;
 
-public class User
-{
-    [Key]
-    public int Id { get; set; }
+// public class User
+// {
+//     [Key]
+//     public int Id { get; set; }
 
-    [Required]
-    public string? Username { get; set; }
-    public string? Salt { get; set; }
-    public string? Hash { get; set; }
-    public string? ProfileImage { get; set; }
-    public string? Status { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime? LastActive { get; set; }
+//     [Required]
+//     public string? Username { get; set; }
+//     public string? Salt { get; set; }
+//     public string? Hash { get; set; }
+//     public string? Avatar { get; set; }
+//     public string? Status { get; set; }
+//     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+//     public DateTime? LastActive { get; set; }
 
     // Navigation properties
     // public virtual ICollection<Message> SentMessages { get; set; }
@@ -24,9 +24,9 @@ public class User
     // public virtual ICollection<FriendRequest> SentFriendRequests { get; set; }
     // public virtual ICollection<FriendRequest> ReceivedFriendRequests { get; set; }
     // public virtual ICollection<Blog> Blogs { get; set; } = new HashSet<Blog>();
-    public object? FavoriteGames { get; internal set; }
-    public object? ChatParticipants { get; internal set; }
-    public object? BlockedByUsers { get; internal set; }
+    // public object? FavoriteGames { get; internal set; }
+    // public object? ChatParticipants { get; internal set; }
+    // public object? BlockedByUsers { get; internal set; }
 
     // public User()
     // {
@@ -37,4 +37,4 @@ public class User
     //     SentFriendRequests = new HashSet<FriendRequest>();
     //     ReceivedFriendRequests = new HashSet<FriendRequest>();
     // }
-}
+// }

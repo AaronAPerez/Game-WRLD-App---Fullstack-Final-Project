@@ -1,60 +1,123 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using api.Models;
 using api.Services.Context;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Services;
 
-public class BlogItemService : ControllerBase
+public class BlogItemService
 {
     private readonly DataContext _context;
 
     public BlogItemService(DataContext context)
     {
-            _context = context;
+        _context = context;
     }
- public bool AddBlogItems(BlogItemModel newBlogItem)
-{
-    bool result = false;
-    _context.Add(newBlogItem);
-    result = _context.SaveChanges() != 0;
-    return result;
-}
-
-
-    public bool DeleteBlogItem(int userId, int blogId)
-{
-    var blogItem = _context.BlogInfo.FirstOrDefault(b => b.UserId == userId && b.Id == blogId);
     
-   
-    if (blogItem != null)
+    public async Task<(bool success, string message)> AddBlogItems(BlogItemModel newBlogItem)
+        {
+        try
+        {
+            // Validate user exists
+            var user = await _context.UserInfo.FindAsync(newBlogItem.UserId);
+            if (user == null)
+            {
+                return (false, $"User with ID {newBlogItem.UserId} does not exist");
+            }
+
+            // Set default values 
+            newBlogItem.IsDeleted = false;
+            newBlogItem.Date = DateTime.UtcNow.ToString("yyyy-MM-dd");
+            
+            await _context.BlogInfo.AddAsync(newBlogItem);
+            await _context.SaveChangesAsync();
+            
+            return (true, "Blog item added successfully");
+        }
+        catch (Exception ex)
+        {
+            // Log the error
+            return (false, $"Error adding blog item: {ex.Message}");
+        }
+    }
+
+
+    public async Task<bool> DeleteBlogItem(int userId, int blogId)
     {
+        try
+        {
+            // Find the blog item and include user information
+            var blogItem = await _context.BlogInfo
+                .FirstOrDefaultAsync(b => b.Id == blogId && !b.IsDeleted);
 
-        _context.BlogInfo.Remove(blogItem);
-        
+            if (blogItem == null)
+            {
+                return false;
+            }
 
-        return _context.SaveChanges() != 0;
+            // Verify user ownership
+            if (blogItem.UserId != userId)
+            {
+                return false;
+            }
+
+            // Soft delete
+            blogItem.IsDeleted = true;
+
+            // Save changes
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            // Log the error
+            Console.WriteLine($"Error in DeleteBlogItem: {ex.Message}");
+            return false;
+        }
     }
-    
-    return false;
-}
-public IEnumerable<BlogItemModel> GetAllBlogItems()
-{
-    return _context.BlogInfo;
-}
+
+
+    public IEnumerable<BlogItemModel> GetAllBlogItems()
+    {
+        return _context.BlogInfo;
+    }
 
     public IEnumerable<BlogItemModel> GetItemByCategory(string category)
     {
         return _context.BlogInfo.Where(item => item.Category == category);
     }
+    
 
     public IEnumerable<BlogItemModel> GetItemsByDate(string date)
     {
-        throw new NotImplementedException();
+        try
+        {
+            // First validate the date string
+            if (!DateTime.TryParse(date, out DateTime parsedDate))
+            {
+                throw new ArgumentException("Invalid date format. Please use yyyy-MM-dd format.", nameof(date));
+            }
+
+            // Format the parsed date to match your date string format
+            string formattedDate = parsedDate.ToString("yyyy-MM-dd");
+
+            // Query the database for blog items matching the date
+            var blogItems = _context.BlogInfo
+                .Where(blog => 
+                    !blog.IsDeleted && 
+                    blog.Date == formattedDate)
+                .OrderByDescending(blog => blog.Id)
+                .ToList();
+
+            return blogItems;
+        }
+        catch (Exception ex)
+        {
+            // Log the error
+            Console.WriteLine($"Error in GetItemsByDate: {ex.Message}");
+            return Enumerable.Empty<BlogItemModel>();
+        }
     }
 
     public List<BlogItemModel> GetItemsByTag(string Tag)
@@ -87,7 +150,8 @@ public IEnumerable<BlogItemModel> GetAllBlogItems()
 
     public IEnumerable<BlogItemModel> GetItemsByUserId(int userId)
     {
-        return _context.BlogInfo.Where(item => item.UserId == userId);
+        return _context.BlogInfo.Where(item => item.UserId == userId
+        && item.IsDeleted == false);
     }
 
 
@@ -95,5 +159,6 @@ public IEnumerable<BlogItemModel> GetAllBlogItems()
     {
         return _context.BlogInfo.Where(item => item.IsPublished && item.IsDeleted == false);
     }
+
 
 }

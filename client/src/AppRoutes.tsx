@@ -1,6 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
-import Layout from './components/layout/Layout';
 import ErrorPage from './pages/ErrorPage';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -10,15 +9,10 @@ import Dashboard from './pages/Dashboard';
 import BlogPage from './pages/BlogPage';
 import { UserSearch } from './components/UserSearch/UserSearch';
 import GamesList from './pages/GamesList';
-import { Gamepad2, Flame, Clock, BarChart, Calendar } from 'lucide-react';
-<<<<<<< HEAD
-import Messages from './components/chat/Messages';
-=======
-
->>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
+import { Gamepad2, Flame, Clock, BarChart, Calendar, Layout } from 'lucide-react';
 import FriendsPage from './pages/FriendsPage';
-import Messages from './components/message/Messages';
 import GamingTimeline from './pages/GamingTimeline';
+import { ChatRoom } from './pages/ChatRoom';
 
 
 // Protected Route Component
@@ -126,15 +120,9 @@ const AppRoutes = () => {
         } />
         <Route path="chat" element={
           <ProtectedRoute>
-<<<<<<< HEAD
             <ChatRoom roomId={0}/>
           </ProtectedRoute> 
-         } />
-=======
-            <ChatRoom/>
-          </ProtectedRoute> */}
-        {/* } /> */}
->>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
+         } />   
         <Route path="messages/:userId?" element={
           <ProtectedRoute>
             <Messages/>

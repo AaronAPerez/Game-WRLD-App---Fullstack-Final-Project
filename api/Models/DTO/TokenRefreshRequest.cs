@@ -1,13 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace api.Models.DTO
 {
     public class TokenRefreshRequest
     {
-        public string Token { get; set; }
+        [Required(ErrorMessage = "Token is required")]
+        public string? Token { get; set; }
     }
 }
 

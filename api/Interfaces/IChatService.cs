@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using api.Models;
 using api.Models.DTO;
 
 namespace api.Interfaces

@@ -4,8 +4,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.Services.Context;
 
-public class DataContext(DbContextOptions options) : DbContext(options)
+public class DataContext : DbContext
 {
+    public DataContext(DbContextOptions options) : base(options)
+    {
+    }
+
 
     // Define DbSets for all models
     public DbSet<UserModel>? UserInfo { get; set; }
@@ -41,11 +45,13 @@ public class DataContext(DbContextOptions options) : DbContext(options)
             .OnDelete(DeleteBehavior.Cascade);
 
         // Blog Item Relationships
+       // Relationship with UserModel
         modelBuilder.Entity<BlogItemModel>()
-            .HasOne<UserModel>()
+            .HasOne(b => b.User)
             .WithMany()
             .HasForeignKey(b => b.UserId)
             .OnDelete(DeleteBehavior.Restrict);
+
 
         // Chat Room Relationships
         modelBuilder.Entity<ChatRoomModel>()

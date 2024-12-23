@@ -1,62 +1,61 @@
-using System;
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace api.Models;
 
 public class UserModel
 {
     public int Id { get; set; }
+
+    [Required(ErrorMessage = "Username is required")]
+    [StringLength(50, MinimumLength = 3, ErrorMessage = "Username must be between 3 and 50 characters")]
     public string? Username { get; set; }
+
+    [Required]
     public string? Salt { get; set; }
+
+    [Required]
     public string? Hash { get; set; }
+
+    [Url(ErrorMessage = "Invalid avatar URL")]
     public string? Avatar { get; set; }
-    public string? Status { get; set; } // online, offline, in-game
+
+    [StringLength(20)]
+    public string? Status { get; set; }
+
     public DateTime LastActive { get; set; }
     public DateTime CreatedAt { get; set; }
     public bool IsDeleted { get; set; }
 
-    // Navigation properties
+
+   // JsonIgnore to prevent circular references
+    [JsonIgnore]
     public virtual ICollection<FriendModel>? FriendshipsInitiated { get; set; }
+    
+    [JsonIgnore]
     public virtual ICollection<FriendModel>? FriendshipsReceived { get; set; }
+    
+    [JsonIgnore]
     public virtual ICollection<UserGameModel>? UserGames { get; set; }
 
     public UserModel()
     {
-
         FriendshipsInitiated = new HashSet<FriendModel>();
         FriendshipsReceived = new HashSet<FriendModel>();
         UserGames = new HashSet<UserGameModel>();
         CreatedAt = DateTime.UtcNow;
         LastActive = DateTime.UtcNow;
     }
-
-}
-public class UserGameModel
-{
-    public int Id { get; set; }
-    public int UserId { get; set; }
-    public int GameId { get; set; }
-    public bool IsFavorite { get; set; }
-    public DateTime AddedAt { get; set; }
-
-    public virtual UserModel? User { get; set; }
 }
 
-// public class FriendModel
-// {
-//     public int Id { get; set; }
-//     public int RequesterId { get; set; }
-//     public int AddresseeId { get; set; }
-//     public string Status { get; set; } = "pending"; // Default value 
-//     public DateTime CreatedAt { get; set; }
-//     public DateTime? AcceptedAt { get; set; }
+    public class UserGameModel
+    {
+        public int Id { get; set; }
+        public int UserId { get; set; }
+        public int GameId { get; set; }
+        public bool IsFavorite { get; set; }
+        public DateTime AddedAt { get; set; }
 
-//     public virtual UserModel? Requester { get; set; }
-//     public virtual UserModel? Addressee { get; set; }
+        public virtual UserModel? User { get; set; }
+    }
 
-//     public FriendModel()
-//     {
-//         CreatedAt = DateTime.UtcNow;
-//         Status = "pending"; // Ensure Status is initialized
-//     }
-// }
