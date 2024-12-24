@@ -50,6 +50,7 @@ export interface BlogPost {
 }
 
 export interface BlogPostDTO extends BlogPost {
+  likes: number;
   commentsCount: number;
   createdAt: string;
 }

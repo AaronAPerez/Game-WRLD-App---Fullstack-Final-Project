@@ -1,43 +1,21 @@
 import { NavLink } from 'react-router-dom';
-import {
-  LucideIcon,
-  Home,
-  Gamepad2,
-  Clock,
-  Trophy,
-  Flame,
-  BarChart,
-  Calendar,
-  Users,
-  MessageSquare,
-  LayoutDashboard,
-  BookOpen,
-  MessagesSquare,
-  ChevronLeft
-} from 'lucide-react';
+import { LucideIcon, ChevronLeft } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '../../utils/styles';
 import { useAuth } from '../../hooks/useAuth';
 import { motion } from 'framer-motion';
+import { discoveryNavItems, mainNavItems, personalNavItems } from '../../navigation.config';
 
-// Define types for navigation items
+
 type NavItem = {
   icon: LucideIcon;
   label: string;
   path: string;
-  requiresAuth?: boolean;
 };
 
-type NavSection = {
-  title?: string;
-  items: NavItem[];
-  requiresAuth?: boolean;
-};
-
-// Navigation Item Component with responsive design
+// Navigation Item Component
 const NavItem = ({ item, isCollapsed }: { item: NavItem; isCollapsed: boolean }) => {
   const Icon = item.icon;
-
 
   return (
     <NavLink
@@ -77,7 +55,6 @@ const NavItem = ({ item, isCollapsed }: { item: NavItem; isCollapsed: boolean })
   );
 };
 
-// Main Sidebar Component
 const Sidebar = () => {
   const { isAuthenticated } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -92,39 +69,6 @@ const Sidebar = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-  // Navigation sections
-  const navigationSections: NavSection[] = [
-    {
-      items: [
-        { icon: Home, label: 'Home', path: '/' },
-        { icon: Gamepad2, label: 'Browse', path: '/games' },
-      ]
-    },
-    {
-      title: 'Discover',
-      items: [
-        { icon: Flame, label: 'Trending', path: '/trending' },
-        // { icon: Clock, label: 'New Releases', path: '/new-releases' },
-        // { icon: BarChart, label: 'Top Rated', path: '/top-rated' },
-        { icon: Trophy, label: 'Popular', path: '/popular' },
-        { icon: Calendar, label: 'Upcoming', path: '/upcoming' }
-      ]
-    },
-    ...(isAuthenticated ? [
-      {
-        title: 'Personal',
-        items: [
-          { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', requiresAuth: true },
-          { icon: BookOpen, label: 'Blog', path: '/blog', requiresAuth: true },
-          { icon: Users, label: 'Friends', path: '/friends', requiresAuth: true },
-          { icon: Users, label: 'Social', path: '/social', requiresAuth: true },
-          { icon: MessagesSquare, label: 'Chat Room', path: '/chat', requiresAuth: true },
-          { icon: MessageSquare, label: 'Messages', path: '/messages', requiresAuth: true },
-        ]
-      }
-    ] : [])
-  ];
 
   return (
     <motion.aside
@@ -141,7 +85,7 @@ const Sidebar = () => {
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
         className={cn(
-          "absolute right-2 top-2 p-2 rounded-full",
+          "absolute right-2 top-0 rounded-full",
           "text-gray-400 hover:text-white hover:bg-stone-800",
           "transition-colors duration-300",
           "lg:flex hidden"
@@ -155,26 +99,53 @@ const Sidebar = () => {
         </motion.div>
       </button>
 
-      <nav className="space-y-6 px-2 mt-10">
-        {navigationSections.map((section, sectionIndex) => (
-          <div key={sectionIndex} className="space-y-1">
-            {section.title && !isCollapsed && (
+      <nav className="space-y-6 px-2 mt-2">
+        {/* Main Navigation */}
+        <div className="space-y-1">
+          {mainNavItems.map((item) => (
+            <NavItem
+              key={item.path}
+              item={item}
+              isCollapsed={isCollapsed}
+            />
+          ))}
+        </div>
+
+        {/* Discovery Section */}
+        {!isCollapsed && (
+          <h3 className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+            Discover
+          </h3>
+        )}
+        <div className="space-y-1">
+          {discoveryNavItems.map((item) => (
+            <NavItem
+              key={item.path}
+              item={item}
+              isCollapsed={isCollapsed}
+            />
+          ))}
+        </div>
+
+        {/* Personal Section - Only shown when authenticated */}
+        {isAuthenticated && (
+          <>
+            {!isCollapsed && (
               <h3 className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                {section.title}
+                Personal
               </h3>
             )}
-
-            {section.items
-              .filter(item => !item.requiresAuth || (item.requiresAuth && isAuthenticated))
-              .map((item) => (
+            <div className="space-y-1">
+              {personalNavItems.map((item) => (
                 <NavItem
                   key={item.path}
                   item={item}
                   isCollapsed={isCollapsed}
                 />
               ))}
-          </div>
-        ))}
+            </div>
+          </>
+        )}
       </nav>
     </motion.aside>
   );

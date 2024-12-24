@@ -53,7 +53,7 @@ const GameCarousel = ({ games, onGameSelect }: GameCarouselProps) => {
   const currentGame = games[currentIndex];
 
   return (
-    <div className="relative h-[70vh] group" 
+    <div className="relative h-[90vh] group" 
          onMouseEnter={() => setIsAutoPlaying(false)}
          onMouseLeave={() => setIsAutoPlaying(true)}>
       <AnimatePresence custom={direction} initial={false} mode="wait">

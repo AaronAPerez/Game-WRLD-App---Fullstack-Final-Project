@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, Search, UserSearchIcon, X } from 'lucide-react';
+import { Menu, Search, X } from 'lucide-react';
 import Sidebar from './SideBar';
 import { Link, Outlet } from 'react-router-dom';
 import { cn } from '../../utils/styles';
@@ -8,11 +8,8 @@ import Logo from '../Logo';
 import { useSearch } from '../../hooks/useSearch';
 import { useAuth } from '../../hooks/useAuth';
 import SearchResults from '../SearchResults';
-import { FriendRequestsNotifications } from '../FriendRequestsNotifications';
-import { NotificationBell } from '../chat/Notification';
 import AvatarMenu from '../AvatarMenu';
-import { NotificationProvider } from '../../contexts/NotificationContext';
-import { NotificationIndicator } from '../NotificationIndicator';
+
 
 
 const Layout = () => {
@@ -69,12 +66,12 @@ const Layout = () => {
               title="Side Menu"
               aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}>
               <Menu className="w-6 h-6 text-gray-400 group-hover:text-white group-hover:scale-110 transition-transform" />
-           
+
             </button>
 
-          
+
             <Link to="/" aria-label="Home" className="hover:opacity-90 transition-opacity">
-            <Logo />
+              <Logo />
             </Link>
           </div>
 
@@ -142,15 +139,15 @@ const Layout = () => {
 
           {/* Right Section - Auth Actions */}
           <div className="flex items-center gap-4">
-          
-        
- 
+
+
+
 
             {/* <FriendRequestsNotifications /> */}
 
-             {/* <NotificationIndicator />  */}
+            {/* <NotificationIndicator />  */}
 
-          
+
             {isAuthenticated ? (
               <AvatarMenu />
             ) : (
@@ -201,7 +198,7 @@ const Layout = () => {
               transition={{ duration: 0.2 }}
               className="fixed left-0 top-16 bottom-0 bg-stone-950 z-40 border-r border-stone-800"
             >
-              <Sidebar/>
+              <Sidebar />
               {/* <Sidebar isCollapsed={false} /> */}
             </motion.div>
           )}

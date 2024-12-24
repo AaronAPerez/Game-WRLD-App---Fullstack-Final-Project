@@ -34,13 +34,16 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route element={<Layout />} errorElement={<ErrorPage />}>
+      <Route element={
+        <Layout />
+        } errorElement={<ErrorPage />}>
         {/* Public Routes */}
         <Route index element={<HomePage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="signup" element={<SignUpPage />} />
         <Route path="game/:id" element={<GameDetailsWrapper />} />
         <Route path="timeline" element={<GamingTimeline />} />
+
 
         {/* Game Discovery Routes */}
         <Route path="trending" element={
@@ -108,11 +111,14 @@ const AppRoutes = () => {
             <Dashboard />
           </ProtectedRoute>
         } />
-        <Route path="blog" element={
-          <ProtectedRoute>
-            <BlogPage />
-          </ProtectedRoute>
-        } />
+            <Route 
+            path="blog" 
+            element={
+              <ProtectedRoute>
+                <BlogPage />
+              </ProtectedRoute>
+            } 
+          />
         <Route path="search" element={
           <ProtectedRoute>
             <UserSearch />

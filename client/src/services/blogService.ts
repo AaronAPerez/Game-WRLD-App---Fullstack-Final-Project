@@ -1,4 +1,4 @@
-import type { BlogPostDTO, CreateBlogPostDTO, BlogListResponse, BlogCommentDTO } from '../types/blog';
+import type { BlogPostDTO, CreateBlogPostDTO, BlogListResponse, BlogCommentDTO, BlogItemModel } from '../types/blog';
 import apiClient from './apiClient';
 
 
@@ -27,25 +27,25 @@ export const blogService = {
   },
 
   // Update blog post
-  async updatePost(id: number, data: Partial<BlogPostDTO>) {
-    const response = await apiClient.post('/Blog/UpdateBlogItems', {
-      id,
-      ...data
-    });
-    return response.data;
-  },
+  // async updatePost(id: number, data: Partial<BlogPostDTO>) {
+  //   const response = await apiClient.post('/Blog/UpdateBlogItems', {
+  //     id,
+  //     ...data
+  //   });
+  //   return response.data;
+  // },
 
-  // Delete blog post
-  async deletePost(id: number) {
-    const response = await apiClient.post(`/Blog/DeleteBlogItem/${id}`);
-    return response.data;
-  },
+  // // Delete blog post
+  // async deletePost(id: number) {
+  //   const response = await apiClient.post(`/Blog/DeleteBlogItem/${id}`);
+  //   return response.data;
+  // },
 
   // Get posts by category
-  async getPostsByCategory(category: string): Promise<BlogPostDTO[]> {
-    const response = await apiClient.get(`/Blog/GetBlogItemByCategory/${category}`);
-    return response.data;
-  },
+  // async getPostsByCategory(category: string): Promise<BlogPostDTO[]> {
+  //   const response = await apiClient.get(`/Blog/GetBlogItemByCategory/${category}`);
+  //   return response.data;
+  // },
 
   // Get user's posts
   async getUserPosts(userId: number): Promise<BlogPostDTO[]> {
@@ -67,43 +67,36 @@ export const blogService = {
     async deleteComment(blogId: number, commentId: number): Promise<boolean> {
       const response = await apiClient.delete(`/Blog/${blogId}/comments/${commentId}`);
       return response.data;
+    },
+  // CREATE
+  async createoPst(post: Omit<BlogItemModel, 'id'>) {
+    const response = await apiClient.post('/Blog/AddBlogItems', post);
+    return response.data;
+  },
+
+    // READ
+    async getAllPosts() {
+      const response = await apiClient.get<BlogItemModel[]>('/Blog/GetBlogItems');
+      return response.data;
+    },
+
+    async getPostsByCategory(category: string) {
+      const response = await apiClient.get<BlogItemModel[]>(`/Blog/GetBlogItemByCategory/${category}`);
+      return response.data;
+    },
+
+    // UPDATE
+    async updatePost(post: BlogItemModel) {
+      const response = await apiClient.post('/Blog/UpdateBlogItems', post);
+      return response.data;
+    },
+
+    // DELETE
+    async deletePost(userId: number, blogId: number) {
+      const response = await apiClient.delete(`/Blog/DeleteBlogItem/${userId}/${blogId}`);
+      return response.data;
     }
   };
-
-// import { BlogItemModel } from "../types/models";
-// import { apiClient } from "./userService";
-
-
-// export const blogService = {
-//   // CREATE
-//   async createPost(post: Omit<BlogItemModel, 'id'>) {
-//     const response = await apiClient.post('/Blog/AddBlogItems', post);
-//     return response.data;
-//   },
-
-//   // READ
-//   async getAllPosts() {
-//     const response = await apiClient.get<BlogItemModel[]>('/Blog/GetBlogItems');
-//     return response.data;
-//   },
-
-//   async getPostsByCategory(category: string) {
-//     const response = await apiClient.get<BlogItemModel[]>(`/Blog/GetBlogItemByCategory/${category}`);
-//     return response.data;
-//   },
-
-//   // UPDATE
-//   async updatePost(post: BlogItemModel) {
-//     const response = await apiClient.post('/Blog/UpdateBlogItems', post);
-//     return response.data;
-//   },
-
-//   // DELETE
-//   async deletePost(userId: number, blogId: number) {
-//     const response = await apiClient.delete(`/Blog/DeleteBlogItem/${userId}/${blogId}`);
-//     return response.data;
-//   }
-// };
 
 
 

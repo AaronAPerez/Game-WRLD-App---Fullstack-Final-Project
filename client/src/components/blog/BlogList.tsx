@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, Filter } from 'lucide-react';
 import { useState } from 'react';
 
-import BlogCard from './BlogCard';
+
 import { blogService } from '../../services/blogService';
 import { BlogPost } from '../../types/blog';
 
@@ -122,7 +122,7 @@ export const BlogList = ({ userId, category, showFilters = true }: BlogListProps
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.3 }}
             >
-              <BlogCard blog={blog} />
+            
             </motion.div>
           ))}
         </AnimatePresence>

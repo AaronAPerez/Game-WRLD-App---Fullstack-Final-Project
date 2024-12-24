@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { Home, Grid, Clock, Trending, Star, Trophy, Gamepad2 } from 'lucide-react';
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion';
 

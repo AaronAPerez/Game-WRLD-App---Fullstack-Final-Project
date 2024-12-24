@@ -12,7 +12,7 @@ export function useBlogPosts(params?: {
   return useQuery({
     queryKey: ['blogs', params],
     queryFn: () => blogService.getPosts(params),
-    keepPreviousData: true
+    // keepPreviousData: true
   });
 }
 

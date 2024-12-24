@@ -4,8 +4,8 @@ import { Plus, X, Loader2, ImagePlus } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { blogService } from '../../services/blogService';
-import { CreateBlogPostDTO } from '../../types/blog';
 import { useForm } from 'react-hook-form';
+import { BlogItemModel } from '../../types/models';
 
 
 
@@ -42,7 +42,7 @@ export const BlogEditor = ({ onSuccess, initialData, isEditing, blogId }: BlogEd
   });
 
   const mutation = useMutation({
-    mutationFn: (data: CreateBlogPostDTO) => 
+    mutationFn: (data: BlogItemModel) => 
       isEditing 
         ? blogService.updateBlog(blogId!, data)
         : blogService.createBlog(data),

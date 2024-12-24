@@ -6,6 +6,7 @@ import { Loader2, MessageCircle, ThumbsUp, Flag, Trash } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { blogService } from '../../api/blog';
 import toast from 'react-hot-toast';
+import { BlogCommentDTO } from '../../types/blog';
 
 
 interface BlogCommentsProps {
@@ -126,7 +127,7 @@ export const BlogComments = ({ blogId }: BlogCommentsProps) => {
                   </div>
                 </div>
                 
-                {user?.id === comment.userId && (
+                {user?.userId === comment.userId && (
                   <button
                     onClick={() => deleteCommentMutation.mutate(comment.id)}
                     className="text-gray-400 hover:text-red-500"
