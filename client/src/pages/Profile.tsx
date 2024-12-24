@@ -1,10 +1,8 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { motion, AnimatePresence } from 'framer-motion';
 import { 
   User, 
-  Settings, 
   Users, 
   Gamepad2, 
   Calendar,
@@ -15,10 +13,10 @@ import {
   Clock
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
-import { userService } from '../api/user';
+import { UserService } from '../services/userService';
 import { Button } from '../components/common/Button';
 import { toast } from 'react-hot-toast';
-import { cn } from '../utils/styles';
+
 
 export default function Profile() {
   const { userId } = useParams();
@@ -33,7 +31,7 @@ export default function Profile() {
   // Fetch profile data
   const { data: profile, isLoading } = useQuery({
     queryKey: ['profile', userId],
-    queryFn: () => userId ? userService.getUserProfile(parseInt(userId)) : userService.getProfile(),
+    queryFn: () => userId ? UserService.getUserProfile(parseInt(userId)) : UserService.getProfile(),
     initialData: userId ? undefined : currentUser
   });
 
@@ -43,7 +41,7 @@ export default function Profile() {
       const formData = new FormData();
       if (data.username) formData.append('username', data.username);
       if (data.avatar) formData.append('avatar', data.avatar);
-      return userService.updateProfile(formData);
+      return UserService.updateProfile(formData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['profile']);

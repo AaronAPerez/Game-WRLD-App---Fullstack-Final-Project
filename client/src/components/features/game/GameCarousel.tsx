@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Star, Calendar } from 'lucide-react';
-import { cn } from '../../utils/styles';
+import { cn } from '../../../utils/styles';
 import type { Game } from '../../types/rawg';
 
 interface GameCarouselProps {

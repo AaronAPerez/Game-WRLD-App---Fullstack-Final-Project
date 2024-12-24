@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { UserProfileDTO } from "../types/index";
-import { chatService } from "../services/chatService";
+import { chatService } from '../api/chat';
+
 
 export function useChatUserStatus() {
     const [onlineUsers, setOnlineUsers] = useState<UserProfileDTO[]>([]);

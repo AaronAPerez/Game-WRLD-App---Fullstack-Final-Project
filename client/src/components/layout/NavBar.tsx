@@ -6,7 +6,7 @@ import {
   X
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { cn } from '../utils/styles';
+import { cn } from '../../utils/styles';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChatNotifications } from './chat/ChatNotifications';
 import AvatarMenu from './AvatarMenu';

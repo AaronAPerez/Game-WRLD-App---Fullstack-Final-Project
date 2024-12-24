@@ -1,9 +1,9 @@
 // useChatRoom.ts
 import { useState, useEffect, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { chatService } from '../services/chatService';
+
 import { useChatStore } from '../store/chatStore';
-import { UserProfileDTO, ChatMessage, ChatRoom } from '../types/index';
+
 import { toast } from 'react-hot-toast';
 
 export function useChatRoom(roomId: number) {

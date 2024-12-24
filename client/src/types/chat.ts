@@ -1,6 +1,7 @@
-import { UserFriend } from ".";
+import { UserFriend } from "./models";
 
 export interface UserProfile {
+  isOnline: any;
   id: number;
   username: string;
   avatar: string | null;

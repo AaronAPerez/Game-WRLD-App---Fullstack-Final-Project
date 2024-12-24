@@ -1,21 +1,17 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+
 
 namespace api.Models;
 
-
-public class BlogItemModel
+    
+   public class BlogItemModel
 {
     public int Id { get; set; }
-    
-   
-    [Required(ErrorMessage = "User ID is required")]
-    [ForeignKey("UserInfo")]
-    public int UserId { get; set; }
 
+    [Required(ErrorMessage = "User ID is required")]
+    public int UserId { get; set; }
 
     [Required(ErrorMessage = "Publisher name is required")]
     public string? PublisherName { get; set; }
@@ -38,8 +34,7 @@ public class BlogItemModel
     public bool IsPublished { get; set; }
     public bool IsDeleted { get; set; }
 
-
-    // JsonIgnore to prevent circular references
+    // Ignore navigation property during serialization
     [JsonIgnore]
     public virtual UserModel? User { get; set; }
 

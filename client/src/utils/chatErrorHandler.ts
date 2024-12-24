@@ -7,9 +7,6 @@ export enum ChatErrorType {
   ROOM_JOIN = 'ROOM_JOIN',
   ROOM_LEAVE = 'ROOM_LEAVE',
   USER_STATUS = 'USER_STATUS',
-  MESSAGE_FETCH = "MESSAGE_FETCH",
-  ROOM_FETCH = "ROOM_FETCH",
-  ROOM_CREATE = "ROOM_CREATE",
 }
 
 interface ChatError extends Error {

@@ -12,7 +12,7 @@ import {
   Check,
   Clock
 } from 'lucide-react';
-import { userService } from '../api/user';
+import { UserService } from '../services/userService';
 import { Button } from '../components/common/Button';
 import { toast } from 'react-hot-toast';
 
@@ -43,7 +43,7 @@ export function ProfilePage() {
       const formData = new FormData();
       if (data.username) formData.append('username', data.username);
       if (data.avatar) formData.append('avatar', data.avatar);
-      return userService.updateProfile(formData);
+      return UserService.updateProfile(formData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['profile']);

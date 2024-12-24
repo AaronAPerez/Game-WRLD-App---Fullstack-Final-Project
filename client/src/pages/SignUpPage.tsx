@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Eye, EyeOff, AlertCircle, Loader2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { cn } from '../utils/styles';
-import { useAuth } from '../hooks/useAuth';
+
 
 interface SignUpForm {
   username: string;
@@ -259,4 +259,6 @@ const SignUpPage = () => {
 };
 
 export default SignUpPage;
+
+
 

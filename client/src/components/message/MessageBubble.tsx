@@ -1,3 +1,4 @@
+import { ChatMessageDTO } from "../../types/chat";
 import { cn } from "../../utils/styles";
 
 // Message Bubble Component

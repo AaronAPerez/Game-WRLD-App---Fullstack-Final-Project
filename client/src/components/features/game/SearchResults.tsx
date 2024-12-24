@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { Game } from '../../types/rawg';
 import { gameService } from '../../services/gameService';
-import { cn } from '../../utils/styles';
+import { cn } from '../../../utils/styles';
 
 interface SearchResultsProps {
   query: string;

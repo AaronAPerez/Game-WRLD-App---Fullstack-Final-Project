@@ -1,9 +1,7 @@
-import axios from 'axios';
-import { BASE_URL } from '../constants';
 
 
 import { api } from './axios';
-import type { BlogItemModel } from '../types';
+import type { BlogItemModel } from '../types/models';
 
 export const blogService = {
   getAllPosts: async () => {

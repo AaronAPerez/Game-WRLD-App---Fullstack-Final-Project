@@ -1,78 +1,172 @@
-import { useCallback, useEffect } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { userService } from '../api/user';
-import { jwtDecode } from 'jwt-decode';
-import { UserProfileDTO } from '../types';
+import { createContext, useContext, useState, useCallback, ReactNode, createElement } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { authService, LoginResponse } from '../services/authService';
 
-interface UseAuth {
-  user: UserProfileDTO | null;
+
+interface AuthContextType {
   isAuthenticated: boolean;
-  isLoading: boolean;
+  user: LoginResponse | null;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
-  refreshToken: () => Promise<void>;
+  signup: (username: string, password: string) => Promise<void>;
 }
 
-export const useAuth = (): UseAuth => {
-  // Query user profile
-  const { data: user, isLoading, refetch } = useQuery({
-    queryKey: ['userProfile'],
-    queryFn: userService.getProfile,
-    enabled: !!localStorage.getItem('token'),
-    retry: false
+// Create context with initial null value
+const AuthContext = createContext<AuthContextType | null>(null);
+
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+// Auth Provider Component
+export function AuthProvider(props: AuthProviderProps) {
+  const navigate = useNavigate();
+  const [user, setUser] = useState<LoginResponse | null>(() => {
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : null;
   });
 
-  // Login mutation
-  const loginMutation = useMutation({
-    mutationFn: userService.login,
-    onSuccess: (data) => {
-      localStorage.setItem('token', data.token);
-      refetch();
-    }
-  });
-
-  // Logout handler
-  const logout = useCallback(() => {
-    localStorage.removeItem('token');
-    queryClient.clear();
-  }, []);
-
-  // Token refresh handler
-  const refreshToken = useCallback(async () => {
+  const login = useCallback(async (username: string, password: string) => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
-
-      const decoded = jwtDecode(token);
-      const expirationTime = decoded.exp ? decoded.exp * 1000 : 0;
-      const currentTime = Date.now();
-
-      // If token expires in less than 5 minutes
-      if (expirationTime - currentTime < 5 * 60 * 1000) {
-        const response = await userService.refreshToken(token);
-        localStorage.setItem('token', response.token);
-      }
+      const response = await authService.login({
+        userName: username,
+        password: password
+      });
+  
+      localStorage.setItem('user', JSON.stringify(response)); 
+      localStorage.setItem('authToken', response.token); 
+      setUser(response);
+      navigate('/');
     } catch (error) {
-      console.error('Token refresh failed:', error);
-      logout();
+      console.error('Login error:', error);
+      throw error;
     }
-  }, [logout]);
+  }, [navigate]);
+  
 
-  // Set up token refresh interval
-  useEffect(() => {
-    if (!user) return;
+  const logout = useCallback(() => {
+    authService.logout();
+    setUser(null);
+    navigate('/login');
+  }, [navigate]);
 
-    const interval = setInterval(refreshToken, 4 * 60 * 1000); // Check every 4 minutes
-    return () => clearInterval(interval);
-  }, [user, refreshToken]);
+  const signup = useCallback(async (username: string, password: string) => {
+    try {
+      await authService.signup({
+        id: 0,
+        username,
+        password
+      });
+      navigate('/login');
+    } catch (error) {
+      console.error('Signup error:', error);
+      throw error;
+    }
+  }, [navigate]);
 
-  return {
-    user: user ?? null,
-    isAuthenticated: !!user,
-    isLoading,
-    login: (username: string, password: string) => 
-      loginMutation.mutateAsync({ userName: username, password }),
-    logout,
-    refreshToken
-  };
-};
+  return createElement(AuthContext.Provider, {
+    value: {
+      isAuthenticated: !!user,
+      user,
+      login,
+      logout,
+      signup
+    },
+    children: props.children
+  });
+}
+
+// Custom hook to use auth context
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+}
+// import { createContext, useContext, useState, useCallback, ReactNode, createElement } from 'react';
+// import { useNavigate } from 'react-router-dom';
+// import { authService, LoginResponse } from '../services/authService';
+
+
+// interface AuthContextType {
+//   isAuthenticated: boolean;
+//   user: LoginResponse | null;
+//   login: (username: string, password: string) => Promise<void>;
+//   logout: () => void;
+//   signup: (username: string, password: string) => Promise<void>;
+// }
+
+// // Create context with initial null value
+// const AuthContext = createContext<AuthContextType | null>(null);
+
+// interface AuthProviderProps {
+//   children: ReactNode;
+// }
+
+// // Auth Provider Component
+// export function AuthProvider(props: AuthProviderProps) {
+//   const navigate = useNavigate();
+//   const [user, setUser] = useState<LoginResponse | null>(() => {
+//     const storedUser = localStorage.getItem('user');
+//     return storedUser ? JSON.parse(storedUser) : null;
+//   });
+
+//   const login = useCallback(async (username: string, password: string) => {
+//     try {
+//       const response = await authService.login({
+//         userName: username,
+//         password: password
+//       });
+  
+//       localStorage.setItem('user', JSON.stringify(response)); 
+//       localStorage.setItem('authToken', response.token); 
+//       setUser(response);
+//       navigate('/');
+//     } catch (error) {
+//       console.error('Login error:', error);
+//       throw error;
+//     }
+//   }, [navigate]);
+  
+
+//   const logout = useCallback(() => {
+//     authService.logout();
+//     setUser(null);
+//     navigate('/login');
+//   }, [navigate]);
+
+//   const signup = useCallback(async (username: string, password: string) => {
+//     try {
+//       await authService.signup({
+//         id: 0,
+//         username,
+//         password
+//       });
+//       navigate('/login');
+//     } catch (error) {
+//       console.error('Signup error:', error);
+//       throw error;
+//     }
+//   }, [navigate]);
+
+//   return createElement(AuthContext.Provider, {
+//     value: {
+//       isAuthenticated: !!user,
+//       user,
+//       login,
+//       logout,
+//       signup
+//     },
+//     children: props.children
+//   });
+// }
+
+// // Custom hook to use auth context
+// export function useAuth() {
+//   const context = useContext(AuthContext);
+//   if (!context) {
+//     throw new Error('useAuth must be used within an AuthProvider');
+//   }
+//   return context;
+// }

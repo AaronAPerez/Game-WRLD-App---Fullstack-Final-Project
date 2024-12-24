@@ -1,5 +1,11 @@
+using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace api.Models.DTO
 {
+     // Add JsonIgnore to prevent circular references
+ 
     public class UserProfileDTO
     {
         public int Id { get; set; }

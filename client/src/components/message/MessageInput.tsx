@@ -2,8 +2,9 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Smile, Paperclip, Image, X, Loader2 } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
-import { useChat } from '../../contexts/ChatContext';
+
 import { cn } from '../../utils/styles';
+import { useChat } from '../../hooks/useChat';
 
 interface MessageInputProps {
   roomId: number;

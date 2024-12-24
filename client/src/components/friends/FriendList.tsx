@@ -1,70 +1,14 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
 import { 
   Search,
   Users,
-  User,
-  MessageSquare,
-  UserPlus 
 } from 'lucide-react';
 import { cn } from '../../utils/styles';
-import { userService } from '../../api/user';
-import type { UserProfileDTO } from '../../types';
-import { Link } from 'react-router-dom';
+import { UserService } from '../../services/userService';
+import { FriendCard } from './FriendCard';
 
-interface FriendCardProps {
-  friend: UserProfileDTO;
-}
 
-const FriendCard = ({ friend }: FriendCardProps) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-stone-900 rounded-xl p-6 border border-stone-800"
-    >
-      <div className="flex items-center gap-4">
-        <div className="relative">
-          <img
-            src={friend.avatar || '/default-avatar.png'}
-            alt={friend.username}
-            className="w-12 h-12 rounded-full"
-          />
-          <div className={cn(
-            "absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-stone-900",
-            friend.isOnline ? "bg-green-500" : "bg-gray-500"
-          )} />
-        </div>
-        
-        <div className="flex-1">
-          <h3 className="font-medium text-white">{friend.username}</h3>
-          <p className="text-sm text-gray-400">
-            {friend.isOnline ? 'Online' : 'Offline'}
-          </p>
-        </div>
-      </div>
-
-      <div className="flex gap-2 mt-4">
-        <Link
-          to={`/messages/${friend.id}`}
-          className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-indigo-500/20 text-indigo-400 rounded-lg hover:bg-indigo-500/30"
-        >
-          <MessageSquare className="w-4 h-4" />
-          Message
-        </Link>
-        
-        <Link
-          to={`/profile/${friend.id}`}
-          className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-stone-800 text-gray-400 rounded-lg hover:bg-stone-700"
-        >
-          <User className="w-4 h-4" />
-          Profile
-        </Link>
-      </div>
-    </motion.div>
-  );
-};
 
 export const FriendList = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -72,7 +16,7 @@ export const FriendList = () => {
 
   const { data: friends = [], isLoading } = useQuery({
     queryKey: ['friends'],
-    queryFn: userService.getFriends
+    queryFn: UserService.getFriends
   });
 
   const filteredFriends = friends.filter(friend => {

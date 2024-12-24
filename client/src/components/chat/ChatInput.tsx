@@ -1,3 +1,6 @@
+import { Send } from "lucide-react";
+import { useState } from "react";
+
 interface ChatInputProps {
     onSend: (content: string) => Promise<void>;
   }

@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { color, motion } from 'framer-motion';
-import { Heart, MessageSquare, Users, Gamepad2, BookOpen, Star, Icon } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Heart, MessageSquare, Users, Gamepad2, BookOpen, Star } from 'lucide-react';
 import { gameService } from '../services/gameService';
 import { GameCard } from '../components/game/GameCard';
 import { useAuth } from '../hooks/useAuth';
 import { AvatarUpload } from '../components/AvatarUpload';
 import { Game } from '../types/rawg';
 import { MessageCircle, Send, Plus, X } from 'lucide-react';
-
 
 // Define type interfaces
 interface ChatMessage {
@@ -40,7 +39,7 @@ const DashboardCard = ({ }) => (
         <p className="text-sm text-gray-500 mt-1">{description}</p>
       </div>
       <div className={`p-3 rounded-lg ${color}`}>
-        <Icon className="w-6 h-6" iconNode={[]} />
+        <Icon className="w-6 h-6" />
       </div>
     </div>
   </motion.div>
@@ -126,7 +125,7 @@ const Dashboard = () => {
       value: '8',
       description: 'Published articles',
       icon: BookOpen,
-      color: 'bg-blue-500/10 text-blue-500'
+      color: 'bg-indigo-500/10 text-indigo-500'
     },
     {
       title: 'Friends',
@@ -172,7 +171,7 @@ const Dashboard = () => {
         <button
           onClick={() => setActiveTab('chat')}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-            activeTab === 'chat' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'
+            activeTab === 'chat' ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:text-white'
           }`}
         >
           <MessageCircle className="w-5 h-5" />
@@ -181,7 +180,7 @@ const Dashboard = () => {
         <button
           onClick={() => setActiveTab('social')}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-            activeTab === 'social' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'
+            activeTab === 'social' ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:text-white'
           }`}
         >
           <Users className="w-5 h-5" />
@@ -196,7 +195,7 @@ const Dashboard = () => {
             <div className="space-y-4">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-bold text-white">Chat Rooms</h2>
-                <button className="p-2 bg-blue-600 rounded-full hover:bg-blue-700 transition-colors">
+                <button className="p-2 bg-indigo-600 rounded-full hover:bg-indigo-700 transition-colors">
                   <Plus className="w-5 h-5 text-white" />
                 </button>
               </div>
@@ -239,7 +238,7 @@ const Dashboard = () => {
                     <div className="flex-1 overflow-y-auto p-4 space-y-4">
                       {messages.map((msg) => (
                         <div key={msg.id} className="flex gap-3">
-                          <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center">
+                          <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center">
                             <span className="text-white font-bold">
                               {msg.username[0]}
                             </span>
@@ -265,13 +264,13 @@ const Dashboard = () => {
                           type="text"
                           value={message}
                           onChange={(e) => setMessage(e.target.value)}
-                          onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                          onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                           placeholder="Type your message..."
-                          className="flex-1 bg-stone-800 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                          className="flex-1 bg-stone-800 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
                         />
                         <button
                           onClick={handleSendMessage}
-                          className="bg-blue-600 p-2 rounded-lg hover:bg-blue-700 transition-colors"
+                          className="bg-indigo-600 p-2 rounded-lg hover:bg-indigo-700 transition-colors"
                         >
                           <Send className="w-5 h-5 text-white" />
                         </button>

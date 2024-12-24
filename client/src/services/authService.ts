@@ -1,8 +1,30 @@
-import axios from 'axios';
 
-import { CreateAccountDTO, LoginDTO, LoginResponse, TokenRefreshResponse, UserIdDTO } from '../types';
+import axios from 'axios';
 import { BASE_URL } from '../constants';
 
+
+
+export interface LoginResponse {
+  token: string;
+  userId: number;
+  publisherName: string;
+}
+
+export interface CreateAccountDTO {
+  id: number;
+  username: string;
+  password: string;
+}
+
+export interface LoginDTO {
+  userName: string;
+  password: string;
+}
+
+export interface UserIdDTO {
+  userId: number;
+  publisherName: string;
+}
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -12,43 +34,13 @@ const api = axios.create({
 });
 
 // Add auth token to requests automatically
-axios.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
-
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      
-      try {
-        const token = localStorage.getItem('token');
-        const response = await axios.post<TokenRefreshResponse>(
-          `${BASE_URL}/User/RefreshToken`, 
-          { token }
-        );
-
-        const { token: newToken, userId, username } = response.data;
-
-        // Update local storage
-        localStorage.setItem('token', newToken);
-        localStorage.setItem('user', JSON.stringify({ token: newToken, userId, username }));
-
-        // Update authorization header
-        originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
-        
-        return axios(originalRequest);
-      } catch (refreshError) {
-        // Refresh failed, force logout
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        window.location.href = '/login';
-        return Promise.reject(refreshError);
-      }
-    }
-
-    return Promise.reject(error);
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
-);
+  return config;
+});
 
 export const authService = {
   async login(credentials: LoginDTO): Promise<LoginResponse> {
@@ -58,7 +50,7 @@ export const authService = {
       return {
         token: response.data.token,
         userId: response.data.userId,
-        publisherName: response.data.publisherName
+        publisherName: response.data.publisherName,
       };
     }
     throw new Error('Login failed');

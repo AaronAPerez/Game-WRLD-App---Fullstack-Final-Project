@@ -1,10 +1,9 @@
 import axios from 'axios';
+;
 import { BASE_URL } from '../constants';
-import { UserProfileDTO } from '../types/index';
-<<<<<<< HEAD
-=======
-import { FriendStatus } from '../components/friends/FriendStatus';
->>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
+import { UserProfile } from '../types/chat';
+
+
 
 
 export interface SearchResult {
@@ -61,7 +60,7 @@ export const searchService = {
     }
   },
 
-  async searchUsers(filters: UserSearchFilters): Promise<UserProfileDTO[]> {
+  async searchUsers(filters: UserSearchFilters): Promise<UserProfile[]> {
     try {
       const response = await axios.get(`${BASE_URL}/User/search`, {
         params: {

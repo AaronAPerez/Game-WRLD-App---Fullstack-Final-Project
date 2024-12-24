@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Plus, X, Loader2, ImagePlus } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { blogService } from '../../api/blog';
-import { Post } from '../../types';
+import { blogService } from '../../services/blogService';
 import { CreateBlogPostDTO } from '../../types/blog';
+import { useForm } from 'react-hook-form';
+
 
 
 const blogSchema = z.object({
@@ -20,15 +20,13 @@ const blogSchema = z.object({
 type BlogFormData = z.infer<typeof blogSchema>;
 
 interface BlogEditorProps {
-  onSuccess?: () => Post;
-  initialData: BlogFormData;
+  onSuccess?: () => void;
+  initialData?: BlogFormData;
   isEditing?: boolean;
   blogId?: number;
 }
 
 export const BlogEditor = ({ onSuccess, initialData, isEditing, blogId }: BlogEditorProps) => {
-  const [show, setShow] = useState(false);
-  const [edit, setEdit] = useState<number | null>(null);
   const [tags, setTags] = useState<string[]>(initialData?.tags || []);
   const [tagInput, setTagInput] = useState('');
   const queryClient = useQueryClient();
@@ -36,9 +34,8 @@ export const BlogEditor = ({ onSuccess, initialData, isEditing, blogId }: BlogEd
   const {
     register,
     handleSubmit,
-    reset,
-    setValue,
     formState: { errors },
+    reset
   } = useForm<BlogFormData>({
     resolver: zodResolver(blogSchema),
     defaultValues: initialData
@@ -52,8 +49,7 @@ export const BlogEditor = ({ onSuccess, initialData, isEditing, blogId }: BlogEd
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['blogs'] });
       toast.success(isEditing ? 'Blog updated successfully!' : 'Blog created successfully!');
-      handleClose();
-      // reset();
+      reset();
       setTags([]);
       onSuccess?.();
     },
@@ -62,33 +58,12 @@ export const BlogEditor = ({ onSuccess, initialData, isEditing, blogId }: BlogEd
     }
   });
 
-  const handleClose = () => {
-    setShow(false);
-    setEdit(null);
-    reset();
-  };
-
-  const handleShow = (blog?: BlogFormData) => {
-    setShow(true);
-    if (blog) {
-      setEdit(blog.id);
-      setValue("tags", blog.tags);
-      setValue("title", blog.title);
-      setValue("image", blog.image);
-      setValue("description", blog. description);
-      setValue("category", blog.category);
-    } else {
-      setEdit(null);
-      reset();
-    }
-  };
-
   const handleAddTag = () => {
     if (tagInput.trim() && !tags.includes(tagInput.trim())) {
       setTags([...tags, tagInput.trim()]);
       setTagInput('');
     }
-  }
+  };
 
   const removeTag = (tagToRemove: string) => {
     setTags(tags.filter((tag) => tag !== tagToRemove));
@@ -100,9 +75,6 @@ export const BlogEditor = ({ onSuccess, initialData, isEditing, blogId }: BlogEd
       tags,
     });
   };
-  
-
-
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -187,7 +159,7 @@ export const BlogEditor = ({ onSuccess, initialData, isEditing, blogId }: BlogEd
             type="text"
             value={tagInput}
             onChange={(e) => setTagInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
+            onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
             className="flex-1 rounded-lg border border-stone-700 bg-stone-800 px-4 py-2 text-white"
             placeholder="Add a tag"
           />
@@ -242,3 +214,8 @@ export const BlogEditor = ({ onSuccess, initialData, isEditing, blogId }: BlogEd
 };
 
 export default BlogEditor;
+
+function zodResolver(blogSchema: z.ZodObject<{ title: z.ZodString; description: z.ZodString; category: z.ZodString; tags: z.ZodOptional<z.ZodArray<z.ZodString, "many">>; image: z.ZodOptional<z.ZodString>; }, "strip", z.ZodTypeAny, { title: string; category: string; description: string; image?: string | undefined; tags?: string[] | undefined; }, { title: string; category: string; description: string; image?: string | undefined; tags?: string[] | undefined; }>): import("react-hook-form").Resolver<{ title: string; category: string; description: string; image?: string | undefined; tags?: string[] | undefined; }, any> | undefined {
+  throw new Error('Function not implemented.');
+}
+

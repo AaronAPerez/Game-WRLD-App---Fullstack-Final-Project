@@ -1,11 +1,12 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { MessageSquare, User } from "lucide-react";
 import { useState } from "react";
-import { UserProfileDTO } from "../../types";
 import { useNavigate } from "react-router-dom";
+import { cn } from "../../utils/styles";
+import { UserProfile } from "../../types/chat";
 
 interface FriendCardProps {
-    friend: UserProfileDTO;
+    friend: UserProfile;
   }
   
   export const FriendCard = ({ friend }: FriendCardProps) => {

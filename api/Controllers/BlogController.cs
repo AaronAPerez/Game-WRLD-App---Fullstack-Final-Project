@@ -18,7 +18,7 @@ public class BlogController : ControllerBase
     }
 
     [HttpPost("AddBlogItems")]
-    public async Task<IActionResult> AddBlogItems([FromBody] BlogItemModel newBlogItem)
+    public async Task<IActionResult> AddBlogItems(BlogItemModel newBlogItem)
     {
         if (newBlogItem == null)
         {

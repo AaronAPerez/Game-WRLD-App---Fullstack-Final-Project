@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // // Custom hook for chat operations
 // // good
 // import { useCallback, useContext, useEffect, useState } from 'react';
@@ -213,119 +212,113 @@
 
 
 
-import { createContext, useContext } from 'react';
-import { HubConnectionState } from '@microsoft/signalr';
-import type { ChatMessage, ChatRoom } from '../types/index';
-=======
-import { useEffect, useRef } from 'react';
-import { 
-  HubConnection, 
-  HubConnectionBuilder, 
-  LogLevel 
-} from '@microsoft/signalr';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { chatService } from '../api/chat';
-import { toast } from 'react-hot-toast';
-import { UserProfileDTO } from '../types';
->>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
+// import { useEffect, useRef } from 'react';
+// import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 
-interface UseChatOptions {
-  onMessage?: (message: ChatMessageDTO) => void;
-  onUserTyping?: (roomId: number, user: UserProfileDTO) => void;
-  onUserOnline?: (user: UserProfileDTO) => void;
-}
+// import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query';
+// import toast from 'react-hot-toast';
 
-export const useChat = (options: UseChatOptions = {}) => {
-  const connectionRef = useRef<HubConnection | null>(null);
-  const queryClient = useQueryClient();
+// import { ChatMessageDTO } from '../types/chat';
+// import { UserProfile } from '../types/auth';
+// import { chatService } from '../api/chat';
 
-  // Initialize SignalR connection
-  useEffect(() => {
-    const initConnection = async () => {
-      try {
-        const connection = new HubConnectionBuilder()
-          .withUrl('/hubs/chat', {
-            accessTokenFactory: () => localStorage.getItem('token') || ''
-          })
-          .withAutomaticReconnect()
-          .configureLogging(LogLevel.Information)
-          .build();
+// interface UseChatOptions {
+//   onMessage?: (message: ChatMessageDTO) => void;
+//   onUserTyping?: (roomId: number, user: UserProfile) => void;
+//   onUserOnline?: (user: UserProfileDTO) => void;
+// }
 
-        // Set up event handlers
-        connection.on('ReceiveMessage', (message: ChatMessageDTO) => {
-          queryClient.setQueryData(
-            ['messages', message.chatRoomId],
-            (old: ChatMessageDTO[] = []) => [...old, message]
-          );
-          options.onMessage?.(message);
-        });
+// export const useChat = (options: UseChatOptions = {}) => {
+//   const connectionRef = useRef<HubConnection | null>(null);
+//   const queryClient = useQueryClient();
 
-        connection.on('UserTyping', (roomId: number, user: UserProfileDTO) => {
-          options.onUserTyping?.(roomId, user);
-        });
+//   // Initialize SignalR connection
+//   useEffect(() => {
+//     const initConnection = async () => {
+//       try {
+//         const connection = new HubConnectionBuilder()
+//           .withUrl('/hubs/chat', {
+//             accessTokenFactory: () => localStorage.getItem('token') || ''
+//           })
+//           .withAutomaticReconnect()
+//           .configureLogging(LogLevel.Information)
+//           .build();
 
-        connection.on('UserOnline', (user: UserProfileDTO) => {
-          options.onUserOnline?.(user);
-        });
+//         // Set up event handlers
+//         connection.on('ReceiveMessage', (message: ChatMessageDTO) => {
+//           queryClient.setQueryData(
+//             ['messages', message.chatRoomId],
+//             (old: ChatMessageDTO[] = []) => [...old, message]
+//           );
+//           options.onMessage?.(message);
+//         });
 
-        // Start connection
-        await connection.start();
-        connectionRef.current = connection;
-      } catch (error) {
-        console.error('SignalR Connection Error:', error);
-        toast.error('Failed to connect to chat service');
-      }
-    };
+//         connection.on('UserTyping', (roomId: number, user: UserProfileDTO) => {
+//           options.onUserTyping?.(roomId, user);
+//         });
 
-    initConnection();
+//         connection.on('UserOnline', (user: UserProfileDTO) => {
+//           options.onUserOnline?.(user);
+//         });
 
-    // Cleanup on unmount
-    return () => {
-      connectionRef.current?.stop();
-    };
-  }, []);
+//         // Start connection
+//         await connection.start();
+//         connectionRef.current = connection;
+//       } catch (error) {
+//         console.error('SignalR Connection Error:', error);
+//         toast.error('Failed to connect to chat service');
+//       }
+//     };
 
-  // Get chat rooms
-  const { data: rooms = [] } = useQuery({
-    queryKey: ['chatRooms'],
-    queryFn: chatService.getRooms
-  });
+//     initConnection();
 
-  // Get messages for a room
-  const useMessages = (roomId: number) => useQuery({
-    queryKey: ['messages', roomId],
-    queryFn: () => chatService.getRoomMessages(roomId),
-    enabled: !!roomId
-  });
+//     // Cleanup on unmount
+//     return () => {
+//       connectionRef.current?.stop();
+//     };
+//   }, []);
 
-  // Send message mutation
-  const sendMessageMutation = useMutation({
-    mutationFn: async ({ roomId, content }: { roomId: number; content: string }) => {
-      if (!connectionRef.current) throw new Error('Not connected');
+//   // Get chat rooms
+//   const { data: rooms = [] } = useQuery({
+//     queryKey: ['chatRooms'],
+//     queryFn: chatService.getRooms
+//   });
 
-      await connectionRef.current.invoke('SendMessage', {
-        chatRoomId: roomId,
-        content,
-        messageType: 'text'
-      });
-    }
-  });
+//   // Get messages for a room
+//   const useMessages = (roomId: number) => useQuery({
+//     queryKey: ['messages', roomId],
+//     queryFn: () => chatService.getRoomMessages(roomId),
+//     enabled: !!roomId
+//   });
 
-  // Join room mutation
-  const joinRoomMutation = useMutation({
-    mutationFn: async (roomId: number) => {
-      if (!connectionRef.current) throw new Error('Not connected');
+//   // Send message mutation
+//   const sendMessageMutation = useMutation({
+//     mutationFn: async ({ roomId, content }: { roomId: number; content: string }) => {
+//       if (!connectionRef.current) throw new Error('Not connected');
 
-      await chatService.joinRoom(roomId);
-      await connectionRef.current.invoke('JoinRoom', roomId);
-    }
-  });
+//       await connectionRef.current.invoke('SendMessage', {
+//         chatRoomId: roomId,
+//         content,
+//         messageType: 'text'
+//       });
+//     }
+//   });
 
-  return {
-    rooms,
-    useMessages,
-    sendMessage: sendMessageMutation.mutateAsync,
-    joinRoom: joinRoomMutation.mutateAsync,
-    isConnected: !!connectionRef.current?.state
-  };
-};
+//   // Join room mutation
+//   const joinRoomMutation = useMutation({
+//     mutationFn: async (roomId: number) => {
+//       if (!connectionRef.current) throw new Error('Not connected');
+
+//       await chatService.joinRoom(roomId);
+//       await connectionRef.current.invoke('JoinRoom', roomId);
+//     }
+//   });
+
+//   return {
+//     rooms,
+//     useMessages,
+//     sendMessage: sendMessageMutation.mutateAsync,
+//     joinRoom: joinRoomMutation.mutateAsync,
+//     isConnected: !!connectionRef.current?.state
+//   };
+// };

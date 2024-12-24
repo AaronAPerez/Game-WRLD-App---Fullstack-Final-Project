@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAuth } from './hooks/useAuth';
+
 import ErrorPage from './pages/ErrorPage';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -9,10 +9,15 @@ import Dashboard from './pages/Dashboard';
 import BlogPage from './pages/BlogPage';
 import { UserSearch } from './components/UserSearch/UserSearch';
 import GamesList from './pages/GamesList';
-import { Gamepad2, Flame, Clock, BarChart, Calendar, Layout } from 'lucide-react';
-import FriendsPage from './pages/FriendsPage';
+// import FriendsPage from './pages/FriendsPage';
 import GamingTimeline from './pages/GamingTimeline';
-import { ChatRoom } from './pages/ChatRoom';
+// import { ChatRoom } from './pages/ChatRoom';
+import Layout from './components/layout/Layout';
+import { BarChart, Calendar, Flame, Gamepad2 } from 'lucide-react';
+import { MessageComponent } from './components/message/MessageComponent';
+import { ChatPanel } from './components/chat/ChatPanel';
+// import { NotificationIndicator } from './components/NotificationIndicator';
+
 
 
 // Protected Route Component
@@ -20,7 +25,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useAuth();
   
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return children;
@@ -113,19 +118,19 @@ const AppRoutes = () => {
             <UserSearch />
           </ProtectedRoute>
         } />
-        <Route path="friends" element={
+        <Route path="timeline" element={
           <ProtectedRoute>
-            <FriendsPage />
+            <GamingTimeline />
           </ProtectedRoute>
         } />
-        <Route path="chat" element={
+       <Route path="chat" element={
           <ProtectedRoute>
-            <ChatRoom roomId={0}/>
+          <ChatPanel/>
           </ProtectedRoute> 
-         } />   
+         } />    
         <Route path="messages/:userId?" element={
           <ProtectedRoute>
-            <Messages/>
+            <MessageComponent message={undefined} isOwn={false}/>
           </ProtectedRoute>
         } />
       </Route>
@@ -134,8 +139,12 @@ const AppRoutes = () => {
 };
 
 export default AppRoutes;
+
+function useAuth(): { isAuthenticated: any; } {
+  throw new Error('Function not implemented.');
+}
 // import { Routes, Route, Navigate } from 'react-router-dom';
-// import { useAuth } from './hooks/useAuth';
+// import { useAuth, AuthProvider } from './hooks/useAuth';
 // import Layout from './components/layout/Layout';
 // import { lazy, Suspense } from 'react';
 // import { UserSearch } from './components/search/UserSearch';

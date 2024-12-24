@@ -25,6 +25,9 @@ public class DataContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<BlogItemModel>()
+            .HasQueryFilter(b => !b.IsDeleted);  // Global query filter for soft delete
+
         // User Relationships
         modelBuilder.Entity<UserModel>()
             .HasMany(u => u.FriendshipsInitiated)

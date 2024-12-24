@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useAuth } from '../hooks/useAuth';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { 
   LogOut, 
@@ -11,16 +12,19 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { userService } from '../services/userService';
-import { useAuth } from '../hooks/useAuth';
+import { UserService } from '../services/userService';
+
+
+// Update mutation type
+interface AvatarMutationResult {
+  success: boolean;
+  avatarUrl: string;
+}
+
+
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-
-interface UserProfile {
-  publisherName: string;
-  avatar?: string;
-}
 
 const AvatarMenu = () => {
   const { user, logout } = useAuth();
@@ -28,11 +32,15 @@ const AvatarMenu = () => {
   const queryClient = useQueryClient();
 
   // Upload mutation
-  const { mutate: uploadAvatar, isPending: isLoading } = useMutation({
+  const { mutate: uploadAvatar, isPending: isLoading } = useMutation<
+    AvatarMutationResult,
+    Error,
+    File
+  >({
     mutationFn: async (file: File) => {
       const formData = new FormData();
       formData.append('avatar', file);
-      return userService.updateAvatar(formData);
+      return UserService.updateAvatar(formData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userProfile'] });

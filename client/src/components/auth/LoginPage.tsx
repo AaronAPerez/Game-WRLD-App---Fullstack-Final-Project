@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { AlertCircle, Loader2, User, EyeOff, Eye, Lock } from 'lucide-react';
-import { cn } from '../../utils/styles';
+import { toast } from 'react-hot-toast';
 import { useAuth } from '../../hooks/useAuth';
-import { Link } from 'react-router-dom';
 
 interface LoginFormData {
   userName: string;
@@ -31,31 +30,58 @@ const LoginPage = () => {
 
   const [errors, setErrors] = useState<FormErrors>({});
 
+  // useEffect to autofill the username if it was saved in localStorage
+  useEffect(() => {
+    const rememberedUser = localStorage.getItem('rememberedUser');
+    if (rememberedUser) {
+      setFormData((prev) => ({
+        ...prev,
+        userName: rememberedUser,
+      }));
+    }
+  }, []); // This effect runs once when the component is mounted
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    if (!formData.userName) {
+      newErrors.userName = 'Username is required';
+    }
+
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
-    // if (!validateForm()) {
-    //   return;
-    // }
-  
+
+    if (!validateForm()) {
+      return;
+    }
+
     setIsLoading(true);
     setErrors({});
-  
-    // try {
-    //   await login(formData.userName, formData.password);
+
+    try {
+      await login(formData.userName, formData.password);
+      toast.success('Login successful!');
       
-    //   if (formData.rememberMe) {
-    //     localStorage.setItem(STORAGE_KEYS.REMEMBER_ME, formData.userName);
-    //   } else {
-    //     localStorage.removeItem(STORAGE_KEYS.REMEMBER_ME);
-    //   }
-    // } catch (error: any) {
-    //   setErrors({
-    //     general: error.response?.data?.message || 'Invalid username or password'
-    //   });
-    // } finally {
-    //   setIsLoading(false);
-    // }
+      if (formData.rememberMe) {
+        localStorage.setItem('rememberedUser', formData.userName);
+      }
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Invalid username or password';
+      setErrors({
+        general: errorMessage
+      });
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -175,14 +201,13 @@ const LoginPage = () => {
               type="submit"
               disabled={isLoading}
               className={cn(
-                "w-full relative px-4 py-2 font-medium text-white rounded-full outline",
+                "w-full relative px-4 py-2 font-medium text-white rounded-full",
                 "transition-all duration-300",
-                "bg-indigo-900 hover:bg-indigo-600",
-                // Enhanced glow for primary button
+                "bg-blue-900 hover:bg-indigo-500",
                 "before:absolute before:inset-0 before:rounded-full before:opacity-0",
                 "before:bg-[radial-gradient(circle_at_center,rgba(79,70,229,0.3)_0%,transparent_70%)]",
                 "hover:before:opacity-100",
-                // Shadow effect
+                "disabled:opacity-50 disabled:cursor-not-allowed",
                 "shadow-lg shadow-indigo-500/20"
               )}
             >
@@ -213,6 +238,3 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
-
-
-

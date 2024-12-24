@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Users, Check, X } from 'lucide-react';
 import { chatService } from '../../services/chatService';
-import { cn } from '../utils/styles';
+import { cn } from '../../utils/styles';
 import { toast } from 'react-hot-toast';
 
 export const FriendRequestsPanel = () => {

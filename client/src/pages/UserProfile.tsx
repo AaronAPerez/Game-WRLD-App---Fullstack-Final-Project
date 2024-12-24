@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { UserPlus, MessageSquare, Users, Settings, X, Check } from 'lucide-react';
-import { userService } from '../api/user';
+import { UserService } from '../services/userService';
 import { useAuth } from '../hooks/useAuth';
 import { useChat } from '../hooks/useChat';
 import { Button } from '../components/common/Button';

@@ -1,17 +1,14 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { UserPlus, Check, Loader2 } from 'lucide-react';
-import { userService } from '../../api/user';
+import { UserService } from '../../services/userService';
 import { cn } from '../../utils/styles';
 import { toast } from 'react-hot-toast';
-<<<<<<< HEAD
-import type { UserProfileDTO } from '../../types/index';
-=======
-import type { UserProfileDTO } from '../../types';
->>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
+import { UserProfile } from '../../types/chat';
+
 
 interface FriendActionButtonProps {
-  targetUser: UserProfileDTO;
+  targetUser: UserProfile;
 }
 
 interface SendFriendRequestParams {
@@ -25,7 +22,7 @@ export const FriendActionButton = ({ targetUser }: FriendActionButtonProps) => {
   // Friend request mutation
   const sendRequestMutation = useMutation({
     mutationFn: (params: SendFriendRequestParams) => 
-      userService.sendFriendRequest(params.addresseeId),
+      UserService.sendFriendRequest(params.addresseeId),
     onSuccess: () => {
       setIsRequested(true);
       queryClient.invalidateQueries({

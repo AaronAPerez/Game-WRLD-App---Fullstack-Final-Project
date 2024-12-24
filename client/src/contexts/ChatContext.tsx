@@ -1,8 +1,11 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { toast } from 'react-hot-toast';
+
+
+import { ChatMessageDTO, DirectMessage } from '../types/chat';
 import { CHAT_HUB_URL } from '../constants';
-import type { ChatMessage, DirectMessage, UserProfileDTO } from '../types/index';
+
 
 interface ChatContextType {
   connection: HubConnection | null;
@@ -51,7 +54,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     }
 
     // Set up event handlers
-    newConnection.on('ReceiveMessage', (message: ChatMessage | DirectMessage) => {
+    newConnection.on('ReceiveMessage', (message: ChatMessageDTO | DirectMessage) => {
       if ('roomId' in message) {
         // Handle room message
       } else {

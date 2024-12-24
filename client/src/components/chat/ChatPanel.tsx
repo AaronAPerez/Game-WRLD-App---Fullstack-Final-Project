@@ -10,24 +10,15 @@ import {
   ArrowLeft,
   X 
 } from 'lucide-react';
-<<<<<<< HEAD
-
 import { cn } from '../../utils/styles';
-import { UserProfileDTO } from '../../types';
-import { ChatMessages } from './ChatMessages';
+import { UserProfile } from '../../types/chat';
+import { UserService } from '../../services/userService';
 
 
-=======
-import { userService } from '../../services/userService';
-import { cn } from '../../utils/styles';
-import type { UserProfileDTO } from '../../types/index';
-import { ChatMessages } from './ChatMessages';
-
->>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
 // Types
 interface ConversationListProps {
-  onUserSelect: (user: UserProfileDTO) => void;
-  selectedUser: UserProfileDTO | null;
+  onUserSelect: (user: UserProfile) => void;
+  selectedUser: UserProfile | null;
 }
 
 interface ChatPanelProps {
@@ -41,17 +32,13 @@ const ConversationList = ({ onUserSelect, selectedUser }: ConversationListProps)
   // Fetch friends list
   const { data: friends, isLoading } = useQuery({
     queryKey: ['friends'],
-<<<<<<< HEAD
     queryFn: UserService.getFriends
-=======
-    queryFn: userService.getFriends
->>>>>>> 148c934c91d96d0d5b3f871660dbde30808f4b17
   });
 
   // Filter friends based on search
   const filteredFriends = useMemo(() => {
     if (!friends) return [];
-    return friends.filter(friend => 
+    return friends.filter((friend: { username: string; }) => 
       friend.username.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [friends, searchQuery]);
@@ -88,7 +75,7 @@ const ConversationList = ({ onUserSelect, selectedUser }: ConversationListProps)
             <p className="text-sm">No conversations found</p>
           </div>
         ) : (
-          filteredFriends.map((friend) => (
+          filteredFriends.map((friend: UserProfile) => (
             <button
               key={friend.id}
               onClick={() => onUserSelect(friend)}
@@ -125,7 +112,7 @@ const ConversationList = ({ onUserSelect, selectedUser }: ConversationListProps)
 // Main ChatPanel Component
 export const ChatPanel = ({ className }: ChatPanelProps) => {
   const navigate = useNavigate();
-  const [selectedUser, setSelectedUser] = useState<UserProfileDTO | null>(null);
+  const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
   const [isNavOpen, setIsNavOpen] = useState(true);
 
   return (

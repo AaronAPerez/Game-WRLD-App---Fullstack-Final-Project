@@ -1,4 +1,4 @@
-import { ChatMessage, UserProfileDTO } from "../types";
+import { UserProfile } from "../types/chat";
 
 
 export const formatChatTime = (date: string | Date): string => {
@@ -37,7 +37,7 @@ export const groupMessagesByDate = (messages: ChatMessage[]) => {
   }, {} as Record<string, ChatMessage[]>);
 };
 
-export const getTypingIndicator = (users: UserProfileDTO[]): string => {
+export const getTypingIndicator = (users: UserProfile[]): string => {
   if (!users.length) return '';
   if (users.length === 1) return `${users[0].username} is typing...`;
   if (users.length === 2) return `${users[0].username} and ${users[1].username} are typing...`;
