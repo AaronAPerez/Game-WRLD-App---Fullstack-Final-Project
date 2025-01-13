@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useDebounce } from './useDebounce';
 
 
+
 // Function Declaration
 export function useSearch() {
   const [searchQuery, setSearchQuery] = useState('');
