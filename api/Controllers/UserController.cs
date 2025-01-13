@@ -14,32 +14,32 @@ namespace api.Controllers;
 [Route("api/[controller]")]
 public class UserController : ControllerBase
 {
-    private readonly UserService _data;
+  private readonly UserService _data;
 
-    public UserController(UserService dataFromService)
-    {
-        _data = dataFromService;
-    }
+  public UserController(UserService dataFromService)
+  {
+    _data = dataFromService;
+  }
 
-//Add a user
+  //Add a user
 
-[HttpPost("AddUsers")]
+  [HttpPost("AddUsers")]
 
-public bool AddUser(CreateAccountDTO UserToAdd)
-{
-  return _data.AddUser(UserToAdd);
-}
+  public bool AddUser(CreateAccountDTO UserToAdd)
+  {
+    return _data.AddUser(UserToAdd);
+  }
 
-//GetAllUser Endpoint
-[HttpGet("GetAllUsers")]
+  //GetAllUser Endpoint
+  [HttpGet("GetAllUsers")]
 
-public IEnumerable<UserModel> GetAllUsers()
-{
-  return _data.GetAllUsers();
-}
+  public IEnumerable<UserModel> GetAllUsers()
+  {
+    return _data.GetAllUsers();
+  }
 
-//GetUserByUserName
-[HttpGet("GetUserByUsername/{username}")]
+  //GetUserByUserName
+  [HttpGet("GetUserByUsername/{username}")]
 
   public UserIdDTO GetUserIdDTOByUserName(string username)
   {
@@ -49,26 +49,26 @@ public IEnumerable<UserModel> GetAllUsers()
 
 
 
-//Login
-[HttpPost("Login")]
+  //Login
+  [HttpPost("Login")]
 
-public IActionResult Login([FromBody] LoginDTO User)
-{
-  return _data.Login(User);
-}
+  public IActionResult Login([FromBody] LoginDTO User)
+  {
+    return _data.Login(User);
+  }
 
-//Delete User Account
-[HttpPost("DeleteUser/{userToDelete}")]
-public bool DeleteUser(string userToDelete)
-{
-  return _data.DeleteUser(userToDelete);
-}
+  //Delete User Account
+  [HttpPost("DeleteUser/{userToDelete}")]
+  public bool DeleteUser(string userToDelete)
+  {
+    return _data.DeleteUser(userToDelete);
+  }
 
-//Update user Account
-[HttpPost("UpdateUser")]
-public bool UpdateUser(int id, string username)
-{
-  return _data.UpdateUser(id,username);
-}
+  //Update user Account
+  [HttpPost("UpdateUser")]
+  public bool UpdateUser(int id, string username)
+  {
+    return _data.UpdateUser(id, username);
+  }
 
 }

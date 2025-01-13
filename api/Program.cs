@@ -1,6 +1,7 @@
 using api.Services;
 using api.Services.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,8 +10,21 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<BlogItemService>();
 builder.Services.AddScoped<PasswordService>();
 
-var connectionString = builder.Configuration.GetConnectionString("GameWrldString");
+var connectionString = builder.Configuration.GetConnectionString("GAME_WRLD_String");
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(connectionString));
+
+//Cors policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("BlogPolicy",
+    builder =>
+    {
+        builder.WithOrigins("http://localhost:5173")
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    }
+    );
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -25,6 +39,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("BlogPolicy");
 
 app.UseHttpsRedirection();
 
