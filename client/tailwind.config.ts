@@ -1,4 +1,3 @@
-// tailwind.config.ts
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
@@ -7,6 +6,21 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      keyframes: {
+        expand: {
+          '0%': { transform: 'scaleX(0)' },
+          '100%': { transform: 'scaleX(1)' }
+        },
+      },
+      animation: {
+        expand: 'expand 0.2s ease-out forwards',
+      },
+      transitionTimingFunction: {
+        'bounce-in-out': 'cubic-bezier(0.87, 0, 0.13, 1)',
+      },
+      perspective: {
+        '1000': '1000px'
+      },
       colors: {
         primary: {
           50: '#f0f9ff',
@@ -20,10 +34,24 @@ const config: Config = {
           800: '#075985',
           900: '#0c4a6e',
         },
+        surface: {
+          dark: 'rgba(24, 24, 24, 0.9)',
+          light: 'rgba(40, 40, 40, 0.9)',
+        },
+      },
+      boxShadow: {
+        'spotify': '0 8px 24px rgb(0 0 0 / 50%)',
+        'spotify-hover': '0 8px 32px rgb(0 0 0 / 70%)',
+      },
+      backdropBlur: {
+        'less': '8px',
       },
     },
   },
-  plugins: [require('@tailwindcss/forms')],
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography')
+  ]
 }
 
 export default config

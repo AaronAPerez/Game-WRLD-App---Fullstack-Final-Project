@@ -11,15 +11,15 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { useState } from 'react';
-import { gameService } from '../services/gameService';
-import { cn } from '../utils/styles';
 import { Link } from 'react-router-dom';
+import { gameService } from '../services/gameService';
+import { cn } from '../utils';
 
 interface GameDetailsProps {
   gameId: number;
 }
 
-export default function GameDetails({ gameId }: GameDetailsProps) {
+const GameDetails = ({ gameId }: GameDetailsProps) => {
   const [activeTab, setActiveTab] = useState('about');
   const [selectedScreenshot, setSelectedScreenshot] = useState<string | null>(null);
 
@@ -326,3 +326,5 @@ export default function GameDetails({ gameId }: GameDetailsProps) {
     </div>
   );
 }
+
+export default GameDetails;

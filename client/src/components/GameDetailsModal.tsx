@@ -1,7 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { gameService, getMetacriticColor } from "../services/gameService";
+// import { gameService, getMetacriticColor } from "../services/gameService";
 import { Minimize2, Star } from "lucide-react";
+import { gameService } from "../services/gameService";
+import { getMetacriticColor } from "../utils/formatDate";
+
 
 // Game Details Modal Component
 export function GameDetailsModal({ gameId, onClose }: { gameId: number; onClose: () => void }) {

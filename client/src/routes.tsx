@@ -1,117 +1,114 @@
-import { createBrowserRouter } from 'react-router-dom';
-import Layout from './components/layout/Layout';
-import ErrorPage from './pages/ErrorPage';
-import HomePage from './pages/HomePage';
-import GamesList from './pages/GamesList';
-import { Gamepad2, Flame, Clock, BarChart, Trophy, Calendar } from 'lucide-react';
-import LoginPage from './pages/LoginPage';
-import SignUpPage from './pages/SignUpPage';
-import GameDetailsWrapper from './components/GameDetailsWrapper';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
 
-// Create route configuration
-const router = createBrowserRouter([
+import ErrorPage from './components/pages/ErrorPage';
+import HomePage from './components/pages/HomePage';
+import GamesPage from './components/pages/GamesPage';
+import GameDetails from './components/GameDetails';
+import SignUpPage from './components/pages/auth/SignUpPage';
+import ProtectedRoute from './components/pages/auth/ProtectedRoute';
+
+import { PostCard } from './components/PostCard';
+import { CreatePost } from './components/CreatePost';
+import SocialFeed from './components/SocialFeed';
+import LoginPage from './components/pages/auth/LoginPage';
+import Dashboard from './components/Dashboard';
+import Layout from './components/layouts/Layout';
+import BlogPage from './components/pages/BlogPage';
+import GameGrid from './components/GameGrid';
+import MainLayout from './components/layouts/MainLayout';
+
+
+const routes = [
   {
     path: "/",
-    element: <Layout />,
+    element: <AuthProvider><MainLayout /></AuthProvider>,
     errorElement: <ErrorPage />,
     children: [
-      { index: true, element: <HomePage /> },
-      { path: "login", element: <LoginPage /> },
-      { path: "signup", element: <SignUpPage /> },
-      { path: "game/:id", element: <GameDetailsWrapper />},
-      
-      // Discover section routes
-      { 
-        path: "trending", 
-        element: <GamesList 
-          title="Trending Games"
-          icon={Flame}
-          queryKey="trending"
-          queryParams={{
-            ordering: '-metacritic',
-            metacritic: '80,100',
-            page_size: 21
-          }}
-        />
+      // Public Routes
+      {
+        index: true,
+        element: <GameGrid />
       },
-      { 
-        path: "new-releases", 
-        element: <GamesList 
-          title="New Releases"
-          icon={Clock}
-          queryKey="newReleases"
-          queryParams={{
-            dates: `${new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]},${new Date().toISOString().split('T')[0]}`,
-            ordering: '-released',
-            page_size: 21
-          }}
-        />
+      {
+        path: "games",
+        children: [
+          {
+            index: true,
+            element: <GamesPage />
+          },
+          {
+            path: ":id",
+            element: <GameDetails gameId={0} />
+          }
+        ]
       },
-      { 
-        path: "top-rated", 
-        element: <GamesList 
-          title="Top Rated Games"
-          icon={BarChart}
-          queryKey="topRated"
-          queryParams={{
-            ordering: '-rating',
-            page_size: 21
-          }}
-        />
-      },
-      { 
-        path: "popular", 
-        element: <GamesList 
-          title="Popular Games"
-          icon={Trophy}
-          queryKey="popular"
-          queryParams={{
-            ordering: '-added',
-            page_size: 21
-          }}
-        />
-      },
-      { 
-        path: "games", 
-        element: <GamesList 
-          title="All Games"
-          icon={Gamepad2}
-          queryKey="allGames"
-          queryParams={{
-            ordering: '-rating',
-            page_size: 21
-          }}
-        />
-      },
-      { 
-        path: "upcoming", 
-        element: <GamesList 
-          title="Upcoming Games"
-          icon={Calendar}
-          queryKey="upcoming"
-          queryParams={{
-            dates: `${new Date().toISOString().split('T')[0]},${new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}`,
-            ordering: 'released',
-            page_size: 21
-          }}
-        />
+      {
+        path: "auth",
+        children: [
+          {
+            path: "login",
+            element: <LoginPage />
+          },
+          {
+            path: "signup",
+            element: <SignUpPage />
+          }
+        ]
       },
 
-      // Category routes
-      { 
-        path: "category/:category", 
-        element: <GamesList 
-          title="Games by Category"
-          icon={Gamepad2}
-          queryKey="categoryGames"
-          queryParams={{
-            genres: '', // This will be set dynamically based on the route parameter
-            page_size: 21
-          }}
-        />
+      // Protected Routes
+      {
+        path: "dashboard",
+        element: (
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: "blog",
+        children: [
+          {
+            path: "create",
+            element: (
+              <ProtectedRoute>
+                <BlogPage />
+              </ProtectedRoute>
+            )
+          },
+          {
+            path: "edit/:blogId",
+            element: (
+              <ProtectedRoute>
+                <CreatePost />
+              </ProtectedRoute>
+            )
+          },
+          {
+            path: ":postId",
+            element: <PostCard post={undefined} />
+          },
+          {
+            path: "dashboard",
+            element: (
+              <ProtectedRoute>
+                <SocialFeed />
+              </ProtectedRoute>
+            )
+          }
+        ]
+      },
+
+      // Fallback route
+      {
+        path: "*",
+        element: <Navigate to="/" replace />
       }
-    ],
-  },
-]);
+    ]
+  }
+];
+
+const router = createBrowserRouter(routes);
 
 export default router;
