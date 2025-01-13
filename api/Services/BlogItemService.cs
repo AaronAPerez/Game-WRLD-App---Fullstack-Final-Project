@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Models;
 using api.Services.Context;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Services;
@@ -14,7 +15,7 @@ public class BlogItemService : ControllerBase
 
     public BlogItemService(DataContext context)
     {
-            _context = context;
+        _context = context;
     }
     public bool AddBlogItems(BlogItemModel newBlogItem)
     {
@@ -29,7 +30,7 @@ public class BlogItemService : ControllerBase
         throw new NotImplementedException();
     }
 
-     public IEnumerable<BlogItemModel> GetAllBlogItems()
+    public IEnumerable<BlogItemModel> GetAllBlogItems()
     {
         return _context.BlogInfo;
     }
@@ -48,13 +49,14 @@ public class BlogItemService : ControllerBase
     {
         List<BlogItemModel> AllBlogsWithTag = new List<BlogItemModel>();
         var allItems = GetAllBlogItems().ToList();
-        for(int i = 0; i < allItems.Count; i++)
+        for (int i = 0; i < allItems.Count; i++)
         {
             BlogItemModel Item = allItems[i];
-            var itemArr = Item.Tag.Split(',');
-            for(int j = 0; j < itemArr.Length; j++)
+            BlogItemModel item = Item;
+            var itemArr = item.Tag.Split(',');
+            for (int j = 0; j < itemArr.Length; j++)
             {
-                if(itemArr[j].Contains(Tag))
+                if (itemArr[j].Contains(Tag))
                 {
                     AllBlogsWithTag.Add(Item);
                     break;
@@ -67,9 +69,19 @@ public class BlogItemService : ControllerBase
 
     public bool UpdateBlogItems(BlogItemModel blogUpdate)
     {
-        throw new NotImplementedException();
+        _context.Update<BlogItemModel>(blogUpdate);
+        return _context.SaveChanges() != 0;
+    }
+
+    public IEnumerable<BlogItemModel> GetItemsByUserId(int userId)
+    {
+        return _context.BlogInfo.Where(item => item.UserId == userId);
     }
 
 
+    public IEnumerable<BlogItemModel> GetPublishedItems()
+    {
+        return _context.BlogInfo.Where(item => item.IsPublished && item.IsDeleted == false);
+    }
 
 }

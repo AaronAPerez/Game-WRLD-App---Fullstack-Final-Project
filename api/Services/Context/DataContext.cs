@@ -11,11 +11,11 @@ public class DataContext : DbContext
 {
     public DataContext(DbContextOptions options) : base(options)
     {
-        
+
     }
 
-    public DbSet<UserModel> UserInfo {get; set;}
-    public DbSet<BlogItemModel> BlogInfo {get; set;}
+    public DbSet<UserModel> UserInfo { get; set; }
+    public DbSet<BlogItemModel> BlogInfo { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

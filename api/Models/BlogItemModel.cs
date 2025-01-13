@@ -21,7 +21,7 @@ public class BlogItemModel
 
     public BlogItemModel()
     {
-        
+
     }
-    
+
 }
