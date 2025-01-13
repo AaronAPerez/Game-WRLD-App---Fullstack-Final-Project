@@ -3,7 +3,6 @@ import { AuthProvider } from './contexts/AuthContext';
 
 import ErrorPage from './components/pages/ErrorPage';
 import HomePage from './components/pages/HomePage';
-import GamesPage from './components/pages/GamesPage';
 import GameDetails from './components/GameDetails';
 import SignUpPage from './components/pages/auth/SignUpPage';
 import ProtectedRoute from './components/pages/auth/ProtectedRoute';
@@ -15,27 +14,32 @@ import LoginPage from './components/pages/auth/LoginPage';
 import Dashboard from './components/Dashboard';
 import Layout from './components/layouts/Layout';
 import BlogPage from './components/pages/BlogPage';
+import FilteredGamesGrid from './components/games/FilteredGamesGrid';
+import MediaGallery from './components/media/MediaGallery';
+import { MediaGallerySection } from './components/games/MediaGallerySection';
+import GameCarousel from './components/GameCarousel';
+import FeaturedGames from './components/FeaturedGames';
 import GameGrid from './components/GameGrid';
-import MainLayout from './components/layouts/MainLayout';
+
 
 
 const routes = [
   {
     path: "/",
-    element: <AuthProvider><MainLayout /></AuthProvider>,
+    element: <AuthProvider><Layout /></AuthProvider>,
     errorElement: <ErrorPage />,
     children: [
       // Public Routes
       {
         index: true,
-        element: <GameGrid />
+        element: <GameGrid/> 
       },
       {
         path: "games",
         children: [
           {
             index: true,
-            element: <GamesPage />
+            element: <FilteredGamesGrid />
           },
           {
             path: ":id",

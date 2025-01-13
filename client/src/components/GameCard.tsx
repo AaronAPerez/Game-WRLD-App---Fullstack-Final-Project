@@ -57,7 +57,7 @@ const GameCard = ({ game }: GameCardProps) => {
         transition: 'transform 0.1s ease-out',
       }}
     >
-      <div className="relative bg-gray-900 rounded-lg overflow-hidden transform-gpu transition-all duration-300">
+      <div className="relative bg-black/20 rounded-lg overflow-hidden transform-gpu transition-all duration-300">
         {/* Image with gradient overlay */}
         <div className="aspect-video w-full relative">
           <img
@@ -65,7 +65,7 @@ const GameCard = ({ game }: GameCardProps) => {
             alt={game.name}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent" />
+          <div className="absolute inset-0" />
           
           {/* Glare effect */}
           <div

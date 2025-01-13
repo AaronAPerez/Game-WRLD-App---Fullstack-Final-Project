@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Calendar, 
-  Star, 
-  Award, 
-  Clock, 
+import {
+  Calendar,
+  Star,
+  Award,
+  Clock,
   Tag,
   Globe,
   Store,
@@ -14,6 +14,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { gameService } from '../services/gameService';
 import { cn } from '../utils';
+import { MediaGallerySection } from './games/MediaGallerySection';
 
 interface GameDetailsProps {
   gameId: number;
@@ -65,8 +66,8 @@ const GameDetails = ({ gameId }: GameDetailsProps) => {
       {/* Hero Section */}
       <div className="relative h-[80vh] overflow-hidden">
         <div className="absolute inset-0">
-          <img 
-            src={game.background_image} 
+          <img
+            src={game.background_image}
             alt={game.name}
             className="w-full h-full object-cover"
           />
@@ -110,8 +111,8 @@ const GameDetails = ({ gameId }: GameDetailsProps) => {
                   onClick={() => setActiveTab(tab)}
                   className={cn(
                     "pb-4 text-lg font-medium capitalize transition-colors",
-                    activeTab === tab 
-                      ? "text-white border-b-2 border-indigo-500" 
+                    activeTab === tab
+                      ? "text-white border-b-2 border-indigo-500"
                       : "text-gray-400 hover:text-white"
                   )}
                 >
@@ -165,8 +166,8 @@ const GameDetails = ({ gameId }: GameDetailsProps) => {
                         className="relative aspect-video rounded-lg overflow-hidden 
                                 hover:ring-2 ring-indigo-500 transition-all"
                       >
-                        <img 
-                          src={screenshot.image} 
+                        <img
+                          src={screenshot.image}
                           alt="Screenshot"
                           className="w-full h-full object-cover"
                         />
@@ -197,7 +198,7 @@ const GameDetails = ({ gameId }: GameDetailsProps) => {
                         {/* Timeline Dot */}
                         <div className="absolute left-0 top-1/2 -translate-x-[1.95rem] -translate-y-1/2
                                     w-4 h-4 rounded-full border-4 border-indigo-500 bg-stone-950" />
-                        
+
                         <Link
                           to={`/game/${game.id}`}
                           className="block p-4 bg-stone-900 rounded-lg hover:bg-stone-800 
@@ -219,6 +220,12 @@ const GameDetails = ({ gameId }: GameDetailsProps) => {
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {/* Media Gallery */}
+            <div className="space-y-8">
+              <MediaGallerySection gameId={gameId} />
+            </div>
+
           </div>
 
           {/* Right Column - Details */}

@@ -1,37 +1,21 @@
-// import axios, { AxiosRequestConfig } from "axios";
+import axios from 'axios';
 
-// export interface FetchResponse<T> {
-//     count: number;
-//     next: string | null;
-//     results: T[];
-// }
+const BASE_URL = 'http://localhost:5182/api';
 
-// const axiosInstance = axios.create({
-//     baseURL: 'https://api.rawg.io/api',
-//     params: {
-//         key: '88682be5c94f45ec86a72c163e1a3a09'
-//     }
-// });
+const apiClient = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
 
-// class apiClient<T> {
-//     endpoint: string;
-//     static get: any;
+apiClient.interceptors.request.use(config => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-//     constructor(endpoint: string) {
-//         this.endpoint = endpoint;
-//     }
+export default apiClient;
 
-//     getAll(config: AxiosRequestConfig) {
-//         return axiosInstance
-//             .get<FetchResponse<T>>(this.endpoint, config)
-//             .then(res => res.data);
-//     }
-
-//     get(id: number | string) {
-//         return axiosInstance
-//             .get<T>(`${this.endpoint}/${id}`)
-//             .then(res => res.data);
-//     }
-// }
-
-// export default apiClient;

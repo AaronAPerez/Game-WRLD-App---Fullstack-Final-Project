@@ -1,20 +1,23 @@
-import { useQuery } from '@tanstack/react-query';
-
-
-
 import { useState } from 'react';
-import { GameDetailsModal } from './GameDetailsModal';
-import { AnimatePresence, motion } from 'framer-motion';
-import GameCarousel from './GameCarousel';
+import { useQuery } from '@tanstack/react-query';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronLeft, ChevronRight, Star, Calendar } from 'lucide-react';
 import { gameService } from '../services/gameService';
+import { GameDetailsModal } from './GameDetailsModal';
+import { cn } from '../utils/styles';
 import { Game } from '../types/game';
+import HeroHighlight from './HeroHighlight';
+import Highlight from './Highlight';
+
 
 interface FeaturedGamesResponse {
   results: Game[];
 }
 
 const FeaturedGames = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+  const [direction, setDirection] = useState(0);
 
   const { data: featured, isLoading } = useQuery<FeaturedGamesResponse>({
     queryKey: ['featuredGames'],
@@ -25,9 +28,23 @@ const FeaturedGames = () => {
     })
   });
 
+  const handleNext = () => {
+    setDirection(1);
+    setCurrentIndex((prev) => 
+      prev === (featured?.results.length || 1) - 1 ? 0 : prev + 1
+    );
+  };
+
+  const handlePrev = () => {
+    setDirection(-1);
+    setCurrentIndex((prev) => 
+      prev === 0 ? (featured?.results.length || 1) - 1 : prev - 1
+    );
+  };
+
   if (isLoading) {
     return (
-      <div className="w-full aspect-video bg-stone-900 animate-pulse rounded-lg">
+      <div className="w-full h-[70vh] bg-stone-900 animate-pulse rounded-lg">
         <div className="h-full w-full flex items-center justify-center">
           <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
         </div>
@@ -37,61 +54,153 @@ const FeaturedGames = () => {
 
   if (!featured?.results.length) return null;
 
+  const currentGame = featured.results[currentIndex];
+
   return (
-    <>
-    {/* Section Title Overlay */}
-        <div className="relative group">
-       {/* Section Title Overlay */}
-      <div className="absolute top-0 left-0 z-20 p-6 bg-gradient-to-r from-stone-950 to-transparent">
-         <h2 className="text-3xl font-bold text-white">Featured Games</h2>
-      </div>
-
-      {/* AnimatePresence enables exit animations */}
-      <AnimatePresence mode="wait">
+    <div className="relative h-[70vh] group">
+      <AnimatePresence mode="wait" custom={direction}>
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="relative aspect-video rounded-lg overflow-hidden"
+          key={currentGame.id}
+          custom={direction}
+          initial={{ x: 300 * direction, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: -300 * direction, opacity: 0 }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          className="absolute inset-0"
         >
+          {/* Background Image with Gradient */}
+          <div className="relative h-full">
+            <img
+              src={currentGame.background_image}
+              alt={currentGame.name}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
+          </div>
 
-          {/* Game Background Image */}
+          {/* Hero Text Content */}
+          <div className="absolute inset-0 flex flex-col justify-center items-center">
+            <HeroHighlight className="mb-8">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ 
+                  opacity: 1,
+                  y: [20, -5, 0],
+                }}
+                transition={{
+                  duration: 0.5,
+                  ease: [0.4, 0.0, 0.2, 1],
+                }}
+                className="text-center px-4 space-y-4"
+              >
+                <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white max-w-4xl leading-relaxed">
+                  Discover{" "}
+                  <Highlight className="text-white">
+                    {currentGame.name}
+                  </Highlight>
+                </h1>
+                <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
+                  {currentGame.genres?.map(genre => genre.name).join(' • ')}
+                </p>
+              </motion.div>
+            </HeroHighlight>
 
+            {/* Game Stats */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="flex flex-wrap justify-center gap-6"
+            >
+              {currentGame.metacritic && (
+                <div className="flex items-center gap-2 px-4 py-2 bg-green-500/20 rounded-full">
+                  <span className="text-green-400 font-medium">
+                    {currentGame.metacritic} Metacritic
+                  </span>
+                </div>
+              )}
+              <div className="flex items-center gap-2 px-4 py-2 bg-yellow-500/20 rounded-full">
+                <Star className="w-5 h-5 text-yellow-400" />
+                <span className="text-yellow-400 font-medium">
+                  {currentGame.rating}/5
+                </span>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full">
+                <Calendar className="w-5 h-5 text-white" />
+                <span className="text-white font-medium">
+                  {new Date(currentGame.released).getFullYear()}
+                </span>
+              </div>
+            </motion.div>
 
-          {/* AnimatePresence enables exit animations */}
-       
-          <GameCarousel
-         
-            games={featured.results}
-            onGameSelect={setSelectedGame}
-          
-          />
-
-          <AnimatePresence>
-            {selectedGame && (
-              <GameDetailsModal
-                gameId={selectedGame.id}
-                onClose={() => setSelectedGame(null)}
-              />
-            )}
-         
-
-
-
-          </AnimatePresence>
-    
-
+            {/* CTA Button */}
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              onClick={() => setSelectedGame(currentGame)}
+              className="mt-8 px-8 py-3 bg-indigo-500 hover:bg-indigo-600 text-white rounded-full
+                         transform transition-all hover:scale-105"
+            >
+              Learn More
+            </motion.button>
+          </div>
         </motion.div>
-
       </AnimatePresence>
 
-</div>
+      {/* Navigation Controls */}
+      <div className="absolute inset-x-4 top-1/2 -translate-y-1/2 flex justify-between">
+        <button
+          onClick={handlePrev}
+          className={cn(
+            "p-3 rounded-full bg-black/50 backdrop-blur-sm text-white",
+            "opacity-0 group-hover:opacity-100 transition-opacity",
+            "hover:bg-white/20 transform hover:scale-110"
+          )}
+        >
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+        <button
+          onClick={handleNext}
+          className={cn(
+            "p-3 rounded-full bg-black/50 backdrop-blur-sm text-white",
+            "opacity-0 group-hover:opacity-100 transition-opacity",
+            "hover:bg-white/20 transform hover:scale-110"
+          )}
+        >
+          <ChevronRight className="w-6 h-6" />
+        </button>
+      </div>
 
+      {/* Progress Indicators */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
+        {featured.results.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => {
+              setDirection(index > currentIndex ? 1 : -1);
+              setCurrentIndex(index);
+            }}
+            className={cn(
+              "w-16 h-1 rounded-full transition-all duration-300",
+              index === currentIndex 
+                ? "bg-indigo-500 scale-110" 
+                : "bg-white/50 hover:bg-white/75"
+            )}
+          />
+        ))}
+      </div>
 
-
-
-
-    </>
+      {/* Game Details Modal */}
+      <AnimatePresence>
+        {selectedGame && (
+          <GameDetailsModal
+            gameId={selectedGame.id}
+            onClose={() => setSelectedGame(null)}
+          />
+        )}
+      </AnimatePresence>
+    </div>
   );
 };
 

@@ -3,9 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, X, Search as SearchIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
-import { Game } from '../types/rawg';
 import { gameService } from '../services/gameService';
-import { cn } from '../utils/styles';
+
 
 interface SearchResultsProps {
   query: string;
