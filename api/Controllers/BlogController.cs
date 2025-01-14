@@ -1,23 +1,47 @@
+using AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using api.Models;
 using api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class BlogController : ControllerBase
 {
-
+    private readonly IBlogService _blogService;
     private readonly BlogItemService _data;
+    private readonly IMapper _mapper;
 
-    public BlogController(BlogItemService dataFromService)
+    public BlogController(BlogItemService dataFromService, IBlogService blogService, IMapper mapper)
     {
         _data = dataFromService;
+        _blogService = blogService;
+        _mapper = mapper;
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<BlogItemDto>> Create(CreateBlogItemDto dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var result = await _blogService.CreateAsync(dto, int.Parse(userId));
+
+        return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+    }
+
+    private object GetById()
+    {
+        throw new NotImplementedException();
     }
 
     [HttpPost("AddBlogItems")]
@@ -87,3 +111,5 @@ public class BlogController : ControllerBase
         return _data.GetPublishedItems();
     }
 }
+
+
