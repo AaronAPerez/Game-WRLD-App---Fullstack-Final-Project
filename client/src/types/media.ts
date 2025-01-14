@@ -3,7 +3,6 @@ export interface Screenshot {
   image: string;
   width: number;
   height: number;
-  is_deleted: boolean;
 }
 
 export interface Trailer {
@@ -16,6 +15,13 @@ export interface Trailer {
   };
 }
 
+export interface MediaResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
 export interface MediaItem {
   id: number;
   type: 'image' | 'video';
@@ -25,14 +31,6 @@ export interface MediaItem {
   description?: string;
   width?: number;
   height?: number;
-}
-
-export interface MediaResponse<T> {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: T[];
-  timestamp?: string;
 }
 
 export interface Achievement {

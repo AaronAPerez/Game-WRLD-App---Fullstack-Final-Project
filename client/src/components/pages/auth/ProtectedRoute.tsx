@@ -1,22 +1,14 @@
-import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { Navigate, useLocation, Outlet } from 'react-router-dom';
 
 
-interface ProtectedRouteProps {
-  children: React.ReactNode;
-}
-
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { isAuthenticated, token } = useAuth();
+export const ProtectedRoute = () => {
+  const { isAuthenticated } = useAuth();
   const location = useLocation();
 
-  // Check if still loading auth state
-  if (!isAuthenticated && !token) {
-    // Redirect to login page but save the attempted URL
+  if (!isAuthenticated) {
     return <Navigate to="/auth/login" state={{ from: location }} replace />;
   }
 
-  return <>{children}</>;
+  return <Outlet />;
 };
-
-export default ProtectedRoute;

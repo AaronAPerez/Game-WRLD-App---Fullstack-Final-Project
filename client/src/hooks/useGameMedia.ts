@@ -1,4 +1,3 @@
-// src/hooks/useGameMedia.ts
 import { useQuery } from '@tanstack/react-query';
 import { gameService } from '../services/gameService';
 import { formatMediaItems } from '../utils/mediaUtils';

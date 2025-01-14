@@ -1,5 +1,5 @@
 import { authService } from "@/services/authService";
-import { LoginDTO } from "@/types/api";
+import { LoginDTO } from "@/types/auth";
 import { storage } from "@/utils";
 import { useMutation } from "@tanstack/react-query";
 

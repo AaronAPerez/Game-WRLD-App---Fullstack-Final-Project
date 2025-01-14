@@ -1,6 +1,6 @@
 import React from "react";
 import { useGames } from "../hooks/useGames";
-import GameCard from "./GameCard";
+import GameCard from "./games/GameCard";
 
 const GameGrid = () => {
     const {
@@ -34,16 +34,16 @@ const GameGrid = () => {
     if (error) return <div className="text-red-500">Error loading games</div>;
   
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {games.map((game, index) => (
-            <GameCard 
-            key={game.id} 
-            game={game} 
-            priority={index < 4}
-            />
-          ))}
-        </div>
+      <div className="container mx-auto px-4 py-2">
+ <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {games.map((game, index) => (
+        <GameCard 
+          key={game.id} 
+          game={game}
+          priority={index < 4} // Prioritize loading for first 4 cards
+        />
+      ))}
+    </div>
         
         
         {/* Loading state */}

@@ -1,4 +1,4 @@
-import type { BlogItemModel, ApiResponse } from '@/types/api';
+import type { BlogItemModel, ApiResponse } from '@/types/auth';
 import axiosInstance from './api/axiosConfig';
 
 export const BLOG_KEYS = {

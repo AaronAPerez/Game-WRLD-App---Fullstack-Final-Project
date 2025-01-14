@@ -1,4 +1,5 @@
-import type { Config } from 'tailwindcss'
+// tailwind.config.ts
+import type { Config } from 'tailwindcss';
 
 const config: Config = {
   content: [
@@ -43,15 +44,24 @@ const config: Config = {
         'spotify': '0 8px 24px rgb(0 0 0 / 50%)',
         'spotify-hover': '0 8px 32px rgb(0 0 0 / 70%)',
       },
+      backgroundColor: {
+        'surface-dark': 'rgba(24, 24, 24, 0.9)',
+        'surface-light': 'rgba(40, 40, 40, 0.9)',
+        'card-hover': 'rgba(40, 40, 40, 1)',
+      },
+      backdropFilter: {
+        'less': 'blur(8px)',
+      },
       backdropBlur: {
         'less': '8px',
       },
     },
   },
   plugins: [
+    require('@tailwindcss/aspect-ratio'),
     require('@tailwindcss/forms'),
     require('@tailwindcss/typography')
   ]
-}
+};
 
-export default config
+export default config;

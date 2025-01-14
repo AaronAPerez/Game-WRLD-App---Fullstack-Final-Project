@@ -1,17 +1,13 @@
-import { storage } from '@/utils';
 import axios from 'axios';
-
-
-const baseURL = 'http://localhost:5182/api';
+import { storage } from '@/utils/storage';
 
 const axiosInstance = axios.create({
-  baseURL,
+  baseURL: 'http://localhost:5182/api',
   headers: {
     'Content-Type': 'application/json'
   }
 });
 
-// Request interceptor for API calls
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = storage.getToken();
@@ -25,20 +21,12 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// Response interceptor for API calls
 axiosInstance.interceptors.response.use(
   (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
-
-    // Handle 401 Unauthorized
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+  (error) => {
+    if (error.response?.status === 401) {
       storage.clear();
-      window.location.href = '/auth/login';
-      return Promise.reject(error);
     }
-
     return Promise.reject(error);
   }
 );

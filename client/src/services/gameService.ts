@@ -1,20 +1,12 @@
 import axios from 'axios';
-import { GameQueryParams } from '../types/game';
-import { Game, Platform, Genre } from '../types/game';
-import { Screenshot, Trailer } from '../types/media';
+import { Game } from '../types/game';
+import { MediaResponse, Screenshot, Trailer } from '../types/media';
 
 interface GameResponse {
   count: number;
   next: string | null;
   previous: string | null;
   results: Game[];
-}
-
-interface MediaResponse<T> {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: T[];
 }
 
 interface FilterParams {
@@ -107,43 +99,6 @@ export const getGameTrailers = async (id: number): Promise<Trailer[]> => {
 };
 
 // Mmethod to fetch both screenshots and trailers at once
-export const getGameMedia = async (id: number) => {
-  try {
-    const [screenshots, trailers] = await Promise.all([
-      getGameScreenshots(id),
-      getGameTrailers(id)
-    ]);
-
-    return {
-      screenshots,
-      trailers
-    };
-  } catch (error) {
-    console.error('Error fetching game media:', error);
-    throw new Error('Failed to fetch game media');
-  }
-};
-
-// Add caching for media requests
-const mediaCache = new Map();
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-
-export const getCachedGameMedia = async (id: number) => {
-  const cacheKey = `media-${id}`;
-  const cachedData = mediaCache.get(cacheKey);
-
-  if (cachedData && Date.now() - cachedData.timestamp < CACHE_DURATION) {
-    return cachedData.data;
-  }
-
-  const mediaData = await getGameMedia(id);
-  mediaCache.set(cacheKey, {
-    data: mediaData,
-    timestamp: Date.now()
-  });
-
-  return mediaData;
-};
 
 // Error handling interceptoR
 gameService.interceptors.response.use(
@@ -170,8 +125,8 @@ gameService.interceptors.response.use(
 
     // Add request context to error
     const enhancedError = new Error(errorMessage);
-    enhancedError.config = error.config;
-    enhancedError.response = error.response;
+    error.config = error.config;
+    error.response = error.response;
     
     throw enhancedError;
   }

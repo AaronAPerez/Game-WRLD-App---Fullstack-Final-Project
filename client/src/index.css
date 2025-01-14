@@ -8,7 +8,11 @@
   }
 
   body {
-    @apply bg-stone-950 text-gray-200;
+    @apply bg-black text-gray-200;
+  }
+
+  main {
+    @apply bg-stone-900 text-gray-200;
   }
 
   /* Glow Effect */
