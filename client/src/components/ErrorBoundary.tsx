@@ -1,37 +1,37 @@
-import { Component, ReactNode } from 'react';
+import React from 'react'
+import { Component, ErrorInfo, ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
+  fallback?: ReactNode;
 }
 
 interface State {
   hasError: boolean;
+  error?: Error;
 }
 
 export class ErrorBoundary extends Component<Props, State> {
-  state = { hasError: false };
+  public state: State = {
+    hasError: false
+  };
 
-  static getDerivedStateFromError() {
-    return { hasError: true };
+  public static getDerivedStateFromError(error: Error): State {
+    return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error) {
-    console.error('Blog error:', error);
+  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('Uncaught error:', error, errorInfo);
   }
 
-  render() {
+  public render() {
     if (this.state.hasError) {
-      return (
-        <div className="text-center py-12">
-          <h2 className="text-xl font-medium text-red-500">
-            Something went wrong displaying the blog content
-          </h2>
-          <button
-            onClick={() => this.setState({ hasError: false })}
-            className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg"
-          >
-            Try again
-          </button>
+      return this.props.fallback || (
+        <div className="p-4 text-red-500">
+          <h2>Something went wrong.</h2>
+          <details className="whitespace-pre-wrap">
+            {this.state.error?.toString()}
+          </details>
         </div>
       );
     }
@@ -39,3 +39,5 @@ export class ErrorBoundary extends Component<Props, State> {
     return this.props.children;
   }
 }
+
+export default ErrorBoundary

@@ -1,12 +1,14 @@
-// src/main.tsx
 import React from "react";
 import ReactDOM from "react-dom/client";
-import './styles/globalStyles.css'
+import './styles/globalStyles.css';
 import './styles/scrollbar.css';
 import "./index.css";
-import App from './App';
+import App from "./App";
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
+const rootElement = document.getElementById("root");
+if (!rootElement) throw new Error('Failed to find the root element');
+
+ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>
