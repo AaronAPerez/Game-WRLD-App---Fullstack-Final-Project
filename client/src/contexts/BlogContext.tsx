@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { toast } from 'react-hot-toast';
-import { BlogItemModel } from '../types/auth';
+import { BlogItemModel } from '../types/blog';
+
 // import { useAuth } from './AuthContext';
 
 

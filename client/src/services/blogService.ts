@@ -1,77 +1,74 @@
-import { BlogItemModel } from "../types/blog";
-import { api } from "./api";
+import type { BlogItemModel, ApiResponse } from '@/types/api';
+import axiosInstance from './api/axiosConfig';
 
-
-
-
+export const BLOG_KEYS = {
+  all: ['blogs'] as const,
+  lists: () => [...BLOG_KEYS.all, 'list'] as const,
+  list: (filters: string) => [...BLOG_KEYS.lists(), { filters }] as const,
+  details: () => [...BLOG_KEYS.all, 'detail'] as const,
+  detail: (id: number) => [...BLOG_KEYS.details(), id] as const,
+};
 
 export const blogService = {
-  // Create new blog post
-  async createPost(data: BlogItemModel) {
-    const response = await api.post('/Blog/AddBlogItems', data);
-    return response.data;
+  getAllBlogs: async () => {
+    const { data } = await axiosInstance.get<BlogItemModel[]>('/Blog/GetBlogItems');
+    return data;
   },
 
-  // Get all blog posts with pagination
-  async getPosts(params?: { 
-    page?: number; 
-    pageSize?: number;
-    category?: string;
-    userId?: number;
-  }): Promise<BlogListResponse> {
-    const response = await api.get('/Blog/GetBlogItems', { params });
-    return response.data;
+  getBlogsByCategory: async (category: string) => {
+    const { data } = await axiosInstance.get<BlogItemModel[]>(
+      `/Blog/GetBlogItemByCategory/${category}`
+    );
+    return data;
   },
 
-  // Get single blog post
-  async getPost(id: number): Promise<BlogItemModel> {
-    const response = await api.get(`/Blog/GetBlogItemByCategory/${id}`);
-    return response.data;
+  getBlogsByTag: async (tag: string) => {
+    const { data } = await axiosInstance.get<BlogItemModel[]>(
+      `/Blog/GetItemsByTag/${tag}`
+    );
+    return data;
   },
 
-  // Update blog post
-  async updatePost(id: number, data: Partial<BlogItemModel>) {
-    const response = await api.post('/Blog/UpdateBlogItems', {
-      id,
-      ...data
-    });
-    return response.data;
+  getBlogsByUserId: async (userId: number) => {
+    const { data } = await axiosInstance.get<BlogItemModel[]>(
+      `/Blog/GetItemsByUserId/${userId}`
+    );
+    return data;
   },
 
-  // Delete blog post
-  async deletePost(id: number) {
-    const response = await api.post(`/Blog/DeleteBlogItem/${id}`);
-    return response.data;
+  createBlog: async (blog: Omit<BlogItemModel, 'id'>) => {
+    const { data } = await axiosInstance.post<ApiResponse<BlogItemModel>>(
+      '/Blog/AddBlogItems',
+      blog
+    );
+    return data;
   },
 
-  // Get posts by category
-  async getPostsByCategory(category: string): Promise<BlogItemModel[]> {
-    const response = await api.get(`/Blog/GetBlogItemByCategory/${category}`);
-    return response.data;
+  updateBlog: async (blog: BlogItemModel) => {
+    const { data } = await axiosInstance.post<ApiResponse<boolean>>(
+      '/Blog/UpdateBlogItems',
+      blog
+    );
+    return data;
   },
 
-  // Get user's posts
-  async getUserPosts(userId: number): Promise<BlogItemModel[]> {
-    const response = await api.get(`/Blog/GetItemsByUserId/${userId}`);
-    return response.data;
+  deleteBlog: async (blogId: number) => {
+    const { data } = await axiosInstance.post<ApiResponse<boolean>>(
+      `/Blog/DeleteBlogItem/${blogId}`,
+      {}
+    );
+    return data;
   },
-   // Get comments for a blog post
-   async getBlogComments(blogId: number): Promise<BlogItemModel[]> {
-    const response = await api.get(`/Blog/${blogId}/comments`);
-    return response.data;
-  },
-    // Add a new comment
-    async addComment(blogId: number, content: string): Promise<BlogItemModel> {
-      const response = await api.post(`/Blog/${blogId}/comments`, { content });
-      return response.data;
-    },
 
-    // Delete a comment
-    async deleteComment(blogId: number, commentId: number): Promise<boolean> {
-      const response = await api.delete(`/Blog/${blogId}/comments/${commentId}`);
-      return response.data;
-    }
-  };
+  getPublishedBlogs: async () => {
+    const { data } = await axiosInstance.get<BlogItemModel[]>(
+      '/Blog/GetPublishedItems'
+    );
+    return data;
+  }
+};
+
+
 
 
 
