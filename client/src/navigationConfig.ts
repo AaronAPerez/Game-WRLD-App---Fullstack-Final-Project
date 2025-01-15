@@ -28,12 +28,14 @@ export const navigationConfig: NavigationConfig = {
     { icon: Home, label: 'Home', path: '/' },
     { icon: Gamepad2, label: 'Games', path: '/games' },
     { icon: Flame, label: 'Trending', path: '/trending' },
+    { icon: Flame, label: 'Timeline', path: '/timeline' },
+    { icon: Flame, label: 'Trending', path: '/trending' },
     { icon: Calendar, label: 'New Releases', path: '/new-releases' },
     { icon: BarChart, label: 'Top Rated', path: '/top-rated' }
   ],
   social: [
     { icon: MessageSquare, label: 'Messages', path: '/messages', requiresAuth: true },
-    { icon: Users, label: 'Friends', path: '/friends', requiresAuth: true },
+    { icon: Users, label: 'Social', path: '/social', requiresAuth: true },
     { icon: BookOpen, label: 'Blog', path: '/blog' }
   ],
   settings: [

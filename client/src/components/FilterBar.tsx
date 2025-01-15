@@ -1,22 +1,26 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { 
-  Search, SlidersHorizontal, X, ChevronDown, 
-  Calendar, Star, Tag, 
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { gameService } from '../services/gameService';
 import { useFilterStore } from '../store/filterStore';
+import { AnimatePresence, motion } from 'framer-motion';
+import FilterSection from './FilterSection';
+import { Calendar, ChevronDown, Gamepad, Search, SlidersHorizontal, Star, Tag, X } from 'lucide-react';
 
 export const FilterBar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const filterStore = useFilterStore();
+
+
+
+  // Use the store values properly
   const {
-    search,
-    platforms,
-    genres,
-    ordering,
-    dates,
-    metacritic,
-    tags,
+    search = '',
+    platforms = [],
+    genres = [],
+    ordering = '',
+    dates = '',
+    metacritic = '',
+    tags = [],
     setSearch,
     setPlatforms,
     setGenres,
@@ -25,29 +29,25 @@ export const FilterBar = () => {
     setMetacritic,
     setTags,
     reset,
-  } = useFilterStore();
+  } = filterStore;
 
-  // Fetch filter options
-  const { data: platformsData } = useQuery({
-    queryKey: ['platforms'],
-    queryFn: setPlatforms,
-  });
+  // Calculate active filters
+  const activeFilterCount =
+    platforms.length +
+    genres.length +
+    tags.length +
+    (dates ? 1 : 0) +
+    (metacritic ? 1 : 0);
 
-  const { data: genresData } = useQuery({
-    queryKey: ['genres'],
-    queryFn: setGenres,
-  });
-
-  const { data: tagsData } = useQuery({
-    queryKey: ['tags'],
-    queryFn: setTags,
-  });
 
   return (
     <div className="sticky top-0 z-40 bg-gray-900/80 backdrop-blur-md border-b border-gray-800">
       <div className="max-w-7xl mx-auto px-4 py-4">
         {/* Search and Main Controls */}
-        <div className="flex flex-wrap gap-4 items-center">
+        <motion.div
+          className="flex flex-wrap gap-4 items-center"
+          layout
+        >
           {/* Search Bar */}
           <div className="flex-1 min-w-[300px]">
             <div className="relative">
@@ -91,65 +91,76 @@ export const FilterBar = () => {
             <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
           </div>
 
-          {/* Filter Toggle */}
-          <button
+          {/* Filter Toggle Button */}
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => setIsExpanded(!isExpanded)}
             className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-lg
               border border-gray-700 hover:bg-gray-700 transition-colors"
           >
             <SlidersHorizontal size={18} />
             <span>Filters</span>
-            <span className="bg-purple-600 text-xs px-2 py-0.5 rounded-full">
-              {platforms.length + genres.length + tags.length + (dates ? 1 : 0) + (metacritic ? 1 : 0)}
-            </span>
-          </button>
+            {activeFilterCount > 0 && (
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="bg-purple-600 text-xs px-2 py-0.5 rounded-full"
+              >
+                {activeFilterCount}
+              </motion.span>
+            )}
+          </motion.button>
 
-          {/* Reset Filters */}
-          {(platforms.length > 0 || genres.length > 0 || tags.length > 0 || dates || metacritic) && (
-            <button
-              onClick={reset}
-              className="text-gray-400 hover:text-white transition-colors"
-            >
-              Clear All
-            </button>
-          )}
-        </div>
+          {/* Clear Filters */}
+          <AnimatePresence>
+            {activeFilterCount > 0 && (
+              <motion.button
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                onClick={reset}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                Clear All
+              </motion.button>
+            )}
+          </AnimatePresence>
+        </motion.div>
 
         {/* Expanded Filters */}
         <AnimatePresence>
           {isExpanded && (
             <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              variants={filterContainerVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
               className="overflow-hidden"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-6">
                 {/* Platforms */}
                 <FilterSection
-                  icon={<GameController />}
+                  icon={<Gamepad/>}
                   title="Platforms"
-                  value={platforms}
-                  onChange={setPlatforms}
-                  options={platformsData?.results.map((platform) => ({
+                  value={filterStore.platforms}
+                  onChange={filterStore.setPlatforms}
+                  options={platforms?.map(platform => ({
                     id: platform.id,
                     name: platform.name,
                   })) || []}
                 />
 
-                {/* Genres */}
                 <FilterSection
                   icon={<Tag />}
                   title="Genres"
-                  value={genres}
-                  onChange={setGenres}
-                  options={genresData?.results.map((genre) => ({
+                  value={filterStore.genres}
+                  onChange={filterStore.setGenres}
+                  options={genres?.map(genre => ({
                     id: genre.id,
                     name: genre.name,
                   })) || []}
                 />
-
                 {/* Release Date */}
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-2">
@@ -207,74 +218,5 @@ export const FilterBar = () => {
   );
 };
 
-interface FilterSectionProps {
-  icon: React.ReactNode;
-  title: string;
-  value: number[];
-  onChange: (value: number[]) => void;
-  options: { id: number; name: string; }[];
-}
-
-const FilterSection = ({ icon, title, value, onChange, options }: FilterSectionProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const handleToggle = (id: number) => {
-    const newValue = value.includes(id)
-      ? value.filter((v) => v !== id)
-      : [...value, id];
-    onChange(newValue);
-  };
-
-  return (
-    <div className="relative">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-3 py-2 bg-gray-800 text-white
-          rounded-lg border border-gray-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
-      >
-        <div className="flex items-center gap-2">
-          {icon}
-          <span>{title}</span>
-          {value.length > 0 && (
-            <span className="bg-purple-600 text-xs px-2 py-0.5 rounded-full">
-              {value.length}
-            </span>
-          )}
-        </div>
-        <ChevronDown
-          className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-        />
-      </button>
-
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="absolute z-50 w-full mt-2 py-2 bg-gray-800 rounded-lg border border-gray-700
-              shadow-lg max-h-60 overflow-y-auto custom-scrollbar"
-          >
-            {options.map((option) => (
-              <label
-                key={option.id}
-                className="flex items-center px-4 py-2 hover:bg-gray-700 cursor-pointer"
-              >
-                <input
-                  type="checkbox"
-                  checked={value.includes(option.id)}
-                  onChange={() => handleToggle(option.id)}
-                  className="rounded border-gray-600 text-purple-600 focus:ring-purple-500 bg-gray-700"
-                />
-                <span className="ml-2 text-white">{option.name}</span>
-              </label>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-};
 
 export default FilterBar;

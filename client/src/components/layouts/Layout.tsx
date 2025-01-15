@@ -14,6 +14,7 @@ import Logo from '../Logo';
 import AvatarMenu from '../user/AvatarMenu';
 import { SearchResults } from '../search/SearchResults';
 import { navigationConfig } from '../../navigationConfig';
+import AnimatedSidebar from './sidebars/AnimatedSidebar';
 
 interface NavLinkProps {
   path: string;
@@ -126,7 +127,7 @@ const Layout = () => {
           </div>
           {/* Right Actions */}
           <div className="flex items-center gap-2">
-            {isAuthenticated ? (
+            {!isAuthenticated ? (
               <>
                 <AvatarMenu />
               </>
@@ -192,21 +193,23 @@ const Layout = () => {
         )}
       </AnimatePresence>
       {/* Desktop Layout */}
-      <div className="w-full pt-16 lg:grid lg:grid-cols-[220px,1fr]">
+      <div className="w-full pt-16 lg:grid lg:grid-cols-[80px,1fr]">
         {/* Desktop Sidebar */}
-        <aside className="hidden lg:block h-[calc(100vh-4rem)] sticky top-16 overflow-y-auto border-r border-stone-800/50">
-          <nav className="p-4 space-y-0">
+        <aside className="z-auto hidden lg:block h-[calc(100vh-3rem)] sticky top-16 overflow-y-auto border-r border-stone-600/50">
+         <AnimatedSidebar/> 
+
+          {/* <nav className="p-4 space-y-0">
             {navigationConfig.main.map((item) => (
               <NavLink key={item.path} {...item} />
             ))}
             {isAuthenticated && navigationConfig.social.map((item) => (
               <NavLink key={item.path} {...item} />
             ))}
-          </nav>
+          </nav> */}
         </aside>
         {/* Main Content */}
         <main className="rounded-xl border-slate-300">
-          <div className="container mx-auto p-4">
+          <div className="container mx-auto">
             <Outlet />
           </div>
         </main>

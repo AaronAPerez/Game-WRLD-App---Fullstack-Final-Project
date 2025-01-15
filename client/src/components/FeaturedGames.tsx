@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Star, Calendar } from 'lucide-react';
-import { gameService } from '../services/gameService';
 import { GameDetailsModal } from './GameDetailsModal';
 import { cn } from '../utils/styles';
 import { Game } from '../types/game';
-import HeroHighlight from './HeroHighlight';
+
 import Highlight from './Highlight';
+import { HeroHighlight } from './HeroHighlight';
+import gameService from '@/services/gameService';
 
 
 interface FeaturedGamesResponse {

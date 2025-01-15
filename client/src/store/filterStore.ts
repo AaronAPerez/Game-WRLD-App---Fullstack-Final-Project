@@ -1,7 +1,13 @@
 import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
 
-interface FilterStore extends FilterState {
+interface FilterState {
+  search: string;
+  platforms: number[];
+  genres: number[];
+  ordering: string;
+  dates: string;
+  metacritic: string;
+  tags: number[];
   setSearch: (search: string) => void;
   setPlatforms: (platforms: number[]) => void;
   setGenres: (genres: number[]) => void;
@@ -9,11 +15,11 @@ interface FilterStore extends FilterState {
   setDates: (dates: string) => void;
   setMetacritic: (metacritic: string) => void;
   setTags: (tags: number[]) => void;
-  setPage: (page: number) => void;
   reset: () => void;
 }
 
-const initialState: FilterState = {
+export const useFilterStore = create<FilterState>((set) => ({
+  // Initial state
   search: '',
   platforms: [],
   genres: [],
@@ -21,21 +27,22 @@ const initialState: FilterState = {
   dates: '',
   metacritic: '',
   tags: [],
-  page: 1,
-  page_size: 20,
-};
 
-export const useFilterStore = create<FilterStore>()(
-  devtools((set) => ({
-    ...initialState,
-    setSearch: (search) => set({ search, page: 1 }),
-    setPlatforms: (platforms) => set({ platforms, page: 1 }),
-    setGenres: (genres) => set({ genres, page: 1 }),
-    setOrdering: (ordering) => set({ ordering, page: 1 }),
-    setDates: (dates) => set({ dates, page: 1 }),
-    setMetacritic: (metacritic) => set({ metacritic, page: 1 }),
-    setTags: (tags) => set({ tags, page: 1 }),
-    setPage: (page) => set({ page }),
-    reset: () => set(initialState),
-  }))
-);
+  // Actions
+  setSearch: (search) => set({ search }),
+  setPlatforms: (platforms) => set({ platforms }),
+  setGenres: (genres) => set({ genres }),
+  setOrdering: (ordering) => set({ ordering }),
+  setDates: (dates) => set({ dates }),
+  setMetacritic: (metacritic) => set({ metacritic }),
+  setTags: (tags) => set({ tags }),
+  reset: () => set({
+    search: '',
+    platforms: [],
+    genres: [],
+    ordering: '',
+    dates: '',
+    metacritic: '',
+    tags: [],
+  }),
+}));

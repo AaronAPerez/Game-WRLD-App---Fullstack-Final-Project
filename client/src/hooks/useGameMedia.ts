@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { gameService } from '../services/gameService';
+
 import { formatMediaItems } from '../utils/mediaUtils';
 import { MediaItem } from '../types/media';
+import gameService from '@/services/gameService';
 
 export const useGameMedia = (gameId: number) => {
   // Fetch screenshots

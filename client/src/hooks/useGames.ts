@@ -1,6 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { getGames } from '../services/gameService';
 import { GameQueryParams, Game } from '../types/game';
 import { useDebounce } from './useDebounce';
 

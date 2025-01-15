@@ -12,9 +12,10 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { gameService } from '../services/gameService';
+
 import { cn } from '../utils';
 import { MediaGallerySection } from './games/MediaGallerySection';
+import gameService from '@/services/gameService';
 
 interface GameDetailsProps {
   gameId: number;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useGameMedia } from '../../hooks/useGameMedia';
-import { MediaGallery } from '../media/MediaGallery';
+import { MediaGallery } from './MediaGallery';
 import { Loader2, AlertTriangle } from 'lucide-react';
 
 interface MediaGallerySectionProps {

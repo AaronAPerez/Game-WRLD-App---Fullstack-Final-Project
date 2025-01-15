@@ -31,11 +31,27 @@ export interface Screenshot {
   image: string;
 }
 
+export interface Tag {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+export interface ApiResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
 export interface GameQueryParams {
-  page: number;
-  page_size: number;
   search?: string;
-  genres?: string;
   platforms?: string;
+  genres?: string;
   ordering?: string;
+  dates?: string;
+  metacritic?: string;
+  tags?: string;
+  page?: number;
+  page_size?: number;
 }

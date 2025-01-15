@@ -10,14 +10,15 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  MenuIcon,
 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 
 const menuItems = [
   { id: 1, title: 'Home', icon: Home, path: '/' },
   { id: 2, title: 'Games', icon: Gamepad2, path: '/games' },
-  { id: 3, title: 'Community', icon: Users, path: '/community' },
-  { id: 4, title: 'Library', icon: BookMarked, path: '/library' },
+  { id: 3, title: 'Social', icon: Users, path: '/social' },
+  { id: 4, title: 'Blog', icon: BookMarked, path: '/blog' },
   { id: 5, title: 'Messages', icon: MessageSquare, path: '/messages' },
   { id: 6, title: 'Settings', icon: Settings, path: '/settings' },
 ];
@@ -35,7 +36,7 @@ const AnimatedSidebar = () => {
 
   return (
     <div
-      className={`fixed left-0 top-0 h-screen bg-gray-900 text-gray-200 border-r border-gray-800 
+      className={`fixed left-0 top-0 h-screen text-gray-200 border-r border-gray-800 
         transition-all duration-300 ease-in-out transform ${
           isExpanded ? 'w-64' : 'w-20'
         } z-50`}
@@ -48,7 +49,7 @@ const AnimatedSidebar = () => {
       {/* Toggle Button */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="absolute -right-3 top-8 bg-purple-600 rounded-full p-1.5 transform transition-transform hover:scale-110"
+        className="absolute -right-3 top-8 rounded-full p-1.5 transform transition-transform hover:scale-110"
       >
         {isExpanded ? (
           <ChevronLeft className="w-4 h-4 text-white" />
@@ -58,19 +59,19 @@ const AnimatedSidebar = () => {
       </button>
 
       {/* Logo */}
-      <div className={`flex items-center h-16 px-6 ${isExpanded ? 'justify-start' : 'justify-center'}`}>
-        <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
-          <Gamepad2 className="w-5 h-5 text-white" />
+      <div className={`flex items-center h-16 ${isExpanded ? 'justify-start' : 'justify-center'}`}>
+        <div className="w-8 h-8 rounded-lg flex items-center justify-center">
+          <MenuIcon className="w-5 h-5 text-white" />
         </div>
         {isExpanded && (
           <span className="ml-3 font-bold text-xl text-white opacity-100 transition-opacity duration-200">
-            GameHub
+            {/* Game WRLD */}
           </span>
         )}
       </div>
 
       {/* Navigation Items */}
-      <nav className="mt-8 px-3">
+      <nav className="mt-8 px-3 bg-black rounded-lg">
         {menuItems.map((item) => {
           const isActive = location.pathname === item.path;
           const isItemExpanded = expandedItem === item.id;
@@ -85,7 +86,7 @@ const AnimatedSidebar = () => {
               <button
                 onClick={() => handleItemClick(item.path)}
                 className={`flex items-center w-full p-3 mb-2 rounded-lg transition-all duration-200
-                  ${isActive ? 'bg-purple-600 text-white' : 'hover:bg-gray-800'}`}
+                  ${isActive ? 'bg-indigo-700 text-white' : 'hover:bg-gray-800'}`}
               >
                 <item.icon className={`w-6 h-6 ${isActive ? 'text-white' : 'text-gray-400'}`} />
                 

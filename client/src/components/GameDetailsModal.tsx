@@ -2,8 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 // import { gameService, getMetacriticColor } from "../services/gameService";
 import { Minimize2, Star } from "lucide-react";
-import { gameService } from "../services/gameService";
 import { getMetacriticColor } from "../utils/formatDate";
+import MediaPlayer from "./games/MediaPlayer";
+import gameService from "@/services/gameService";
 
 
 // Game Details Modal Component
@@ -26,6 +27,13 @@ export function GameDetailsModal({ gameId, onClose }: { gameId: number; onClose:
     queryFn: () => gameService.getGameSeries(gameId)
   });
 
+  // Add trailer query
+  const { data: trailers } = useQuery({
+    queryKey: ['trailers', gameId],
+    queryFn: () => gameService.getGameTrailers(gameId)
+  });
+
+
   if (!game) return null;
 
   return (
@@ -44,6 +52,14 @@ export function GameDetailsModal({ gameId, onClose }: { gameId: number; onClose:
         onClick={e => e.stopPropagation()}
       >
         <div className="bg-app-card rounded-xl overflow-hidden max-w-6xl mx-auto">
+            {/* Featured Media */}
+        <div className="relative aspect-video">
+          <MediaPlayer
+            trailer={trailers?.[0]}
+            screenshots={screenshots?.results || []}
+          />
+        </div>
+
           {/* Header Image */}
           <div className="relative aspect-video">
             <img

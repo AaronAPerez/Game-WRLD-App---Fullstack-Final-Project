@@ -1,63 +1,30 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { useFilterStore } from '../store/filterStore';
+// hooks/useFilteredGames.ts
+import { useFilterStore } from '@/store/filterStore';
+import gameService from '../services/gameService';
 import { useDebounce } from './useDebounce';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
 export const useFilteredGames = () => {
-  const {
-    search,
-    platforms,
-    genres,
-    ordering,
-    dates,
-    metacritic,
-    tags,
-    page_size,
-  } = useFilterStore();
+  const filters = useFilterStore();
+  const debouncedSearch = useDebounce(filters.search, 500);
 
-  const debouncedSearch = useDebounce(search, 500);
-
-  const     filters = {
+  const queryParams = {
     search: debouncedSearch,
-    platforms: platforms.length > 0 ? platforms.join(',') : undefined,
-    genres: genres.length > 0 ? genres.join(',') : undefined,
-    ordering: ordering || undefined,
-    dates: dates || undefined,
-    metacritic: metacritic || undefined,
-    tags: tags.length > 0 ? tags.join(',') : undefined,
-    page_size,
+    platforms: filters.platforms.join(','),
+    genres: filters.genres.join(','),
+    ordering: filters.ordering,
+    dates: filters.dates,
+    metacritic: filters.metacritic,
+    tags: filters.tags.join(','),
+    page_size: 20
   };
 
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    error,
-  } = useInfiniteQuery({
-    queryKey: ['games', filters],
-    queryFn: ({ pageParam = 1 }) =>
-      getGames({ ...filters, page: pageParam }),
-    getNextPageParam: (lastPage, allPages) => {
-      if (lastPage.next) {
-        return allPages.length + 1;
-      }
-      return undefined;
-    },
-    staleTime: 1000 * 60 * 5, // 5 minutes
+  return useInfiniteQuery({
+    queryKey: ['games', queryParams],
+    queryFn: ({ pageParam = 1 }) => 
+      gameService.getGames({ ...queryParams, page: pageParam }),
+    getNextPageParam: (lastPage) => 
+      lastPage.next ? parseInt(new URL(lastPage.next).searchParams.get('page') || '1') : undefined,
+    staleTime: 1000 * 60 * 5
   });
-
-  const games = data?.pages.flatMap((page) => page.results) ?? [];
-  const totalCount = data?.pages[0]?.count ?? 0;
-
-  return {
-    games,
-    totalCount,
-    isLoading,
-    error,
-    hasNextPage,
-    fetchNextPage,
-    isFetchingNextPage,
-  };
 };
-    

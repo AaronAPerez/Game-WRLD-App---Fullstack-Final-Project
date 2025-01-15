@@ -1,8 +1,11 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import gameService from '@/services/api/axiosConfig';
+import gameService from '@/services/gameService';
+import { BlogItemModel } from '@/types/blog';
+import React, { createContext, useState, useCallback } from 'react';
 import { toast } from 'react-hot-toast';
-import { BlogItemModel } from '../types/blog';
 
-// import { useAuth } from './AuthContext';
+
+
 
 
 interface BlogContextType {
@@ -27,11 +30,11 @@ export const BlogProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const createBlog = useCallback(async (data: Omit<BlogItemModel, 'id'>) => {
     try {
       setIsLoading(true);
-      const success = await blogApi.addBlogItem(data);
+      const success = await gameService.addBlogItem(data);
       if (success) {
         toast.success('Blog post created successfully!');
         if (user?.userId) {
-          const updatedBlogs = await blogApi.getBlogItemsByUserId(user.userId);
+          const updatedBlogs = await gameService.getBlogItemsByUserId(user.userId);
           setUserBlogs(updatedBlogs);
         }
       }
@@ -47,11 +50,11 @@ export const BlogProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updateBlog = useCallback(async (data: BlogItemModel) => {
     try {
       setIsLoading(true);
-      const success = await blogApi.updateBlogItem(data);
+      const success = await gameService.updateBlogItem(data);
       if (success) {
         toast.success('Blog post updated successfully!');
         if (user?.userId) {
-          const updatedBlogs = await blogApi.getBlogItemsByUserId(user.userId);
+          const updatedBlogs = await gameService.getBlogItemsByUserId(user.userId);
           setUserBlogs(updatedBlogs);
         }
       }
@@ -67,11 +70,11 @@ export const BlogProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const deleteBlog = useCallback(async (blogId: string, data: BlogItemModel) => {
     try {
       setIsLoading(true);
-      const success = await blogApi.deleteBlogItem(blogId, data);
+      const success = await gameService.deleteBlogItem(blogId, data);
       if (success) {
         toast.success('Blog post deleted successfully!');
         if (user?.userId) {
-          const updatedBlogs = await blogApi.getBlogItemsByUserId(user.userId);
+          const updatedBlogs = await gameService.getBlogItemsByUserId(user.userId);
           setUserBlogs(updatedBlogs);
         }
       }
@@ -89,7 +92,7 @@ export const BlogProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     try {
       setIsLoading(true);
-      const data = await blogApi.getBlogItemsByUserId(user.userId);
+      const data = await gameService.getBlogItemsByUserId(user.userId);
       setUserBlogs(data);
     } catch (error) {
       console.error('Fetch user blogs error:', error);
@@ -102,7 +105,7 @@ export const BlogProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const fetchPublishedBlogs = useCallback(async () => {
     try {
       setIsLoading(true);
-      const data = await blogApi.getPublishedItems();
+      const data = await gameService.getPublishedItems();
       setBlogs(data);
     } catch (error) {
       console.error('Fetch published blogs error:', error);

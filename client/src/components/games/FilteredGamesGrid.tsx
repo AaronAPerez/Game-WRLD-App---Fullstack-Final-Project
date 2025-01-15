@@ -4,7 +4,7 @@ import { useFilteredGames } from '../../hooks/useFilteredGames';
 
 import { Loader2 } from 'lucide-react';
 import FilterBar from '../FilterBar';
-import GameCard from '../GameCard';
+import GameCard from './GameCard';
 
 const FilteredGamesGrid = () => {
   const {
@@ -81,7 +81,7 @@ const FilteredGamesGrid = () => {
           animate="show"
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
         >
-          {games.map((game, i) => {
+          {games.map((game, ) => {
             if (games.length === i + 1) {
               return (
                 <motion.div
